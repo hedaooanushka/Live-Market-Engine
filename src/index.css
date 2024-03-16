@@ -1,0 +1,54 @@
+.box{
+    height: 30px;
+    display: flex;
+    cursor: pointer;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 15px;
+    align-items: center;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    width: 800px;
+    margin: 35px auto;
+}
+
+.box input {
+    outline: none;
+    border: none;
+    font-weight: 500;
+    transition: 0.8s;
+    background: transparent;
+    transform: translate(30px, -35px);
+    font-size: 17px;
+}
+
+.search-symbol{
+    color: #d3d3d3;
+    width: 25px;
+    position: relative;
+    top: -30px;
+    left: -223px;
+}
+
+.search-symbol:hover{
+    color:black;
+    transition: 0.3s;
+}
+
+.straight-line {
+    transform: translate(450px, 27px);
+    position: relative;
+    top: -5px;
+}
+
+.cross{
+    color: #d3d3d3;
+    width: 15px;
+    position: relative;
+    top: -28px;
+    left: 440px;
+}
+
+.cross:hover {
+    color: black;
+    transition: 0.3s;
+}

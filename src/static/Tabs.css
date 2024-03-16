@@ -1,0 +1,31 @@
+/* SUMMARY */
+
+.tab ul{
+    list-style-type: none;
+}
+
+.tab ul li{
+    display: inline;
+    text-align: center;
+    padding: 10px 10px
+}
+
+.tab ul li:hover{
+    background-color: #eee;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.content{
+    display: none;
+}
+
+.show-content{
+    display: block;
+}
+
+.show-active {
+    text-decoration: underline;
+  }
+
+/* NEWS */
