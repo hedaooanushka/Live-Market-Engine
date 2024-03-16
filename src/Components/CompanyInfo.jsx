@@ -1,4 +1,5 @@
 import { Container, Row, Col, Button } from 'react-bootstrap';
+import '../static/Tabs.css'
 
 export default function CompanyInfo() {
     return (
@@ -12,13 +13,13 @@ export default function CompanyInfo() {
                         <br/><span style={{fontSize: '20px', fontWeight:"bold", color:'grey'}}> DELL Technologies Inc.</span> <br />
                         <span style={{color: 'gray', fontSize: '15px'}}> NEW YORK STOCK EXCHANGE INC.</span>
                     </p>
-                    <Button variant="success">Buy</Button>{' '}
+                    <Button className='me-2' variant="success">Buy</Button>{' '}
                     <Button variant="danger">Sell</Button>{' '}
                 </div>
-                <div className="pt-4 bd-highlight">
+                <div className="pt-4 pe-5 bd-highlight">
                     <img src="https://i.pinimg.com/originals/3a/80/d0/3a80d08597eb583fc0784a694b56169a.jpg" style={{maxwidth: '120px', maxHeight:'120px'}}></img>
                 </div>
-                <div className="p-2 bd-highlight">
+                <div className="p-2 pe-5 bd-highlight">
                     <span style={{fontSize: '20px', fontWeight: 'bold'}}>88.75</span> <br/>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
                         <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
