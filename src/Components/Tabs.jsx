@@ -28,8 +28,8 @@ export default function Tabs() {
 
                 {/* SUMMARY TAB */}
                 <div className={toggle === 1 ? "show-content" : "content"}>
-                    <div class="d-flex flex-row">
-                        <div class="p-2 flex-fill">
+                    <div className="d-flex flex-row">
+                        <div className="p-2 flex-fill">
                             <b>High Price: </b> 78.32 <br />
                             <b>Low Price: </b> 78.32 <br />
                             <b>Open Price: </b> 78.32 <br />
@@ -43,7 +43,7 @@ export default function Tabs() {
                             </div>
 
                         </div>
-                        <div class="p-2 flex-fill">
+                        <div className="p-2 flex-fill">
                             Graph
                         </div>
 
@@ -52,8 +52,8 @@ export default function Tabs() {
 
                 {/* NEWS TAB */}
                 <div className={toggle === 2 ? "show-content" : "content"}>
-                    <div class="d-flex flex-row">
-                        <div class="flex-fill ">
+                    <div className="d-flex flex-row">
+                        <div className="flex-fill ">
                             <Container>
                                 <Row xs={1} md={3} className="g-4">
                                     {newsItems.map((item, idx) => (
@@ -71,7 +71,7 @@ export default function Tabs() {
                             </Container>
 
                         </div>
-                        <div class="flex-fill">
+                        <div className="flex-fill">
                             <Container>
                                 <Row xs={1} md={3} className="g-4">
                                     {newsItems.map((item, idx) => (
