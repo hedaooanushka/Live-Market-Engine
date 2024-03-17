@@ -1,12 +1,21 @@
 import SmallChart from "./SmallChart"
 
 export default function Summary(props) {
-    const options = {
+    let xaxis = []
+    const data = props?.summary_chart;
+    if (data) {
+        return <></>;
+    }
+    console.log(data)
+    for(let i=0; i<data.length; i++){
+        xaxis.push(data[i].c)
+    }
+    let options = {
         title: {
-            text: 'My chart'
+            text: 'Hourly Price Variation'
         },
         series: [{
-            data: [1, 2, 3]
+            data: []
         }]
     }
     return (

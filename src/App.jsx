@@ -14,10 +14,6 @@ function App() {
       <Headers/>
       <br/>
       <Search/>
-      <br/>
-      <CompanyInfo/>
-      <br/>
-      <Tabs/>
     </>
   )
 }
