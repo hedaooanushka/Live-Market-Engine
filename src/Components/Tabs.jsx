@@ -6,6 +6,12 @@ import Insights from './Insights';
 import Summary from './Summary';
 import Charts from './Charts';
 export default function Tabs(props) {
+    if(props?.ticker_name === "default" || props?.isValid === false){
+        return(
+            <></>
+        )
+    }
+  
     const [toggle, setToggle] = useState(1);
     const [active, setActive] = useState(1);
     const newsItems = props.news;

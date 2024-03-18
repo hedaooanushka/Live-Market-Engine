@@ -17,19 +17,38 @@ export default function Search() {
     const [news_info, setNewsInfo] = useState([]);
     const [charts_info, setChartsInfo] = useState({ results: [] });
     const [insights_info, setInsightsInfo] = useState({ results: [] });
-
+    let [isValid, setIsValid] = useState(false);
 
 
     var callBackend = () => {
         if (ticker_name !== "default") {
             // console.log("go backkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+            console.log("ticker_name: " + ticker_name)
             axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
                 .then(response => {
                     setSummaryInfo(response.data);
+                    console.log("Summary Data: " + JSON.stringify(response.data));
+                    console.log("Peers: " + response.data.peers.length)
+                    if (response.data.peers.length > 0) {
+                        setIsValid(true)
+                    }
+                    else {
+                        setIsValid(false)
+                    }
                 })
                 .catch(error => {
                     console.error('An error occurred:', error);
                 });
+        }
+        console.log("isValid: " + isValid)
+       
+    }
+
+    var handleInputChange = (event) => {
+        setTickerName(event.target.value);
+    }
+    useEffect(() => {
+        if (isValid) {
             axios.get(`http://localhost:3000/news?ticker_name=${ticker_name}`)
                 .then(response => {
                     setNewsInfo(response.data);
@@ -58,27 +77,14 @@ export default function Search() {
             axios.get(`http://localhost:3000/insights?ticker_name=${ticker_name}`)
                 .then(response => {
                     console.log("############################")
-                    console.log(response.data);
+                    console.log(JSON.stringify(response.data));
                     setInsightsInfo(response.data);
                 })
                 .catch(error => {
                     console.error('An error occurred:', error);
                 });
         }
-    }
-
-    var handleInputChange = (event) => {
-        setTickerName(event.target.value);
-    }
-
-    useEffect(() => {
-        // console.log("##########")
-        // console.log(summary_chart);
-    }, [summary_chart]);
-
-    useEffect(() => {
-        callBackend();
-    }, []);
+    }, [isValid]);
 
     return (
         <>
@@ -101,10 +107,10 @@ export default function Search() {
                 <p></p> */}
             </Container>
             <br />
-            <CompanyInfo info={summary_info} />
+            <CompanyInfo info={summary_info} ticker_name={ticker_name} isValid={isValid} />
             {/* <p>{company_info.peers}</p> */}
             <br />
-            <Tabs info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} />
+            <Tabs info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={isValid} />
             {/* <Summary news={news_info}/> */}
 
         </>

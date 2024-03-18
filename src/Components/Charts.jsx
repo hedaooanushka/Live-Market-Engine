@@ -35,8 +35,9 @@ export default function Charts(props) {
 
         options = {
             chart: {
-                height: 600, // Height of the chart in pixels
-                backgroundColor: '#eee'
+                height: 650, // Height of the chart in pixels
+                backgroundColor: '#eee',
+                alignTicks: false,
             },
             title: {
                 text: `${props?.info?.profile?.ticker} Historical`
@@ -50,7 +51,7 @@ export default function Charts(props) {
                     lineColor: 'red',
                     upColor: 'lightgreen',
                     upLineColor: 'green',
-                    pointWidth: 3,
+                    pointWidth: 5,
                     groupPadding: 0.5,
                     borderWidth: 1
                 },
@@ -93,68 +94,41 @@ export default function Charts(props) {
                 type: 'datetime',
                 endOnTick: false,
                 maxPadding: 0,
-                offset: 40
+                offset: 78
             },
             yAxis: [{
                 title: {
                     text: 'Stock Price'
                 },
                 labels: {
-                          align: 'left',
-                        //   x: -30
-                        },
-                        lineWidth: 2,
+                    align: 'right',
+                      x: -3
+                },
+                lineWidth: 2,
                 height: '80%',
                 resize: {
                     enabled: true
                 },
+                pointPlacement: 'on'
             }, {
                 labels: {
-                    align: 'left',
-                    x: -30
-                  },
-                  lineWidth:2,
+                    align: 'right',
+                    x: -3
+                },
+                lineWidth: 2,
                 title: {
                     text: 'Volume'
                 },
                 opposite: true,
                 // min: 0,
                 height: '40%',
-                top: '85%'
+                top: '85%',
+                pointPlacement: 'on',
+                offset: 0
             }],
             legend: {
                 enabled: true
             },
-            // yAxis: [{
-            //     labels: {
-            //       align: 'right',
-            //     //   x: -3
-            //     },
-            //     title: {
-            //       text: 'OHLC'
-            //     },
-            //     height: '100%',
-            //     lineWidth: 2,
-            //     resize: {
-            //       enabled: true
-            //     }
-            //   }, {
-            //     labels: {
-            //       align: 'right',
-            //     //   x: -3
-            //     },
-            //     title: {
-            //       text: 'Volume'
-            //     },
-            //     top: '71%',
-            //     height: '50%',
-            //     // offset: 0,
-            //     lineWidth: 2
-            //   }],
-            //   tooltip: {
-            //     split: true
-            //   },
-
             series: [{
                 type: 'candlestick',
                 name: 'USD to EUR',
@@ -172,7 +146,7 @@ export default function Charts(props) {
                     valueDecimals: 0
                 },
                 pointPlacement: 'on',
-                id:'volume'
+                id: 'volume'
             },
             {
                 type: 'sma',
@@ -182,7 +156,7 @@ export default function Charts(props) {
             {
                 type: 'vbp',
                 linkedTo: 'candles',
-                params:{volumeSeriesId: 'volume'},
+                params: { volumeSeriesId: 'volume' },
                 showInLegend: false,
                 dataLabels: {
                     enabled: false
