@@ -1,6 +1,40 @@
 import '../static/Tabs.css'
 import SmallChart from './SmallChart'
 export default function Insights(props) {
+    const data = props.insights.data;
+    let mspr_total = 0;
+    let mspr_positive = 0;
+    let mspr_negative = 0;
+    let change_total = 0;
+    let change_positive = 0;
+    let change_negative = 0;
+    if(!data){
+        return(
+            <></>
+        )
+    }
+
+    for(let i=0; i<data.length; i++){
+        if(data[i]?.mspr >= 0){
+            mspr_positive += data[i]?.mspr;
+        }else if(data[i]?.mspr < 0){
+            mspr_negative += data[i]?.mspr;
+        }
+        if(data[i]?.change < 0){
+            change_negative += data[i]?.change;
+        }else{
+            change_positive += data[i]?.change;
+        }
+        change_total += data[i]?.change;
+        mspr_total += data[i]?.mspr;
+    }
+    console.log(mspr_total);
+    console.log(mspr_positive);
+    console.log(mspr_negative);
+
+
+
+
     const options = {
         title: {
             text: 'My chart'
@@ -9,24 +43,6 @@ export default function Insights(props) {
             data: [1, 2, 3]
         }]
     }
-    const tableData = {
-        "company": "Apple",
-        "Apple": {
-            "Total": "-590",
-            "Positive": "200",
-            "Negative": "-790"
-        },
-        "MSPR": {
-            "Total": "-245648",
-            "Positive": "8985196",
-            "Negative": "-456865"
-        },
-        "Change": {
-            "Total": "-245058",
-            "Positive": "8984996",
-            "Negative": "-456075"
-        }
-    }
     return (
         <div className={props.toggle === 4 ? "show-content" : "content"}>
             <div className='container justify-content-center' style={{ textAlign: "center" }} >
@@ -34,7 +50,7 @@ export default function Insights(props) {
                 <table className="table table-responsive-sm ">
                     <thead>
                         <tr>
-                            <th scope="col">{tableData["company"]}</th>
+                            <th scope="col">{props?.info?.profile?.name}</th>
                             <th scope="col">MSPR</th>
                             <th scope="col">Change</th>
                         </tr>
@@ -42,30 +58,30 @@ export default function Insights(props) {
                     <tbody>
                         <tr>
                             <th>Total</th>
-                            <td>-590</td>
-                            <td>-245648</td>
+                            <td>{mspr_total}</td>
+                            <td>{change_total}</td>
                         </tr>
                         <tr>
                             <th>Positvie</th>
-                            <td>200</td>
-                            <td>8985196</td>
+                            <td>{mspr_positive}</td>
+                            <td>{change_positive}</td>
                         </tr>
                         <tr>
                             <th> Negative</th>
-                            <td >-790</td>
-                            <td>-456865</td>
+                            <td >{mspr_negative}</td>
+                            <td> {change_negative}</td>
                         </tr>
                     </tbody>
                 </table>
             </div><br/>
-            <div className='container-fluid row justify-content-center'>
+            {/* <div className='container-fluid row justify-content-center'>
                 <div className='col-5'>
                     <SmallChart data={options} />
                 </div>
                 <div className='col-5'>
                     <SmallChart data={options} />
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }

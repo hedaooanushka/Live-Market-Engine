@@ -1,13 +1,22 @@
 import SmallChart from "./SmallChart"
 
 export default function Summary(props) {
+    const baseURL = 'https://finance.example.com/stock/';
+    if(!props.info.peers) {
+        return(
+            <></>
+        )
+    }
+
+
+
+    // SUMMARY-CHARTS
     let xaxis = []
-    const data = props?.summary_chart;
-    if (data) {
+    const data = props?.summary_chart?.results;
+    if (!data) {
         return <></>;
     }
-    console.log(data)
-    for(let i=0; i<data.length; i++){
+    for (let i = 0; i < data.length; i++) {
         xaxis.push(data[i].c)
     }
     let options = {
@@ -15,7 +24,8 @@ export default function Summary(props) {
             text: 'Hourly Price Variation'
         },
         series: [{
-            data: []
+            data: xaxis,
+            type: 'spline'
         }]
     }
     return (
@@ -24,17 +34,24 @@ export default function Summary(props) {
                 <div className="col-6">
                     <div className="pt-2 flex-fill">
                         <div className="container ps-5">
-                            <b>High Price: </b> {props.data['High Price']}<br />
-                            <b>Low Price: </b> {props.data['Low Price']} <br />
-                            <b>Open Price: </b>{props.data['Open Price']} <br />
-                            <b>Prev Price: </b>{props.data['Prev Price']} <br /> <br /> <br />
+                            <b>High Price: </b> {props?.info?.latest_price?.h}<br />
+                            <b>Low Price: </b> {props?.info?.latest_price?.l} <br />
+                            <b>Open Price: </b>{props?.info?.latest_price?.o} <br />
+                            <b>Prev Price: </b>{props?.info?.latest_price?.pc} <br /> <br /> <br />
                         </div>
                         <div style={{ textAlign: 'center' }} className="container">
                             <b><u>About the company</u></b> <br /> <br />
-                            <b>IPO Start Date: </b> {props.data['IPO Start Date']} <br />
-                            <b>Industry: </b> {props.data['Industry']} <br />
-                            <b>Webpage: </b> <a href="#">{props.data['Webpage']}</a><br />
-                            <b>Company peers:</b>{props.data['Company peers']} <br />
+                            <b>IPO Start Date: </b> {props?.info?.profile?.ipo} <br />
+                            <b>Industry: </b> {props?.info?.profile?.finnhubIndustry} <br />
+                            <b>Webpage: </b> <a href={props?.info?.profile?.weburl}>{props?.info?.profile?.weburl}</a><br />
+                            <b>Company peers</b>
+                            <div>
+                                {props?.info?.peers.map((company, index) => (
+                                    <span>
+                                        <a href={`${baseURL}${company}`} target="_blank" rel="noopener noreferrer">{company} </a>,
+                                    </span>
+                                ))}
+                            </div>
                         </div>
                     </div>
 

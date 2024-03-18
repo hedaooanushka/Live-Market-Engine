@@ -12,7 +12,7 @@ export default function News({ toggle, newsItems }) {
             if (pair.every(item => item.image !== "")) {
                 newsItemPairs.push(pair);
             }
-            if(newsItemPairs.length > 9) break
+            if (newsItemPairs.length > 9) break
         }
     }
 
@@ -24,27 +24,30 @@ export default function News({ toggle, newsItems }) {
 
     // Main component rendering
     return (
-        <div className={toggle === 2 ? "show-content" : "content"}>
-            <Container fluid className="m-2">
-                {newsItemPairs.map((pair, index) => (
-                    <Row className="mt-3" key={index}>
-                        {pair.map((item, idx) => (
-                            <Col md={6} key={idx}>
-                                <Container fluid>
-                                    <Row className="news p-3" type="button">
-                                        <Col xs={4}>
-                                            <img src={item.image} className="news-img" alt="" />
-                                        </Col>
-                                        <Col xs={8} className="mt-3">
-                                            <Card.Title>{item.headline}</Card.Title>
-                                        </Col>
-                                    </Row>
-                                </Container>
-                            </Col>
-                        ))}
-                    </Row>
-                ))}
-            </Container>
+        <div >
+            <div className={toggle === 2 ? "show-content" : "content"}>
+                <Container fluid className="m-2">
+                    {newsItemPairs.map((pair, index) => (
+                        <Row className="mt-3" key={index}>
+                            {pair.map((item, idx) => (
+                                <Col md={6} key={idx}>
+                                    <Container fluid>
+                                        <Row className="news p-3" type="button" stye={{textAlign: 'center'}}>
+                                            <Col xs={3}>
+                                                <img src={item.image} className="news-img" alt="" style={{maxWidth:'140px', maxHeight:'70px', height:'80px'}} />
+                                            </Col>
+                                            <Col xs={9} className="mt-3" style={{maxHeight:'70px'}}>
+                                                {item.headline.length > 50 ? <p>{item.headline.slice(0, 100) + "..."}</p> : <p>{item.headline}</p>}
+                                            </Col>
+                                        </Row>
+                                    </Container>
+                                </Col>
+                            ))}
+                            <br/><br/>
+                        </Row>
+                    ))}
+                </Container>
+            </div>
         </div>
     );
 }

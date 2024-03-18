@@ -9,16 +9,16 @@ export default function Tabs(props) {
     const [toggle, setToggle] = useState(1);
     const [active, setActive] = useState(1);
     const newsItems = props.news;
-    const summaryData = {
-        'High Price': '78.32',
-        'Low Price': '78.32',
-        'Open Price': '78.32',
-        'Prev Price': '78.32',
-        'IPO Start Date': '2023-90-56',
-        'Industry': 'Technology',
-        'Webpage': 'https://www.com',
-        'Company peers': ['Dell', 'HP', 'Apple', 'Microsoft']
-    }
+    // const summaryData = {
+    //     'High Price': '78.32',
+    //     'Low Price': '78.32',
+    //     'Open Price': '78.32',
+    //     'Prev Price': '78.32',
+    //     'IPO Start Date': '2023-90-56',
+    //     'Industry': 'Technology',
+    //     'Webpage': 'https://www.com',
+    //     'Company peers': ['Dell', 'HP', 'Apple', 'Microsoft']
+    // }
 
 
     // const options = {
@@ -46,7 +46,7 @@ export default function Tabs(props) {
                 </ul>
 
                 {/* SUMMARY TAB */}
-                <Summary toggle={toggle} data={summaryData} summary_chart = {props.summary_chart}/>
+                <Summary toggle={toggle} info={props.info} summary_chart = {props.summary_chart}/>
 
                 {/* NEWS TAB */}
                 <News toggle={toggle} newsItems={newsItems} />
@@ -54,10 +54,10 @@ export default function Tabs(props) {
 
 
                 {/* CHARTS TAB */}
-                <Charts toggle={toggle} data={props.summary_chart}/>
+                <Charts toggle={toggle} data={props.summary_chart} charts={props.charts} info={props.info}/>
 
                 {/* INSIGHTS TAB */}
-                <Insights toggle={toggle}/>
+                <Insights toggle={toggle} insights={props.insights} info={props.info}/>
             </div>
         </>
     )

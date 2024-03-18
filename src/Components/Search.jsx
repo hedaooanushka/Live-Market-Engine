@@ -9,16 +9,20 @@ import axios from 'axios';
 
 
 
+
 export default function Search() {
     const [ticker_name, setTickerName] = useState("default");
     const [summary_info, setSummaryInfo] = useState("default");
     const [summary_chart, setSummaryChart] = useState({ results: [] });
     const [news_info, setNewsInfo] = useState([]);
+    const [charts_info, setChartsInfo] = useState({ results: [] });
+    const [insights_info, setInsightsInfo] = useState({ results: [] });
+
 
 
     var callBackend = () => {
-        // if (ticker_name !== "default") {
-            console.log("go backkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+        if (ticker_name !== "default") {
+            // console.log("go backkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
             axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
                 .then(response => {
                     setSummaryInfo(response.data);
@@ -35,14 +39,32 @@ export default function Search() {
                 });
             axios.get(`http://localhost:3000/summary-charts?ticker_name=${ticker_name}`)
                 .then(response => {
-                    console.log("############################")
-                    console.log(response.data);
+                    // console.log("############################")
+                    // console.log(response.data);
                     setSummaryChart(response.data);
                 })
                 .catch(error => {
                     console.error('An error occurred:', error);
                 });
-        // }
+            axios.get(`http://localhost:3000/charts?ticker_name=${ticker_name}`)
+                .then(response => {
+                    // console.log("############################")
+                    // console.log(JSON.stringify(response.data));
+                    setChartsInfo(response.data);
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
+            axios.get(`http://localhost:3000/insights?ticker_name=${ticker_name}`)
+                .then(response => {
+                    console.log("############################")
+                    console.log(response.data);
+                    setInsightsInfo(response.data);
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
+        }
     }
 
     var handleInputChange = (event) => {
@@ -50,8 +72,8 @@ export default function Search() {
     }
 
     useEffect(() => {
-        console.log("##########")
-        console.log(summary_chart);
+        // console.log("##########")
+        // console.log(summary_chart);
     }, [summary_chart]);
 
     useEffect(() => {
@@ -82,7 +104,7 @@ export default function Search() {
             <CompanyInfo info={summary_info} />
             {/* <p>{company_info.peers}</p> */}
             <br />
-            <Tabs news={news_info} summary_chart={summary_chart} />
+            <Tabs info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} />
             {/* <Summary news={news_info}/> */}
 
         </>

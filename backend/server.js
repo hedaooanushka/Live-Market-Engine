@@ -26,10 +26,8 @@ app.get('/summary', (req, res) => {
             const profile = results[0].data;
             const latestPrice = results[1].data;
             const peers = results[2].data;
-            // console.log(profile)
-            // console.log(latestPrice)
-            // console.log(peers)
             res.json({ profile: profile, latest_price: latestPrice, peers: peers });
+            // console.log(latestPrice)
         })
         .catch((error) => {
             console.error('An error occurred:', error);
@@ -48,7 +46,7 @@ app.get('/summary-charts', (req, res) =>{
     axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/${timespan}/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=${POLYGON_API_KEY}`)
     .then((result) => {
         const summary_chart = result.data;
-        console.log(summary_chart)
+        // console.log(summary_chart)
         res.json(summary_chart);
     })
     .catch((error) => {
@@ -65,7 +63,7 @@ app.get("/news", (req, res) => {
     let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
     let day = ("0" + date.getDate()).slice(-2);
     let formattedDate = `${year}-${ month }-${ day }`;
-    console.log(formattedDate);
+    // console.log(formattedDate);
     const to_date = formattedDate;
     
     date.setDate(date.getDate()-7) 
@@ -87,12 +85,52 @@ app.get("/news", (req, res) => {
         });
 })
 
-app.get("/charts", (res, req) => {
-    res.send("Hello World!")
+app.get("/charts", (req, res) => {
+    const ticker_name = req.query.ticker_name.toUpperCase();
+
+    // const date = new Date();
+    // let year = date.getFullYear();
+    // let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
+    // let day = ("0" + date.getDate()).slice(-2);
+    // let formattedDate = `${year}-${ month }-${ day }`;
+    // console.log(formattedDate);
+    // const to_date = formattedDate;
+    
+    // date.setDate(date.getDate()-7) 
+    // year = date.getFullYear();
+    // month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
+    // day = ("0" + date.getDate()).slice(-2);
+    // formattedDate = `${ year }-${ month }-${ day }`;
+    // const from_date = formattedDate;
+
+    // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2022-03-16/2024-03-17?adjusted=true&sort=asc&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
+    axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/day/2022-03-16/2024-03-17?adjusted=true&sort=asc&apiKey=${POLYGON_API_KEY}`)
+        .then((result) => {
+            const big_chart = result.data;
+            // console.log(big_chart)
+            res.json(big_chart);
+        })
+        .catch((error) => {
+            console.error('An error occurred:', error);
+            res.status(500).send({ status: 'error', message: 'An error occurred fetching data from the API.' });
+        });
 })
 
-app.get("/insights", (res, req) => {
-    res.send("Hello World!")
+app.get("/insights", (req, res) => {
+    const ticker_name = req.query.ticker_name.toUpperCase();
+    const from_date = ""
+    //https://finnhub.io/api/v1/stock/insider-sentiment?symbol=AAPL&from=2022-01-01&token=cn23u1hr01qmg1p4fpjgcn23u1hr01qmg1p4fpk0
+    axios.get(`https://finnhub.io/api/v1/stock/insider-sentiment?symbol=${ticker_name}&from=2022-01-01&token=${finnhub_API_KEY}`)
+    .then((result) => {
+        const insights = result.data;
+        // console.log(insights)
+        res.json(insights);
+    })
+    .catch((error) => {
+        console.error('An error occurred:', error);
+        res.status(500).send({ status: 'error', message: 'An error occurred fetching data from the API.' });
+    });
+
 })
 
 app.get("/watchlist", (req, res) => {
