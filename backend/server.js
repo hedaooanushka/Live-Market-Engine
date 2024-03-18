@@ -120,16 +120,20 @@ app.get("/insights", (req, res) => {
     const ticker_name = req.query.ticker_name.toUpperCase();
     const from_date = ""
     //https://finnhub.io/api/v1/stock/insider-sentiment?symbol=AAPL&from=2022-01-01&token=cn23u1hr01qmg1p4fpjgcn23u1hr01qmg1p4fpk0
-    axios.get(`https://finnhub.io/api/v1/stock/insider-sentiment?symbol=${ticker_name}&from=2022-01-01&token=${finnhub_API_KEY}`)
-    .then((result) => {
-        const insights = result.data;
-        // console.log(insights)
-        res.json(insights);
-    })
-    .catch((error) => {
-        console.error('An error occurred:', error);
-        res.status(500).send({ status: 'error', message: 'An error occurred fetching data from the API.' });
-    });
+    const mspr = axios.get(`https://finnhub.io/api/v1/stock/insider-sentiment?symbol=${ticker_name}&from=2022-01-01&token=${finnhub_API_KEY}`)
+    const eps = axios.get(`https://finnhub.io/api/v1/stock/earnings?symbol=${ticker_name}&token=${finnhub_API_KEY}`)
+    const recommendation = axios.get(`https://finnhub.io/api/v1/stock/recommendation?symbol=${ticker_name}&token=${finnhub_API_KEY}`)
+    Promise.all([mspr, eps, recommendation])
+        .then((results) => {
+            const mspr = results[0].data;
+            const eps = results[1].data;
+            const recommendation = results[2].data;
+            res.json({ mspr: mspr, eps: eps, recommendation: recommendation });
+        })
+        .catch((error) => {
+            console.error('An error occurred:', error);
+            res.status(500).send({ status: 'error', message: 'An error occurred fetching data from the API.' });
+        });
 
 })
 
