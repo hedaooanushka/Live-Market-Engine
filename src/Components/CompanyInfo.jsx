@@ -4,13 +4,21 @@ import { useState, useEffect } from 'react';
 
 
 export default function CompanyInfo(props) {
-    console.log(props.isValid)
-    if (props?.ticker_name === "default" && props?.isValid === false) {
+    console.log("isdatavalid = " + props.dataValid)
+    console.log("isClick = " + props.click)
+    console.log("ticker name = " + props?.ticker_name)
+    console.log("info", props?.info)
+    console.log(props?.info?.marketStatus?.exchanges?.nasdaq)
+    // console.log("isLoading = " + props?.isLoading)
+    // const [doneLoading, setDoneLoading] = useState(false);
+
+
+    if (props?.ticker_name === "default" && props?.dataValid === false) {
         return (
             <></>
         )
     }
-    else if (props?.ticker_name === "" && props?.isValid === false) {
+    else if (props?.ticker_name === "" && props?.dataValid === false && props.click === true) {
         return (
             <div className='d-flex justify-content-center align-items-center'>
                 <div className='alert alert-danger' role='alert' style={{ textAlign: 'center', width: '60%' }}>
@@ -19,8 +27,36 @@ export default function CompanyInfo(props) {
             </div>
         )
     }
-    if (props.isValid) {
+    // else if (props?.ticker_name !== "" && props?.dataValid === false && props.click === true){
+    //     return (
+    //         <div className='d-flex justify-content-center align-items-center'>
+    //             <div className='alert alert-danger' role='alert' style={{ textAlign: 'center', width: '60%' }}>
+    //                 No Data Found. Please enter a valid Ticker
+    //             </div>
+    //         </div>
+    //     )
+    // }
+    else if (props?.isLoading === true && props?.ticker_name !== "" && props?.dataValid === false && props.click === true) {
+        return (
+            <div>
+                <div className="d-flex justify-content-center">
+                    <div className="spinner-border" role="status"></div>
+                </div>
+            </div>
+        )
+    }
+    else if (props?.isLoading === false && props?.ticker_name !== "" && props?.dataValid === false && props.click === true) {
+        return (
+            <div className='d-flex justify-content-center align-items-center'>
+                <div className='alert alert-danger' role='alert' style={{ textAlign: 'center', width: '60%' }}>
+                    No Data Found. Please enter a valid Ticker
+                </div>
+            </div>
+        )
+    }
+    else if (props.dataValid) {
 
+        // t converted to actual format
         const unixTimestamp = props?.info?.latest_price?.t;
         const date = new Date(unixTimestamp * 1000);
         const formattedDate = date.getFullYear() + '-' +
@@ -29,9 +65,18 @@ export default function CompanyInfo(props) {
             ('0' + date.getHours()).slice(-2) + ':' +
             ('0' + date.getMinutes()).slice(-2) + ':' +
             ('0' + date.getSeconds()).slice(-2);
-        console.log(formattedDate);
+        // console.log(formattedDate);
         const [color, setColor] = useState('red');
         const d = props?.info?.latest_price?.d;
+
+        // Calculate today's date
+        // const date = new Date();
+        // let year = date.getFullYear();
+        // let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
+        // let day = ("0" + date.getDate()).slice(-2);
+        // let formattedDate = `${year}-${month}-${day}`;
+        // // console.log(formattedDate);
+        // const to_date = formattedDate;
 
         useEffect(() => {
             if (d > 0) {
@@ -76,18 +121,11 @@ export default function CompanyInfo(props) {
 
                         <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d} ({props?.info?.latest_price?.dp}%)</span> <br />
                         <span style={{ fontSize: '13px' }}> {formattedDate}</span>
+                        <span>{props?.info?.marketStatus?.exchanges?.nasdaq}</span>
                     </div>
                 </div>
             </>
         )
     }
-    else {
-        return (
-            <div className='d-flex justify-content-center align-items-center'>
-                <div className='alert alert-danger' role='alert' style={{ textAlign: 'center', width: '60%' }}>
-                    No Data Found. Please enter a valid Ticker
-                </div>
-            </div>
-        )
-    }
+
 }

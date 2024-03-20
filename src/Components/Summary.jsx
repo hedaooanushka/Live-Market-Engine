@@ -2,6 +2,7 @@ import SmallChart from "./SmallChart"
 
 export default function Summary(props) {
     const baseURL = 'https://finance.example.com/stock/';
+    // put level by level check
     if(!props.info.peers) {
         return(
             <></>

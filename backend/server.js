@@ -14,19 +14,37 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
+app.get('/autocomplete', (req, res) => {
+    const query = req.query.query;
+    console.log(query)
+    axios.get(`https://finnhub.io/api/v1/search?q=${query}&token=${finnhub_API_KEY}`)
+        .then((result) => {
+            const suggestions = result.data.result
+            console.log(suggestions)
+            res.json(suggestions);
+        })
+        .catch((error) => {
+            console.error('An error occurred:', error);
+            res.status(500).send({ status: 'error', message: 'An error occurred fetching data from the API.' });
+        });
+})
+
 app.get('/summary', (req, res) => {
     const ticker_name = req.query.ticker_name.toUpperCase();
 
     const profilePromise = axios.get(`https://finnhub.io/api/v1/stock/profile2?symbol=${ticker_name}&token=${finnhub_API_KEY}`);
     const latestPricePromise = axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker_name}&token=${finnhub_API_KEY}`);
     const peersPromise = axios.get(`https://finnhub.io/api/v1/stock/peers?symbol=${ticker_name}&token=${finnhub_API_KEY}`);
+    const marketStatus = axios.get(`https://api.polygon.io/v1/marketstatus/now?apiKey=${POLYGON_API_KEY}`)
 
-    Promise.all([profilePromise, latestPricePromise, peersPromise])
+    Promise.all([profilePromise, latestPricePromise, peersPromise, marketStatus])
         .then((results) => {
             const profile = results[0].data;
             const latestPrice = results[1].data;
             const peers = results[2].data;
-            res.json({ profile: profile, latest_price: latestPrice, peers: peers });
+            const marketStatus = results[3].data;
+
+            res.json({ profile: profile, latest_price: latestPrice, peers: peers, marketStatus: marketStatus});
             // console.log(latestPrice)
         })
         .catch((error) => {
@@ -63,7 +81,7 @@ app.get("/news", (req, res) => {
     let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
     let day = ("0" + date.getDate()).slice(-2);
     let formattedDate = `${year}-${ month }-${ day }`;
-    // console.log(formattedDate);
+    console.log(formattedDate);
     const to_date = formattedDate;
     
     date.setDate(date.getDate()-7) 
