@@ -20,7 +20,7 @@ app.get('/autocomplete', (req, res) => {
     axios.get(`https://finnhub.io/api/v1/search?q=${query}&token=${finnhub_API_KEY}`)
         .then((result) => {
             const suggestions = result.data.result
-            console.log(suggestions)
+            // console.log(suggestions)
             res.json(suggestions);
         })
         .catch((error) => {
@@ -94,7 +94,7 @@ app.get("/news", (req, res) => {
     axios.get(`https://finnhub.io/api/v1/company-news?symbol=${ticker_name}&from=${from_date}&to=${to_date}&token=${finnhub_API_KEY}`)
         .then((result) => {
             const news = result.data;
-            // console.log(news)
+            console.log(news)
             res.json(news);
         })
         .catch((error) => {

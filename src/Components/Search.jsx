@@ -4,14 +4,25 @@ import CompanyInfo from './CompanyInfo';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Autosuggest from 'react-autosuggest'
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 
 
 
 
 
+export default function Search(props) {
+    console.log(props.ticker_name)
+    // let url = useLocation().pathname;
+    // let ishome = url.endsWith("/home");
+    // const [endsWithHome, setEndsWithHome] = useState(true);
+    // setEndsWithHome(ishome)
 
-export default function Search() {
+    // console.log("url = " + location);
+    // console.log("endsWithHome = " + endsWithHome);
+
+
+    let cancelTokenSource = axios.CancelToken.source();
     const [ticker_name, setTickerName] = useState("");
     const [summary_info, setSummaryInfo] = useState("default");
     const [summary_chart, setSummaryChart] = useState({ results: [] });
@@ -22,12 +33,52 @@ export default function Search() {
     const [dataValid, setDataValid] = useState(false);
     const [click, setClick] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
+    let timeoutId = null;
     const [suggestions, setSuggestions] = useState([]);
     const [isSuggestionSet, setIsSuggestionSet] = useState(false);
     const [autoSuggestLoader, setAutoSuggestLoader] = useState(true);
-
+    const [isSuggestionSelected, setIsSuggestionSelected] = useState(false);
     const getSuggestionValue = suggestion => suggestion.displaySymbol;
+    const navigate = useNavigate();
+
+    // LOGIC IF TICKER NAME ALREADY AVAILABLE
+
+    // if (!endsWithHome) {
+    //     let storedTickerName = url.split("/search/:")[1];
+    //     // console.log(storedTickerName)
+    //     setTickerName(storedTickerName);
+    //     callBackend();
+    // }
+
+    // MUST GET CALLED ONLY WHEN ENDSWITHHOME CHANGES, BUT GETS CALLED WHEN COMPANY URL CHANGES
+    // WHEN WE CHANGE URL HOW IT KNOWS THAT THIS CODE MUST RUN?
+    // useEffect(() => {
+    //     if (!endsWithHome && !click) {
+    //         let storedTickerName = url.split("/search/:")[1];
+    //         // console.log(storedTickerName)
+    //         setTickerName(storedTickerName);
+    //         console.log("new ticker name = " + ticker_name)  // tickername not being set
+    //         console.log("calling callBackend from endswithhome useeffect")
+    //         callBackend();
+    //     }
+    // }, [endsWithHome]);
+
+    // if(props?.ticker_name){
+    //     // setTickerName(props?.ticker_name);
+    //     console.log("new ticker" + ticker_name)
+    // }
+
+    useEffect(() =>{
+        if(props?.ticker_name){
+            setTickerName(props?.ticker_name);
+
+            console.log("new ticker" + ticker_name)
+            callBackend();
+        }
+    })
+
+
+
     const renderSuggestion = (suggestion, { query, isHighlighted }) => (
         <div style={{
             backgroundColor: isHighlighted ? '#fafafa' : 'white',
@@ -42,6 +93,7 @@ export default function Search() {
         setIsSuggestionSet(true);
         console.log("Selected: " + suggestion.displaySymbol)
         setTickerName(suggestion.displaySymbol);
+        setIsSuggestionSelected(true);
 
     };
     useEffect(() => {
@@ -54,6 +106,9 @@ export default function Search() {
 
 
     var callBackend = () => {
+        if(props?.ticker_name) setTickerName(props?.ticker_name)
+        navigate(`/search/${ticker_name}`);
+        console.log("ticker name in callbackend = " + ticker_name)
         console.log("i clicked")
         setClick(true);
         setIsLoading(true);
@@ -89,26 +144,13 @@ export default function Search() {
         setTickerName(inputValue);
         setClick(false);
         setIsSuggestionSet(false);
-        setAutoSuggestLoader(true);
-        if (inputValue.length > 0) {
-            axios.get(`http://localhost:3000/autocomplete?query=${inputValue}`).then(response => {
-                setAutoSuggestLoader(false);
-                const filteredSuggestions = response.data.filter(suggestion =>
-                    suggestion.type === 'Common Stock' && !suggestion.symbol.includes('.')
-                );
-                setSuggestions(filteredSuggestions);
-            }).catch(error => {
-                console.error('Failed to fetch suggestions:', error);
-            });
-
-        } else {
-            setSuggestions([]);
-        }
 
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        navigate(`/search/${ticker_name}`);
+        callBackend();
     };
 
     useEffect(() => {
@@ -176,13 +218,13 @@ export default function Search() {
                                 }
                             }}
                             renderSuggestionsContainer={({ containerProps, children, query }) => {
-                                return (suggestions.length > 0 || (autoSuggestLoader && ticker_name.length > 0)) && (
-                                    <div {...containerProps} style={{...containerProps.style, maxHeight: '200px', overflow: 'auto'}}>
-                                        {autoSuggestLoader && ticker_name.length > 0 && suggestions.length == 0 ? 
+                                return (!click && (suggestions.length > 0 || (autoSuggestLoader && ticker_name.length > 0))) && (
+                                    <div {...containerProps} style={{ ...containerProps.style, maxHeight: '200px', overflow: 'auto' }}>
+                                        {autoSuggestLoader && ticker_name.length > 0 && suggestions.length == 0 ?
                                             <div className="d-flex justify-content-center">
                                                 <div className="spinner-border" role="status">
                                                 </div>
-                                            </div> 
+                                            </div>
                                             : children}
                                     </div>
                                 );
@@ -190,8 +232,52 @@ export default function Search() {
 
                             suggestions={suggestions}
                             // when you want to fetch something
-                            onSuggestionsFetchRequested={({ value }) => { }}
-                            onSuggestionsClearRequested={() => setSuggestions([])}
+                            // Declare a variable to hold the timeout ID
+                            onSuggestionsFetchRequested={({ value }) => {
+                                if (!isSuggestionSelected) {
+                                    // Cancel the previous delay
+                                    clearTimeout(timeoutId);
+
+                                    if (value.length > 0) {
+                                        // Set a delay before fetching the suggestions
+                                        timeoutId = setTimeout(() => {
+                                            setAutoSuggestLoader(true);
+                                            setSuggestions([]);
+                                            // Cancel the previous request
+                                            cancelTokenSource.cancel();
+
+                                            // Create a new CancelToken source
+                                            cancelTokenSource = axios.CancelToken.source();
+
+                                            axios.get(`http://localhost:3000/autocomplete?query=${value}`, {
+                                                cancelToken: cancelTokenSource.token
+                                            }).then(response => {
+                                                const filteredSuggestions = response.data.filter(suggestion =>
+                                                    suggestion.type === 'Common Stock' && !suggestion.symbol.includes('.')
+                                                );
+                                                setSuggestions(filteredSuggestions);
+                                                setAutoSuggestLoader(false);
+                                            }).catch(error => {
+                                                if (axios.isCancel(error)) {
+                                                    console.log('Request canceled:', error.message);
+                                                } else {
+                                                    console.error('Failed to fetch suggestions:', error);
+                                                    setAutoSuggestLoader(false);
+                                                }
+                                            });
+                                        }, 10); // 300ms delay
+                                    } else {
+                                        setSuggestions([]);
+                                        setAutoSuggestLoader(false);
+                                    }
+                                } else {
+                                    setSuggestions([]);
+                                }
+                            }}
+                            onSuggestionsClearRequested={() => {
+                                setSuggestions([]);
+                                setIsSuggestionSelected(false);
+                            }}
                             getSuggestionValue={getSuggestionValue}
                             renderSuggestion={renderSuggestion}
                             onSuggestionSelected={onSuggestionSelected}
@@ -225,4 +311,3 @@ export default function Search() {
         </>
     )
 }
-

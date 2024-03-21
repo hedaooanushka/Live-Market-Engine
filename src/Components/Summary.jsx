@@ -1,13 +1,38 @@
 import SmallChart from "./SmallChart"
+// import { useState } from 'react-router-dom';
+// import Search, { callBackend } from '../Components/Search';
+// import Search from '../Components/Search.jsx';
+import Search from './Search.jsx';
+import { useState } from "react";
+// import Search from '../Components/Search.jsx';
+
+
 
 export default function Summary(props) {
-    const baseURL = 'https://finance.example.com/stock/';
     // put level by level check
-    if(!props.info.peers) {
-        return(
+    if (!props.info.peers) {
+        return (
             <></>
         )
     }
+
+    // COMPANY PEERS
+    // const navigate = useNavigate();
+    // const baseURL = `http://localhost:5173/search/`;
+    const [selectedCompany, setSelectedCompany] = useState(null);
+
+    const handleClick = (company) => {
+        console.log("handling different company");
+        console.log(company);
+        // Update the state to the clicked company
+        setSelectedCompany(company);
+    };
+
+    // const handleClick = (company) => {
+    //     console.log("handling different company");
+    //     console.log(company);
+    //     return (<Search ticker_name={company}/>)
+    // };
 
 
 
@@ -46,13 +71,23 @@ export default function Summary(props) {
                             <b>Industry: </b> {props?.info?.profile?.finnhubIndustry} <br />
                             <b>Webpage: </b> <a href={props?.info?.profile?.weburl}>{props?.info?.profile?.weburl}</a><br />
                             <b>Company peers</b>
-                            <div>
+                            {/* <div>
                                 {props?.info?.peers.map((company, index) => (
                                     <span>
-                                        <a href={`${baseURL}${company}`} target="_blank" rel="noopener noreferrer">{company} </a>,
+                                        <a href={`${baseURL}${company}`}>{company} </a>,
+                                    </span>
+                                ))}
+                            </div> */}
+                            <div>
+                                {props?.info?.peers.map((company, index) => (
+                                    <span key={index}>
+                                        <button onClick={() => handleClick(company)} style={{ textDecoration: 'underline', color: 'blue', background: 'none', border: 'none', cursor: 'pointer' }}>
+                                            {company}
+                                        </button>,
                                     </span>
                                 ))}
                             </div>
+                            {selectedCompany && <Search ticker_name={selectedCompany} />}
                         </div>
                     </div>
 
