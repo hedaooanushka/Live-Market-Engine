@@ -1,6 +1,8 @@
 import { Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
 import '../static/Tabs.css'
 import {useState, useEffect} from 'react'
+import axios from 'axios'
+
 
 export default function BuyModal(props) {
     if (!props?.showBuyModal) {
@@ -28,14 +30,19 @@ export default function BuyModal(props) {
     }
 
     const callBackend = () => {
-
+        axios.post('http://localhost:3000/buy', {price: totalPrice, quantity: numStocks, ticker: props?.info?.profile?.ticker, company: props?.info?.profile?.name}).then((res) => { 
+            props.toggleBuyModal();
+            
+        }).catch((err) => {
+            console.log(err);
+        })
     }
 
     return (
         <>
             {/* BUY MODAL */}
-            <Modal show={props?.showBuyModal} onHide={props?.toggleBuyModal} dialogClassName="custom-modal">
-                <Modal.Dialog>
+            <Modal className="my-modal" show={props?.showBuyModal} onHide={props?.toggleBuyModal} >
+                <Modal.Dialog style={{ width: '100%', height: '100%'}}>
                     <Modal.Header closeButton>
                         <Modal.Title>{props?.info?.profile?.ticker}</Modal.Title>
                     </Modal.Header>
@@ -52,7 +59,7 @@ export default function BuyModal(props) {
                     </Modal.Body>
                     <Modal.Footer>
                         <p className="text-left">Total:{totalPrice}</p>
-                        <Button variant="success">Buy</Button>
+                        <Button variant="success" onClick={callBackend} type='submit' disabled={totalPrice > props?.currentBalance}>Buy</Button>
                     </Modal.Footer>
                 </Modal.Dialog>
             </Modal>

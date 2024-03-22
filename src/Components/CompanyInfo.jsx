@@ -119,7 +119,7 @@ export default function CompanyInfo(props) {
 
         const buy = () => {
             // axios call to fetch total money in wallet
-            axios.get(`http://localhost:3000/portfolio?ticker_name=${props?.ticker_name}`)
+            axios.get(`http://localhost:3000/portfolio`)
                 .then(response => {
                     // console.log(response.data.current_balance)
                     setCurrentBalance(response.data.current_balance)
@@ -142,7 +142,8 @@ export default function CompanyInfo(props) {
             setIsStarSelected(!isStarSelected);
             console.log("item sent to handle star click = " + JSON.stringify(item))
             // call the backend to add the ticker to the watchlist
-            axios.post(`http://127.0.0.1:3000/watchlist?ticker_name=${props?.ticker_name}`, JSON.stringify(item))
+            
+            axios.post(`http://localhost:3000/watchlist`, {ticker: props.ticker_name})
                 .then(response => {
                     console.log("Added company = " + JSON.stringify(response))
                 })

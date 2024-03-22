@@ -1,8 +1,31 @@
-export default function Watchlist() {
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
+export default function Watchlist() {
+    const [data, setData] = useState([]);
+    const [prices, setPrices] = useState({});
     const deleteFromWatchlist = () => {
         
     }
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await axios.get('http://localhost:3000/watchlist');
+            const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
+            console.log("Data == ", JSON.stringify(result.data));
+            setData(result.data);
+            const pricePromises = result?.data.map(async (item, index) => {
+                await delay(1000); // Wait for 1 second between each request
+                const priceResult = await axios.get(`http://localhost:3000/current_stock_price?ticker_name=${item.ticker}`);
+                return priceResult.data;
+            });
+            if (pricePromises) {
+                const prices = await Promise.all(pricePromises);
+                setPrices(prices); // Store the prices as an array
+            }
+        };
+        fetchData();
+        console.log("Prices == ", JSON.stringify(prices));
+    },[])
 
 
     return (
