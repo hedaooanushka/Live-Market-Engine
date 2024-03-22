@@ -12,7 +12,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 
 export default function Search(props) {
-    console.log(props.ticker_name)
+    // console.log(props.ticker_name)
     // let url = useLocation().pathname;
     // let ishome = url.endsWith("/home");
     // const [endsWithHome, setEndsWithHome] = useState(true);
@@ -140,7 +140,7 @@ export default function Search(props) {
 
     var handleInputChange = (event, { newValue }) => {
         const inputValue = typeof newValue === 'string' ? newValue : event.target.value;
-        console.log("input value" + inputValue);
+        // console.log("input value" + inputValue);
         setTickerName(inputValue);
         setClick(false);
         setIsSuggestionSet(false);
@@ -182,8 +182,8 @@ export default function Search(props) {
                 });
             axios.get(`http://localhost:3000/insights?ticker_name=${ticker_name}`)
                 .then(response => {
-                    console.log("############################")
-                    console.log(JSON.stringify(response.data));
+                    // console.log("############################")
+                    // console.log(JSON.stringify(response.data));
                     setInsightsInfo(response.data);
                 })
                 .catch(error => {

@@ -1,6 +1,10 @@
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
 import '../static/Tabs.css'
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+import BuyModal from './BuyModal.jsx'
+import SellModal from './SellModal.jsx'
+
 
 
 export default function CompanyInfo(props) {
@@ -11,7 +15,6 @@ export default function CompanyInfo(props) {
     // console.log(props?.info?.marketStatus?.exchanges?.nasdaq)
     // console.log("isLoading = " + props?.isLoading)
     // const [doneLoading, setDoneLoading] = useState(false);
-
 
     if (props?.ticker_name === "default" && props?.dataValid === false) {
         return (
@@ -69,11 +72,71 @@ export default function CompanyInfo(props) {
         const [isStarSelected, setIsStarSelected] = useState(false);
         const [showAlert, setShowAlert] = useState(false);
         const [color, setColor] = useState('red');
-        const handleStarClick = async () => {
+
+        const [currentBalance, setCurrentBalance] = useState(0);
+        const [showBuyModal, setShowBuyModal] = useState(false);
+        const [showSellModal, setShowSellModal] = useState(false);
+        const [showBuyButton, setShowBuyButton] = useState(true);
+        const [showSellButton, setShowSellButton] = useState(true);
+        const [reRender, setReRender] = useState(false);
+        const toggleBuyModal = () => {
+            setShowBuyModal(!showBuyModal);
+            setReRender(!reRender);
+            setShowAlert(false);
+        }
+        const toggleSellModal = () => {
+            setShowSellModal(!showSellModal);
+            setReRender(!reRender);
+            setShowAlert(false);
+        }
+
+        // const getValues = ()=>{
+        //     axios.get(`http://localhost:3000/portfolio?ticker_name=${props?.ticker_name}`)
+        //         .then(response => {
+        //             // console.log(response.data.current_balance)
+        //             setCurrentBalance(response.data.current_balance)
+        //             // console.log("CB"+currentBalance);
+        //         })
+        //         .catch(error => {
+        //             console.error('An error occurred:', error);
+        //         });
+        // }
+
+        const buy = () => {
+            // axios call to fetch total money in wallet
+            axios.get(`http://localhost:3000/portfolio?ticker_name=${props?.ticker_name}`)
+                .then(response => {
+                    // console.log(response.data.current_balance)
+                    setCurrentBalance(response.data.current_balance)
+                    // console.log("CB"+currentBalance);
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
+            setShowBuyModal(true);
+        };
+
+        const sell = () => {
+            // axios call to fetch total money in wallet
+            setShowSellModal(true);
+        };
+
+
+
+        const handleStarClick = async (item) => {
             setIsStarSelected(!isStarSelected);
+            console.log("item sent to handle star click = " + JSON.stringify(item))
             // call the backend to add the ticker to the watchlist
+            axios.post(`http://127.0.0.1:3000/watchlist?ticker_name=${props?.ticker_name}`, JSON.stringify(item))
+                .then(response => {
+                    console.log("Added company = " + JSON.stringify(response))
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
             setShowAlert(true);
         };
+
         const d = props?.info?.latest_price?.d;
 
         // Calculate today's date
@@ -95,17 +158,24 @@ export default function CompanyInfo(props) {
 
 
         return (
-            <><div className='d-flex justify-content-center align-items-center'>
-                {showAlert && (
-                    <div className='alert alert-success' role='alert' style={{ textAlign: 'center', width: '60%' }}>
-                        Ticker added to watchlist
-                    </div>
-                )}
-            </div>
+            <><div key={reRender}>
+                <div className='d-flex justify-content-center align-items-center'>
+                    {showAlert && (
+                        <div className='alert alert-success' role='alert' style={{ textAlign: 'center', width: '60%' }}>
+                            Ticker added to watchlist
+                        </div>
+                    )}
+                </div>
                 <div className="d-flex flex-row bd-highlight mx-auto" style={{ textAlign: 'center', justifyContent: 'space-around', width: '80%' }}>
                     <div className="p-2 bd-highlight">
                         <p><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{props?.info?.profile?.ticker}</span>
-                            <svg className="ms-2 mb-4 bi bi-star m-1 star" onClick={handleStarClick} type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill={isStarSelected ? "yellow" : "currentColor"} viewBox="0 0 16 16">
+                            <svg className="ms-2 mb-4 bi bi-star m-1 star"
+                                onClick={() => handleStarClick({
+                                    ticker: props?.info?.profile?.ticker,
+                                    name: props?.info?.profile?.name,
+                                    c: props?.info?.latest_price?.c,
+                                    dp: props?.info?.latest_price?.dp
+                                })} type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill={isStarSelected ? "yellow" : "currentColor"} viewBox="0 0 16 16">
                                 <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
                             </svg>
                             {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="yellow" class="bi bi-star-fill" viewBox="0 0 16 16">
@@ -115,8 +185,10 @@ export default function CompanyInfo(props) {
                             <span style={{ color: 'gray', fontSize: '15px', position: 'relative', top: '-15px' }}>{props?.info?.profile?.exchange} </span>
                         </p>
                         <div style={{ position: 'relative', top: '-15px' }}>
-                            <Button className='me-2' variant="success">Buy</Button>{' '}
-                            <Button variant="danger">Sell</Button>{' '}
+                            {showBuyButton && <Button className='me-2' onClick={() => { buy() }} variant="success">Buy</Button>}
+                            {showSellButton && <Button variant="danger" onClick={() => { sell() }}>Sell</Button>}
+                            <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance} info={props?.info}/>
+                            <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} info={props?.info}/>
                         </div>
                     </div>
                     <div className="pt-4 pe-5 bd-highlight">
@@ -137,6 +209,7 @@ export default function CompanyInfo(props) {
                         <span>{props?.info?.marketStatus?.exchanges?.nasdaq}</span>
                     </div>
                 </div>
+            </div>
             </>
         )
     }

@@ -11,6 +11,7 @@ const app = express()
 const port = 3000
 const finnhub_API_KEY = "cn23u1hr01qmg1p4fpjgcn23u1hr01qmg1p4fpk0"
 const POLYGON_API_KEY = "zwVPTZUN52Kmef7FZFscrMwGZClJpJiv"
+
 // Connection URL
 const url = 'mongodb://localhost:27017';
 
@@ -20,6 +21,8 @@ const dbName = 'web_assignment_3';
 // Create a new MongoClient
 
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -47,9 +50,14 @@ async function run() {
         // To add a new item to the watchlist
         app.post('/watchlist', async (req, res) => {
             const body = req.body;
+            console.log("request = "+JSON.stringify(body))
+            // console.log("data sent to backend = "+body)
             await client.connect();
             console.log("Connected successfully to MongoDB server");
             const watchlist = client.db(dbName).collection('watchlist');
+
+            // TESTING PURPOSE: DELETING ALL ITEMS FIRST
+            // const deletedItems = await watchlist.deleteMany({});
 
             // Update the document where 'userId' is 'user1' and append 'body' to the 'watchlist' array
             const result = await watchlist.updateOne(
@@ -60,6 +68,7 @@ async function run() {
             await client.close();
             res.json(result);
         });
+
         // Fetch documents from the portfolio collection where userId is "user1"
         app.get('/portfolio', async (req, res) => {
             await client.connect();
@@ -74,6 +83,7 @@ async function run() {
             await client.close();
             res.json(finalData);
         });
+
         // To add a new item to the portfolio
         app.post('/portfolio', async (req, res) => {
             const body = req.body;
@@ -168,7 +178,7 @@ async function run() {
             let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
             let day = ("0" + date.getDate()).slice(-2);
             let formattedDate = `${year}-${month}-${day}`;
-            console.log(formattedDate);
+            // console.log(formattedDate);
             const to_date = formattedDate;
 
             date.setDate(date.getDate() - 7)
@@ -181,7 +191,7 @@ async function run() {
             axios.get(`https://finnhub.io/api/v1/company-news?symbol=${ticker_name}&from=${from_date}&to=${to_date}&token=${finnhub_API_KEY}`)
                 .then((result) => {
                     const news = result.data;
-                    console.log(news)
+                    // console.log(news)
                     res.json(news);
                 })
                 .catch((error) => {
