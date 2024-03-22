@@ -44,26 +44,24 @@ async function run() {
             const watchlist = client.db(dbName).collection('watchlist');
             const watchlistItems = await watchlist.find({ userId: 'user1' }).toArray();
             await client.close();
-            res.json(watchlistItems.watchlist);
+            res.json(watchlistItems[0].watchlist);
         });
 
         // To add a new item to the watchlist
         app.post('/watchlist', async (req, res) => {
             const body = req.body;
-            console.log("request = "+JSON.stringify(body))
+            console.log("request = " + JSON.stringify(body))
             // console.log("data sent to backend = "+body)
             await client.connect();
             console.log("Connected successfully to MongoDB server");
             const watchlist = client.db(dbName).collection('watchlist');
 
-            // TESTING PURPOSE: DELETING ALL ITEMS FIRST
-            // const deletedItems = await watchlist.deleteMany({});
 
-            // Update the document where 'userId' is 'user1' and append 'body' to the 'watchlist' array
             const result = await watchlist.updateOne(
                 { userId: 'user1' },
                 { $push: { watchlist: body } }
             );
+            console.log("result = " + JSON.stringify(result))
 
             await client.close();
             res.json(result);
@@ -85,28 +83,31 @@ async function run() {
         });
 
         // To add a new item to the portfolio
-        app.post('/portfolio', async (req, res) => {
+        app.post('/buy', async (req, res) => {
+            console.log("request = " + req.body)
             const body = req.body;
+            console.log("body = " + JSON.stringify(body))
             const price = body.price || 0;
+            console.log("price = " + price)
             await client.connect();
             console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
-        
+
             // Update the 'portfolio' document where userId is 'user1'
             const result = await portfolio.findOneAndUpdate(
                 { userId: 'user1' },
-                { 
-                    $push: { investments: body?.companyDetails },
+                {
+                    $push: { investments: body },
                     $inc: { current_balance: -price }
                 },
                 { returnOriginal: false } // Option to return the updated document
             );
-        
+            console.log("result = " + JSON.stringify(result))
             await client.close();
             res.json(result.value); // Send the updated document to the client
         });
 
-    
+
         app.get('/', (req, res) => {
             res.send('Hello World!')
         })
@@ -149,6 +150,22 @@ async function run() {
                     res.status(500).send({ status: 'error', message: 'An error occurred fetching data from the API.' });
                 });
         });
+
+        app.get('/current_stock_price', (req, res) => {
+            const ticker_name = req.query.ticker_name.toUpperCase();
+
+
+            // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
+            axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker_name}&token=${finnhub_API_KEY}`).then((result) => {
+                const status = result.data;
+                // console.log(summary_chart)
+                res.json(status);
+            })
+                .catch((error) => {
+                    console.error('An error occurred:', error);
+                    res.status(500).send({ status: 'error', message: 'An error occurred fetching data from the API.' });
+                });
+        })
 
         app.get('/summary-charts', (req, res) => {
             const ticker_name = req.query.ticker_name.toUpperCase();
