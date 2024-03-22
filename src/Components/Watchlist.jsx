@@ -21,10 +21,11 @@ export default function Watchlist() {
             if (pricePromises) {
                 const prices = await Promise.all(pricePromises);
                 setPrices(prices); // Store the prices as an array
+                console.log("Prices == ", JSON.stringify(prices));
             }
         };
         fetchData();
-        console.log("Prices == ", JSON.stringify(prices));
+        
     },[])
 
 
