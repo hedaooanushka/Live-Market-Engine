@@ -68,6 +68,19 @@ export default function CompanyInfo(props) {
             ('0' + date.getHours()).slice(-2) + ':' +
             ('0' + date.getMinutes()).slice(-2) + ':' +
             ('0' + date.getSeconds()).slice(-2);
+
+        // getting wrong hours, minutes, seconds, need to fix this
+        const currentDay = date.getDay();
+        const currentHour = date.getHours();
+        const currentMinute = date.getMinutes();
+        const currentSecond = date.getSeconds();
+
+        console.log("hours" + currentHour)
+        console.log("minutes" + currentMinute)
+        console.log("sec" + currentSecond)
+
+
+
         // console.log(formattedDate);
         const [isStarSelected, setIsStarSelected] = useState(false);
         const [showAlert, setShowAlert] = useState(false);
@@ -79,6 +92,8 @@ export default function CompanyInfo(props) {
         const [showBuyButton, setShowBuyButton] = useState(true);
         const [showSellButton, setShowSellButton] = useState(true);
         const [reRender, setReRender] = useState(false);
+
+
         const toggleBuyModal = () => {
             setShowBuyModal(!showBuyModal);
             setReRender(!reRender);
@@ -187,8 +202,8 @@ export default function CompanyInfo(props) {
                         <div style={{ position: 'relative', top: '-15px' }}>
                             {showBuyButton && <Button className='me-2' onClick={() => { buy() }} variant="success">Buy</Button>}
                             {showSellButton && <Button variant="danger" onClick={() => { sell() }}>Sell</Button>}
-                            <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance} info={props?.info}/>
-                            <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} info={props?.info}/>
+                            <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance} info={props?.info} />
+                            <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} info={props?.info} />
                         </div>
                     </div>
                     <div className="pt-4 pe-5 bd-highlight">
@@ -206,8 +221,10 @@ export default function CompanyInfo(props) {
 
                         <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d} ({props?.info?.latest_price?.dp}%)</span> <br />
                         <span style={{ fontSize: '13px' }}> {formattedDate}</span>
-                        <span>{props?.info?.marketStatus?.exchanges?.nasdaq}</span>
                     </div>
+                </div>
+                <div className="container" style={{textAlign:'center'}}>
+                    {(currentDay == 0 || currentDay == 6 || (currentHour <= 12 && currentMinute >= 0 && currentSecond >= 0) || (currentHour >= 9 && currentMinute >= 0 && currentSecond >= 0)) ? <span style={{ color: 'red', fontWeight: 'bold' }}>Market closed on {formattedDate}</span> : <span style={{ color: 'green', fontWeight: 'bold' }}>Market is open!</span>}
                 </div>
             </div>
             </>
