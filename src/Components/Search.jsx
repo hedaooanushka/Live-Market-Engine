@@ -29,7 +29,7 @@ export default function Search(props) {
     const [news_info, setNewsInfo] = useState([]);
     const [charts_info, setChartsInfo] = useState({ results: [] });
     const [insights_info, setInsightsInfo] = useState({ results: [] });
-
+    const [url, setUrl] = useState("");
     const [dataValid, setDataValid] = useState(false);
     const [click, setClick] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -68,8 +68,8 @@ export default function Search(props) {
     //     console.log("new ticker" + ticker_name)
     // }
 
-    useEffect(() =>{
-        if(props?.ticker_name){
+    useEffect(() => {
+        if (props?.ticker_name) {
             setTickerName(props?.ticker_name);
 
             console.log("new ticker" + ticker_name)
@@ -105,34 +105,65 @@ export default function Search(props) {
 
 
 
-    var callBackend = () => {
-        if(props?.ticker_name) setTickerName(props?.ticker_name)
-        navigate(`/search/${ticker_name}`);
-        console.log("ticker name in callbackend = " + ticker_name)
-        console.log("i clicked")
-        setClick(true);
-        setIsLoading(true);
-        setDataValid(false);
-        if (ticker_name !== "") {
-            // console.log("go backkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
-            console.log("ticker_name: " + ticker_name)
-            axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
-                .then(response => {
-                    setSummaryInfo(response.data);
-                    // console.log("Summary Data: " + JSON.stringify(response.data));
-                    // console.log("Peers: " + response.data.peers.length)
-                    setIsLoading(false);
+    var callBackend = (storedTickerName) => {
+        if (props?.ticker_name) setTickerName(props?.ticker_name)
+        if (storedTickerName) {
+            navigate(`/search/${storedTickerName}`);
+            console.log("ticker name in callbackend = " + storedTickerName)
+            console.log("i clicked")
+            setClick(true);
+            setIsLoading(true);
+            setDataValid(false);
+            if (storedTickerName !== "") {
+                // console.log("go backkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+                console.log("ticker_name: " + storedTickerName)
+                axios.get(`http://localhost:3000/summary?ticker_name=${storedTickerName}`)
+                    .then(response => {
+                        setSummaryInfo(response.data);
+                        // console.log("Summary Data: " + JSON.stringify(response.data));
+                        // console.log("Peers: " + response.data.peers.length)
+                        setIsLoading(false);
 
-                    if (response.data.peers.length > 0) {
-                        setDataValid(true);
-                    }
-                    else {
-                        setDataValid(false);
-                    }
-                })
-                .catch(error => {
-                    console.error('An error occurred:', error);
-                });
+                        if (response.data.peers.length > 0) {
+                            setDataValid(true);
+                        }
+                        else {
+                            setDataValid(false);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('An error occurred:', error);
+                    });
+            }
+        }
+        else {
+            navigate(`/search/${ticker_name}`);
+            console.log("ticker name in callbackend = " + ticker_name)
+            console.log("i clicked")
+            setClick(true);
+            setIsLoading(true);
+            setDataValid(false);
+            if (ticker_name !== "") {
+                // console.log("go backkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+                console.log("ticker_name: " + ticker_name)
+                axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
+                    .then(response => {
+                        setSummaryInfo(response.data);
+                        // console.log("Summary Data: " + JSON.stringify(response.data));
+                        // console.log("Peers: " + response.data.peers.length)
+                        setIsLoading(false);
+
+                        if (response.data.peers.length > 0) {
+                            setDataValid(true);
+                        }
+                        else {
+                            setDataValid(false);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('An error occurred:', error);
+                    });
+            }
         }
         // else console.log("isDataValid: " + isDataValid)
 
@@ -191,6 +222,21 @@ export default function Search(props) {
                 });
         }
     }, [dataValid]);
+
+
+    useEffect(() => {
+        const path = window.location.pathname;
+        setUrl(path);
+        console.log(path)
+        let ishome = path.endsWith("/home");
+        console.log(ishome)
+        if (!ishome) {
+            let storedTickerName = path.split("/search/")[1];
+            console.log("storedTickerName", storedTickerName)
+            setTickerName(storedTickerName);
+            callBackend(storedTickerName);
+        }
+    }, [window.location.pathname])
 
     return (
         <>

@@ -3,7 +3,8 @@ import SmallChart from "./SmallChart"
 // import Search, { callBackend } from '../Components/Search';
 // import Search from '../Components/Search.jsx';
 import Search from './Search.jsx';
-import { useState } from "react";
+import {  useState } from "react";
+import { useNavigate } from 'react-router-dom';
 // import Search from '../Components/Search.jsx';
 
 
@@ -20,11 +21,12 @@ export default function Summary(props) {
     // const navigate = useNavigate();
     // const baseURL = `http://localhost:5173/search/`;
     const [selectedCompany, setSelectedCompany] = useState(null);
-
+    const navigate = useNavigate();
     const handleClick = (company) => {
         console.log("handling different company");
         console.log(company);
         // Update the state to the clicked company
+        navigate(`/search/${company}`);
         setSelectedCompany(company);
     };
 
@@ -87,7 +89,7 @@ export default function Summary(props) {
                                     </span>
                                 ))}
                             </div>
-                            {selectedCompany && <Search ticker_name={selectedCompany} />}
+                            {/* {selectedCompany && <Search ticker_name={selectedCompany} />} */}
                         </div>
                     </div>
 
