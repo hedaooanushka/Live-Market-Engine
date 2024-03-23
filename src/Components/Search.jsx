@@ -238,6 +238,15 @@ export default function Search(props) {
         }
     }, [window.location.pathname])
 
+    useEffect(() => {
+        // Set up a timer to refresh the page every 15 seconds
+        const timer = setInterval(() => {
+            window.location.reload();
+        }, 15000);
+    
+        // Clean up the timer when the component is unmounted
+        return () => clearInterval(timer);
+    }, []);
     return (
         <>
             <br />
