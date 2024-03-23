@@ -1,32 +1,42 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react';
+import BuyModal from './BuyModal.jsx'
+import SellModal from './SellModal.jsx'
+
 export default function Portfolio() {
 
     const [data, setData] = useState([]);
     const [prices, setPrices] = useState({});
     const [currentBalance, setCurrentBalance] = useState(0);
+    const [showBuyModal, setShowBuyModal] = useState(false);
+    const [showSellModal, setShowSellModal] = useState(false);
+    const[ticker, setTicker] = useState('');
+    const[current_price, setCurrentPrice] = useState(0);
+    const[company, setCompany] = useState('');
+    const toggleBuyModal = () => {
+        setShowBuyModal(!showBuyModal);
+        setReRender(!reRender);
+        setShowAlert(false);
+    }
+    const toggleSellModal = () => {
+        setShowSellModal(!showSellModal);
+        setReRender(!reRender);
+        setShowAlert(false);
+    }
 
     useEffect(() => {
         const fetchData = async () => {
             const result = await axios.get('http://localhost:3000/portfolio');
-          
+
             console.log("Data == ", JSON.stringify(result.data));
             setCurrentBalance(result.data.current_balance);
-            // Broo adding this comments for you, once you understood it you can remove it
-            // Create an empty object to hold the combined investments
             const combinedInvestments = {};
             const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
-            // Loop through the investments
+
             result.data?.investments?.forEach(item => {
-                // If the ticker already exists in the combined investments
-                if (combinedInvestments[item.ticker]) {
-                    // Add the quantity and price to the existing entry
-                    combinedInvestments[item.ticker].quantity += item.quantity;
-                    combinedInvestments[item.ticker].price = parseFloat(combinedInvestments[item.ticker].price) + parseFloat(item.price);
-                } else {
-                    // If the ticker doesn't exist, add a new entry
-                    combinedInvestments[item.ticker] = item;
-                }
+
+                combinedInvestments[item.ticker] = item;
+
             });
 
             // Convert the combined investments object back into an array
@@ -49,7 +59,20 @@ export default function Portfolio() {
         console.log("Prices == ", JSON.stringify(prices));
     }, []);
 
-
+    const buy = (item, currentPrice) => {
+        console.log("buying ", ticker);
+        setShowBuyModal(true);
+        setTicker(item.ticker);
+        setCurrentPrice(currentPrice);
+        setCompany(item.company);
+    }
+    const sell = (item, currentPrice) => {  
+        console.log("selling ", ticker);
+        setShowSellModal(true);
+        setTicker(item.ticker);
+        setCurrentPrice(currentPrice);
+        setCompany(item.company);
+    }
 
     return (
         <div style={{ maxHeight: '80vh', overflow: 'auto' }}>
@@ -63,7 +86,7 @@ export default function Portfolio() {
                             <h3 style={{ color: "#323232" }}>Money in Wallet : ${currentBalance ? (currentBalance).toFixed(2) : '0.00'}</h3>
                         </div>
                         {data?.map((item, index) => (
-                            <div className="col-12 mt-3" key={index} style={{minWidth:'500px'}}>
+                            <div className="col-12 mt-3" key={index} style={{ minWidth: '500px' }}>
                                 <div className='container-fluid' style={{ backgroundColor: "#f5f5f5", padding: '0px', border: 'solid 1px', borderRadius: '7px' }}>
                                     <div className='row'>
                                         <div className='col-2 mx-3'>
@@ -74,7 +97,7 @@ export default function Portfolio() {
                                         </div>
                                     </div>
                                     <hr className='m-0' />
-                                    <div className='container-fluid mt-0' style={{ backgroundColor: 'white', paddingTop: "1%", paddingBottom: "1%", fontSize:'10px' }}>
+                                    <div className='container-fluid mt-0' style={{ backgroundColor: 'white', paddingTop: "1%", paddingBottom: "1%", fontSize: '10px' }}>
                                         <div className='row'>
                                             <div className='col-4'>
                                                 <h5>Quantity:</h5>
@@ -109,24 +132,26 @@ export default function Portfolio() {
                                                 <h5>Total Cost:</h5>
                                             </div>
                                             <div className='col-2'>
-                                                <h5>{item.price}</h5>
+                                                <h5>{(parseFloat(item.price).toFixed(2))}</h5>
                                             </div>
                                             <div className='col-4'>
                                                 <h5>Market Value:</h5>
                                             </div>
                                             <div className='col-2'>
-                                                <h5>{prices[index]?.price * item.quantity}</h5>
+                                                <h5>{(prices[index]?.price * item.quantity).toFixed(2)}</h5>
                                             </div>
                                         </div>
                                     </div>
                                     <hr className='m-0' />
                                     <div className='row'>
                                         <div className='container'>
-                                            <button className='btn btn-primary m-2'>Buy</button>
-                                            <button className='btn btn-danger'>Sell</button>
+                                            <button className='btn btn-primary m-2' onClick={() => { buy(item, prices[index]?.price) }}>Buy</button>
+                                            <button className='btn btn-danger'onClick={() => { sell(item, prices[index]?.price) }}>Sell</button>
                                         </div>
                                     </div>
                                 </div>
+                                <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance}  ticker={ticker} latest_price = {current_price} company = {company}/>
+                                <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} ticker={ticker} latest_price = {current_price} company = {company} />
                             </div>
                         ))}
                     </div>

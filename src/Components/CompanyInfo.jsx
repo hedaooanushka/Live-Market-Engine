@@ -109,9 +109,11 @@ export default function CompanyInfo(props) {
         const [showBuyModal, setShowBuyModal] = useState(false);
         const [showSellModal, setShowSellModal] = useState(false);
         const [showBuyButton, setShowBuyButton] = useState(true);
-        const [showSellButton, setShowSellButton] = useState(true);
+        const [showSellButton, setShowSellButton] = useState(false);
         const [reRender, setReRender] = useState(false);
-
+        const [ticker, setTicker] = useState('');
+        const [current_price, setCurrentPrice] = useState(0);
+        const [company, setCompany] = useState('');
 
         const toggleBuyModal = () => {
             setShowBuyModal(!showBuyModal);
@@ -148,15 +150,36 @@ export default function CompanyInfo(props) {
                     console.error('An error occurred:', error);
                 });
             setShowBuyModal(true);
+            setTicker(props?.info?.profile?.ticker);
+            setCurrentPrice(props?.info?.latest_price?.c);
+            setCompany(props?.info?.profile?.name);
         };
 
         const sell = () => {
             // axios call to fetch total money in wallet
             setShowSellModal(true);
+            setTicker(props?.info?.profile?.ticker);
+            setCurrentPrice(props?.info?.latest_price?.c);
+            setCompany(props?.info?.profile?.name);
         };
 
 
-
+        useEffect(() => {
+            axios.get(`http://localhost:3000/portfolio`)
+                .then(response => {
+                    const investments = response.data.investments;
+                    console.log("investments = " + JSON.stringify(investments));
+                    for (let i = 0; i < investments.length; i++) {
+                        if (investments[i].ticker === props?.ticker_name.toUpperCase()) {
+                            setShowSellButton(true);
+                            return;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
+        }, [])
         const handleStarClick = async () => {
             setIsStarSelected(!isStarSelected);
             // console.log("item sent to handle star click = " + JSON.stringify(item))
@@ -217,8 +240,8 @@ export default function CompanyInfo(props) {
                         <div style={{ position: 'relative', top: '-15px' }}>
                             {showBuyButton && <Button className='me-2' onClick={() => { buy() }} variant="success">Buy</Button>}
                             {showSellButton && <Button variant="danger" onClick={() => { sell() }}>Sell</Button>}
-                            <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance} info={props?.info} />
-                            <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} info={props?.info} />
+                            <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance} ticker={ticker} latest_price = {current_price} company = {company} />
+                            <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} ticker={ticker} latest_price = {current_price} company = {company} />
                         </div>
                     </div>
                     <div className="pt-4 pe-5 bd-highlight">

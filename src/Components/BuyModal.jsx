@@ -15,7 +15,7 @@ export default function BuyModal(props) {
 
     
     useEffect(() => {
-        const currentPrice = parseFloat(numStocks * props?.info?.latest_price?.c).toFixed(2)
+        const currentPrice = parseFloat(numStocks * props?.latest_price).toFixed(2)
         setTotalPrice(currentPrice);
         if(currentPrice > props?.currentBalance){
             setShowAlert(true);
@@ -29,7 +29,7 @@ export default function BuyModal(props) {
     }
 
     const callBackend = () => {
-        axios.post('http://localhost:3000/buy', {price: totalPrice, quantity: numStocks, ticker: props?.info?.profile?.ticker, company: props?.info?.profile?.name})
+        axios.post('http://localhost:3000/buy', {price: totalPrice, quantity: numStocks, ticker: props?.ticker, company: props?.company})
             .then((res) => { 
                 props.toggleBuyModal();
             }).catch((err) => {
@@ -43,10 +43,10 @@ export default function BuyModal(props) {
             <Modal className="my-modal" show={props?.showBuyModal} onHide={props?.toggleBuyModal} >
                 <Modal.Dialog style={{ width: '100%', height: '100%'}}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{props?.info?.profile?.ticker}</Modal.Title>
+                        <Modal.Title>{props?.ticker}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <p>Current Price: {props?.info?.latest_price?.c}</p>
+                        <p>Current Price: {props?.latest_price}</p>
                         <p>Money in wallet: ${props?.currentBalance.toFixed(2)}</p>
                         <p>Quantity: </p>
                         <Form>
