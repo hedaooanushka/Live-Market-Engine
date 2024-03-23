@@ -75,7 +75,7 @@ async function run() {
             console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
             // find userId == user1 and ticker=="${ticker_name}"
-            const portfolioItems = await portfolio.find({ userId: 'user1'}).toArray();
+            const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
             const finalData = {
                 current_balance: portfolioItems[0].current_balance,
                 investments: portfolioItems[0].investments
@@ -87,21 +87,34 @@ async function run() {
 
         // To add a new item to the portfolio
         app.post('/buy', async (req, res) => {
-            console.log("request = " + req.body)
             const body = req.body;
-            console.log("body = " + JSON.stringify(body))
             const price = body.price || 0;
             console.log("price = " + price)
-
+            const quantity = body.quantity || 0;
+            const ticker = body.ticker || "";
             await client.connect();
             console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
-
+            const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
+            let investments = portfolioItems[0].investments;
+            let isPresent = false;
+            for (let i = 0; i < investments.length; i++) {
+                if (investments[i].ticker === ticker) {
+                    console.log("Found the ticker investments[i].ticker = " + investments[i].ticker)
+                    investments[i].quantity += quantity;
+                    investments[i].price = parseFloat(investments[i].price) + parseFloat(price);
+                    isPresent = true;
+                    break;
+                }
+            }
+            if (!isPresent) {
+                investments.push(body);
+            }
             // Update the 'portfolio' document where userId is 'user1'
             const result = await portfolio.findOneAndUpdate(
                 { userId: 'user1' },
                 {
-                    $push: { investments: body },
+                    $set: { investments: investments },
                     $inc: { current_balance: -price }
                 },
                 { returnOriginal: false } // Option to return the updated document
@@ -111,6 +124,43 @@ async function run() {
             res.json(result.value); // Send the updated document to the client
         });
 
+        // To delete an item from the watchlist
+        app.post("/sell", async (req, res) => {
+            const body = req.body;
+            console.log("request = " + JSON.stringify(body))
+            const price = body.price || 0;
+            const quantity = body.quantity || 0;
+            const ticker = body.ticker || "";
+            console.log("price = " + price)
+
+            await client.connect();
+            console.log("Connected successfully to MongoDB server");
+            const portfolio = client.db(dbName).collection('portfolio');
+            const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
+            const investments = portfolioItems[0].investments;
+            for (let i = 0; i < investments.length; i++) {
+                if (investments[i].ticker === ticker) {
+                    investments[i].quantity -= quantity;
+                    investments[i].price = parseFloat(investments[i].price) - parseFloat(price);
+                    if (investments[i].quantity === 0) {
+                        investments.splice(i, 1);
+                    }
+                    break;
+                }
+            }
+            const result = await portfolio.findOneAndUpdate(
+                { userId: 'user1' },
+                {
+                    $set: { investments: investments },
+                    $inc: { current_balance: parseFloat(price) }
+                },
+                { returnOriginal: false } // Option to return the updated document
+            );
+            //remove the item from the investments array
+            console.log("result = " + JSON.stringify(result))
+            await client.close();
+            res.json(result.value); // Send the updated document to the client
+        });
 
         app.get('/', (req, res) => {
             res.send('Hello World!')
