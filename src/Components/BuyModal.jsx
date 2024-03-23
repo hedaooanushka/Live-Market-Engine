@@ -26,16 +26,15 @@ export default function BuyModal(props) {
         const value = Number(e.target.value);
         setNumStocks(value);
         console.log(props.info)
-
     }
 
     const callBackend = () => {
-        axios.post('http://localhost:3000/buy', {price: totalPrice, quantity: numStocks, ticker: props?.info?.profile?.ticker, company: props?.info?.profile?.name}).then((res) => { 
-            props.toggleBuyModal();
-            
-        }).catch((err) => {
-            console.log(err);
-        })
+        axios.post('http://localhost:3000/buy', {price: totalPrice, quantity: numStocks, ticker: props?.info?.profile?.ticker, company: props?.info?.profile?.name})
+            .then((res) => { 
+                props.toggleBuyModal();
+            }).catch((err) => {
+                console.log(err);
+            })
     }
 
     return (
@@ -48,7 +47,7 @@ export default function BuyModal(props) {
                     </Modal.Header>
                     <Modal.Body>
                         <p>Current Price: {props?.info?.latest_price?.c}</p>
-                        <p>Money in wallet: ${props?.currentBalance}</p>
+                        <p>Money in wallet: ${props?.currentBalance.toFixed(2)}</p>
                         <p>Quantity: </p>
                         <Form>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">

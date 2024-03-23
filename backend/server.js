@@ -5,6 +5,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const username = "anushka"
 const password = "vGf17pdWPlYRyWlW"
 const uri = `mongodb+srv://${username}:${password}@cluster0.drk46si.mongodb.net/?retryWrites=true&w=majority`;
+// mongodb+srv://anushka:vGf17pdWPlYRyWlW@cluster0.drk46si.mongodb.net/?retryWrites=true&w=majority
 
 
 const app = express()
@@ -73,11 +74,13 @@ async function run() {
             await client.db(dbName).command({ ping: 1 });
             console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
-            const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
+            // find userId == user1 and ticker=="${ticker_name}"
+            const portfolioItems = await portfolio.find({ userId: 'user1'}).toArray();
             const finalData = {
                 current_balance: portfolioItems[0].current_balance,
                 investments: portfolioItems[0].investments
             }
+            console.log(finalData)
             await client.close();
             res.json(finalData);
         });
@@ -89,6 +92,7 @@ async function run() {
             console.log("body = " + JSON.stringify(body))
             const price = body.price || 0;
             console.log("price = " + price)
+
             await client.connect();
             console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
@@ -156,11 +160,12 @@ async function run() {
 
 
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
-            axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker_name}&token=${finnhub_API_KEY}`).then((result) => {
-                const status = result.data;
-                // console.log(summary_chart)
-                res.json(status);
-            })
+            axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker_name}&token=${finnhub_API_KEY}`)
+                .then((result) => {
+                    const status = result.data;
+                    // console.log(summary_chart)
+                    res.json(status);
+                })
                 .catch((error) => {
                     console.error('An error occurred:', error);
                     res.status(500).send({ status: 'error', message: 'An error occurred fetching data from the API.' });

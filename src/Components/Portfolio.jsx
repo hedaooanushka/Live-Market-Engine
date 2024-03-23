@@ -63,7 +63,7 @@ export default function Portfolio() {
                             <h3 style={{ color: "#323232" }}>Money in Wallet : ${currentBalance ? (currentBalance).toFixed(2) : '0.00'}</h3>
                         </div>
                         {data?.map((item, index) => (
-                            <div className="col-12 mt-3" key={index}>
+                            <div className="col-12 mt-3" key={index} style={{minWidth:'500px'}}>
                                 <div className='container-fluid' style={{ backgroundColor: "#f5f5f5", padding: '0px', border: 'solid 1px', borderRadius: '7px' }}>
                                     <div className='row'>
                                         <div className='col-2 mx-3'>
@@ -74,48 +74,48 @@ export default function Portfolio() {
                                         </div>
                                     </div>
                                     <hr className='m-0' />
-                                    <div className='container-fluid mt-0' style={{ backgroundColor: 'white', paddingTop: "1%", paddingBottom: "1%" }}>
+                                    <div className='container-fluid mt-0' style={{ backgroundColor: 'white', paddingTop: "1%", paddingBottom: "1%", fontSize:'10px' }}>
                                         <div className='row'>
                                             <div className='col-4'>
-                                                <h4>Quantity:</h4>
+                                                <h5>Quantity:</h5>
                                             </div>
                                             <div className='col-2'>
-                                                <h4>{item.quantity}</h4>
+                                                <h5>{item.quantity}</h5>
                                             </div>
                                             <div className='col-4'>
-                                                <h4>Change:</h4>
+                                                <h5>Change:</h5>
                                             </div>
                                             <div className='col-2'>
-                                                <h4>{(item.price / item.quantity - prices[index]?.price).toFixed(2)}</h4>
+                                                <h5>{(item.price / item.quantity - prices[index]?.price).toFixed(2)}</h5>
                                             </div>
                                         </div>
                                         {/* Similar changes for other rows */}
                                         <div className='row'>
                                             <div className='col-4'>
-                                                <h4>Avg Cost / Share:</h4>
+                                                <h5>Avg Cost / Share:</h5>
                                             </div>
                                             <div className='col-2'>
-                                                <h4>{(item.price / item.quantity).toFixed(2)}</h4>
+                                                <h5>{(item.price / item.quantity).toFixed(2)}</h5>
                                             </div>
                                             <div className='col-4'>
-                                                <h4>Current Price:</h4>
+                                                <h5>Current Price:</h5>
                                             </div>
                                             <div className='col-2'>
-                                                <h4>{prices[index]?.price}</h4>
+                                                <h5>{prices[index]?.price}</h5>
                                             </div>
                                         </div>
                                         <div className='row'>
                                             <div className='col-4'>
-                                                <h4>Total Cost:</h4>
+                                                <h5>Total Cost:</h5>
                                             </div>
                                             <div className='col-2'>
-                                                <h4>{item.price}</h4>
+                                                <h5>{item.price}</h5>
                                             </div>
                                             <div className='col-4'>
-                                                <h4>Market Value:</h4>
+                                                <h5>Market Value:</h5>
                                             </div>
                                             <div className='col-2'>
-                                                <h4>{prices[index]?.price * item.quantity}</h4>
+                                                <h5>{prices[index]?.price * item.quantity}</h5>
                                             </div>
                                         </div>
                                     </div>

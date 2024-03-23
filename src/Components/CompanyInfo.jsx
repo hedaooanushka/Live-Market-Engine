@@ -30,15 +30,6 @@ export default function CompanyInfo(props) {
             </div>
         )
     }
-    // else if (props?.ticker_name !== "" && props?.dataValid === false && props.click === true){
-    //     return (
-    //         <div className='d-flex justify-content-center align-items-center'>
-    //             <div className='alert alert-danger' role='alert' style={{ textAlign: 'center', width: '60%' }}>
-    //                 No Data Found. Please enter a valid Ticker
-    //             </div>
-    //         </div>
-    //     )
-    // }
     else if (props?.isLoading === true && props?.ticker_name !== "" && props?.dataValid === false && props.click === true) {
         return (
             <div>
@@ -59,6 +50,35 @@ export default function CompanyInfo(props) {
     }
     else if (props.dataValid) {
 
+        // const lastClosedDate = () => {
+        //     const unixTimestamp = props?.info?.latest_price?.t;
+        //     const date = new Date(unixTimestamp * 1000);
+        //     const formattedDate = date.getFullYear() + '-' +
+        //         ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+        //         ('0' + date.getDate()).slice(-2) + ' ' +
+        //         ('0' + date.getHours()).slice(-2) + ':' +
+        //         ('0' + date.getMinutes()).slice(-2) + ':' +
+        //         ('0' + date.getSeconds()).slice(-2);
+        //     return formattedDate;
+        // }
+
+        const currentDate = () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = ('0' + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
+            const day = ('0' + now.getDate()).slice(-2);
+
+            const hours = ('0' + now.getHours()).slice(-2);
+            const minutes = ('0' + now.getMinutes()).slice(-2);
+            const seconds = ('0' + now.getSeconds()).slice(-2);
+
+            const currentDate = `${year}-${month}-${day}`;
+            const currentTime = `${hours}:${minutes}:${seconds}`;
+            const currentDateTime = `${currentDate} ${currentTime}`;
+
+            return currentDateTime
+        }
+
         // t converted to actual format
         const unixTimestamp = props?.info?.latest_price?.t;
         const date = new Date(unixTimestamp * 1000);
@@ -75,13 +95,12 @@ export default function CompanyInfo(props) {
         const currentMinute = date.getMinutes();
         const currentSecond = date.getSeconds();
 
-        console.log("hours" + currentHour)
-        console.log("minutes" + currentMinute)
-        console.log("sec" + currentSecond)
+        // console.log("hours" + currentHour)
+        // console.log("minutes" + currentMinute)
+        // console.log("sec" + currentSecond)
 
 
 
-        // console.log(formattedDate);
         const [isStarSelected, setIsStarSelected] = useState(false);
         const [showAlert, setShowAlert] = useState(false);
         const [color, setColor] = useState('red');
@@ -138,12 +157,12 @@ export default function CompanyInfo(props) {
 
 
 
-        const handleStarClick = async (item) => {
+        const handleStarClick = async () => {
             setIsStarSelected(!isStarSelected);
-            console.log("item sent to handle star click = " + JSON.stringify(item))
+            // console.log("item sent to handle star click = " + JSON.stringify(item))
             // call the backend to add the ticker to the watchlist
-            
-            axios.post(`http://localhost:3000/watchlist`, {ticker: props.ticker_name})
+
+            axios.post(`http://localhost:3000/watchlist`, { ticker: props?.ticker_name, name: props?.info?.profile?.name })
                 .then(response => {
                     console.log("Added company = " + JSON.stringify(response))
                 })
@@ -186,12 +205,7 @@ export default function CompanyInfo(props) {
                     <div className="p-2 bd-highlight">
                         <p><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{props?.info?.profile?.ticker}</span>
                             <svg className="ms-2 mb-4 bi bi-star m-1 star"
-                                onClick={() => handleStarClick({
-                                    ticker: props?.info?.profile?.ticker,
-                                    name: props?.info?.profile?.name,
-                                    c: props?.info?.latest_price?.c,
-                                    dp: props?.info?.latest_price?.dp
-                                })} type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill={isStarSelected ? "yellow" : "currentColor"} viewBox="0 0 16 16">
+                                onClick={() => handleStarClick()} type="button" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill={isStarSelected ? "yellow" : "currentColor"} viewBox="0 0 16 16">
                                 <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
                             </svg>
                             {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="yellow" class="bi bi-star-fill" viewBox="0 0 16 16">
@@ -221,10 +235,10 @@ export default function CompanyInfo(props) {
                         }
 
                         <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d} ({props?.info?.latest_price?.dp}%)</span> <br />
-                        <span style={{ fontSize: '13px' }}> {formattedDate}</span>
+                        <span style={{ fontSize: '13px' }}> {currentDate()}</span>
                     </div>
                 </div>
-                <div className="container" style={{textAlign:'center'}}>
+                <div className="container" style={{ textAlign: 'center' }}>
                     {(currentDay == 0 || currentDay == 6 || (currentHour <= 12 && currentMinute >= 0 && currentSecond >= 0) || (currentHour >= 9 && currentMinute >= 0 && currentSecond >= 0)) ? <span style={{ color: 'red', fontWeight: 'bold' }}>Market closed on {formattedDate}</span> : <span style={{ color: 'green', fontWeight: 'bold' }}>Market is open!</span>}
                 </div>
             </div>

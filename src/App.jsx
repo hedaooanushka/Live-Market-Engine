@@ -71,6 +71,7 @@ function App() {
   return (
     <>
       <Router>
+        {/*LocalStorage*/}
         <Headers />
         <br />
         <Routes>
@@ -81,6 +82,7 @@ function App() {
           <Route path="/portfolio" element={<Portfolio />} />
         </Routes>
         <Footer />
+        {/* LocalStorage */}
       </Router>
     </>
   );

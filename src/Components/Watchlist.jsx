@@ -4,14 +4,18 @@ import axios from 'axios';
 export default function Watchlist() {
     const [data, setData] = useState([]);
     const [prices, setPrices] = useState({});
+    const [positive, setPositive] = useState(false);
     const deleteFromWatchlist = () => {
-        
+
     }
+
+
+
     useEffect(() => {
         const fetchData = async () => {
             const result = await axios.get('http://localhost:3000/watchlist');
             const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
-            console.log("Data == ", JSON.stringify(result.data));
+            console.log("Data = ", JSON.stringify(result.data));
             setData(result.data);
             const pricePromises = result?.data.map(async (item, index) => {
                 await delay(1000); // Wait for 1 second between each request
@@ -21,37 +25,49 @@ export default function Watchlist() {
             if (pricePromises) {
                 const prices = await Promise.all(pricePromises);
                 setPrices(prices); // Store the prices as an array
-                console.log("Prices == ", JSON.stringify(prices));
+                console.log("Prices = ", JSON.stringify(prices));
             }
         };
         fetchData();
-        
-    },[])
+
+    }, [])
 
 
     return (
         <>
-            <div className="container"  >
-                <h1 style={{marginBottom:'20px'}}>My watchlist</h1>
-                <div class="card">
-                    <svg style={{marginTop:'10px', marginLeft:'10px', cursor:'pointer'}} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                    </svg>
-                    <div class="row g-0">
-                        <div class="col-6">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a wider card </p>
+            <div className="container" style={{ marginBottom: '100px' }} >
+                <h1 style={{ marginBottom: '20px' }}>My watchlist</h1>
+                {data.map((item, index) => {
+                    const price = prices[index];
+                    console.log("card price = " + price)
+                    return (
+                        <div class="card" style={{ marginBottom: '20px' }}>
+                            <svg style={{ marginTop: '10px', marginLeft: '10px', cursor: 'pointer' }} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                            </svg>
+                            <div class="row g-0">
+                                <div class="col-6">
+                                    <div class="card-body">
+                                        <h4 class="card-title">{item.ticker.toUpperCase()}</h4>
+                                        <p class="card-text">{item.name} </p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card-body">
+                                        {
+                                            price?.d > 0 ? <span>
+                                                <span class="card-text" style={{ color: 'green' }}><h4>{price?.c.toFixed(2)}</h4><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" className="bi bi-caret-up-fill" viewBox="0 0 16 16" />
+                                                    <path d="m7.247 4.8F6-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />{price?.d.toFixed(2)} ({price?.dp.toFixed(2)}%)</span></span>
+                                                : <span>
+                                                    <span class="card-text" style={{ color: 'red' }}><h4>{price?.c.toFixed(2)}</h4><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-caret-up-fill" viewBox="0 0 16 16" />
+                                                        <path d="m7.247 4.8F6-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />{price?.d.toFixed(2)} ({price?.dp.toFixed(2)}%)</span></span>
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a wider card</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    )
+                })}
             </div>
         </>
     )
