@@ -54,10 +54,17 @@ async function run() {
             console.log("request = " + JSON.stringify(body))
             // console.log("data sent to backend = "+body)
             await client.connect();
+            const ticker = body.ticker || "";
             console.log("Connected successfully to MongoDB server");
             const watchlist = client.db(dbName).collection('watchlist');
-
-
+            const watchlistItems = await watchlist.find({ userId: 'user1' }).toArray();
+            const watchlistData = watchlistItems[0].watchlist;
+            for (let i = 0; i < watchlistData.length; i++) {
+                if (watchlistData[i].ticker === ticker) {
+                    await client.close();
+                    return res.json({ status: 'ALready present', message: 'Ticker already present in the watchlist.' });
+                }
+            }
             const result = await watchlist.updateOne(
                 { userId: 'user1' },
                 { $push: { watchlist: body } }
@@ -68,6 +75,22 @@ async function run() {
             res.json(result);
         });
 
+        // To delete an item from the watchlist
+        app.post("/deleteWatchlistItem", async (req, res) => {
+            const body = req.body;
+            console.log("request = " + JSON.stringify(body))
+            const ticker = body.ticker || "";
+            await client.connect();
+            console.log("Connected successfully to MongoDB server");
+            const watchlist = client.db(dbName).collection('watchlist');
+            const result = await watchlist.updateOne(
+                { userId: 'user1' },
+                { $pull: { watchlist: { ticker: ticker } } }
+            );
+            console.log("result = " + JSON.stringify(result))
+            await client.close();
+            res.json(result);
+        });
         // Fetch documents from the portfolio collection where userId is "user1"
         app.get('/portfolio', async (req, res) => {
             await client.connect();
