@@ -6,7 +6,7 @@ import Insights from './Insights';
 import Summary from './Summary';
 import Charts from './Charts';
 export default function Tabs(props) {
-    if(props?.ticker_name === "default" || props?.isValid === false){
+    if(props?.ticker_name === "default" || props?.isValid === false || props.hide){
         return(
             <></>
         )

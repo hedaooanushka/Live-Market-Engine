@@ -5,9 +5,7 @@ export default function Watchlist() {
     const [data, setData] = useState([]);
     const [prices, setPrices] = useState({});
     const [positive, setPositive] = useState(false);
-    const deleteFromWatchlist = () => {
-
-    }
+    const [emptyResponse, setEmptyResponse] = useState(false);
 
 
 
@@ -16,6 +14,12 @@ export default function Watchlist() {
             const result = await axios.get('http://localhost:3000/watchlist');
             const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
             console.log("Data = ", JSON.stringify(result.data));
+            if (result.data.length === 0) {
+                setEmptyResponse(true);
+            }
+            else {
+                setEmptyResponse(false);
+            }
             setData(result.data);
             const pricePromises = result?.data.map(async (item, index) => {
                 await delay(1000); // Wait for 1 second between each request
@@ -31,20 +35,39 @@ export default function Watchlist() {
         fetchData();
 
     }, [])
-
+    const deleteStock = (ticker) => {
+        console.log("delete stock")
+        axios.post('http://localhost:3000/deleteWatchlistItem', { ticker: ticker })
+            .then((res) => {
+                console.log("Deleted")
+                console.log("response ===", JSON.stringify(res.data))
+                window.location.reload();
+            }).catch((err) => {
+                console.log(err);
+            })
+    }
 
     return (
         <>
+
+
             <div className="container" style={{ marginBottom: '100px' }} >
                 <h1 style={{ marginBottom: '20px' }}>My watchlist</h1>
+                {emptyResponse && (<div className="alert alert-warning alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
+                    Currently you don't have any stock in your watchlist.
+
+                </div>)}
                 {data.map((item, index) => {
                     const price = prices[index];
                     console.log("card price = " + price)
                     return (
                         <div class="card" style={{ marginBottom: '20px' }}>
-                            <svg style={{ marginTop: '10px', marginLeft: '10px', cursor: 'pointer' }} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+
+                            <svg type="button" style={{ marginTop: '10px', marginLeft: '10px', cursor: 'pointer' }} onClick={() => deleteStock(item.ticker)} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+
                                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
                             </svg>
+
                             <div class="row g-0">
                                 <div class="col-6">
                                     <div class="card-body">
@@ -68,7 +91,7 @@ export default function Watchlist() {
                         </div>
                     )
                 })}
-            </div>
+            </div >
         </>
     )
 }

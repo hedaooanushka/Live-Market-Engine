@@ -38,35 +38,9 @@ export default function Search(props) {
     const [isSuggestionSet, setIsSuggestionSet] = useState(false);
     const [autoSuggestLoader, setAutoSuggestLoader] = useState(true);
     const [isSuggestionSelected, setIsSuggestionSelected] = useState(false);
+    const [hide, setHide] = useState(false);
     const getSuggestionValue = suggestion => suggestion.displaySymbol;
     const navigate = useNavigate();
-
-    // LOGIC IF TICKER NAME ALREADY AVAILABLE
-
-    // if (!endsWithHome) {
-    //     let storedTickerName = url.split("/search/:")[1];
-    //     // console.log(storedTickerName)
-    //     setTickerName(storedTickerName);
-    //     callBackend();
-    // }
-
-    // MUST GET CALLED ONLY WHEN ENDSWITHHOME CHANGES, BUT GETS CALLED WHEN COMPANY URL CHANGES
-    // WHEN WE CHANGE URL HOW IT KNOWS THAT THIS CODE MUST RUN?
-    // useEffect(() => {
-    //     if (!endsWithHome && !click) {
-    //         let storedTickerName = url.split("/search/:")[1];
-    //         // console.log(storedTickerName)
-    //         setTickerName(storedTickerName);
-    //         console.log("new ticker name = " + ticker_name)  // tickername not being set
-    //         console.log("calling callBackend from endswithhome useeffect")
-    //         callBackend();
-    //     }
-    // }, [endsWithHome]);
-
-    // if(props?.ticker_name){
-    //     // setTickerName(props?.ticker_name);
-    //     console.log("new ticker" + ticker_name)
-    // }
 
     useEffect(() => {
         if (props?.ticker_name) {
@@ -106,6 +80,7 @@ export default function Search(props) {
 
 
     var callBackend = (storedTickerName) => {
+        setHide(false);
         if (props?.ticker_name) setTickerName(props?.ticker_name)
         if (storedTickerName) {
             navigate(`/search/${storedTickerName}`);
@@ -238,15 +213,37 @@ export default function Search(props) {
         }
     }, [window.location.pathname])
 
+    function clearAll() {
+        setTickerName("");
+        navigate("/search/home");
+        setHide(true);
+    }
     useEffect(() => {
         // Set up a timer to refresh the page every 15 seconds
         const timer = setInterval(() => {
-            window.location.reload();
+            setHide(false);
+            if(ticker_name !== ""){
+                // navigate(`/search/${ticker_name}`);
+                console.log("ticker name in callbackend = " + ticker_name)
+                console.log("i clicked")
+    
+                if (ticker_name !== "") {
+                    console.log("ticker_name: " + ticker_name)
+                    axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
+                        .then(response => {
+                            setSummaryInfo(response.data);
+                        })
+                        .catch(error => {
+                            console.error('An error occurred:', error);
+                        });
+                }
+    
+            }
         }, 15000);
     
         // Clean up the timer when the component is unmounted
         return () => clearInterval(timer);
-    }, []);
+    }, [ticker_name]); // Include ticker_name in the dependency array
     return (
         <>
             <br />
@@ -291,36 +288,36 @@ export default function Search(props) {
                             onSuggestionsFetchRequested={({ value }) => {
                                 if (!isSuggestionSelected) {
                                     // Cancel the previous delay
-                                    clearTimeout(timeoutId);
+
 
                                     if (value.length > 0) {
                                         // Set a delay before fetching the suggestions
-                                        timeoutId = setTimeout(() => {
-                                            setAutoSuggestLoader(true);
-                                            setSuggestions([]);
-                                            // Cancel the previous request
-                                            cancelTokenSource.cancel();
+                                        // timeoutId = setTimeout(() => {
+                                        setAutoSuggestLoader(true);
+                                        setSuggestions([]);
+                                        // Cancel the previous request
+                                        cancelTokenSource.cancel();
 
-                                            // Create a new CancelToken source
-                                            cancelTokenSource = axios.CancelToken.source();
+                                        // Create a new CancelToken source
+                                        cancelTokenSource = axios.CancelToken.source();
 
-                                            axios.get(`http://localhost:3000/autocomplete?query=${value}`, {
-                                                cancelToken: cancelTokenSource.token
-                                            }).then(response => {
-                                                const filteredSuggestions = response.data.filter(suggestion =>
-                                                    suggestion.type === 'Common Stock' && !suggestion.symbol.includes('.')
-                                                );
-                                                setSuggestions(filteredSuggestions);
+                                        axios.get(`http://localhost:3000/autocomplete?query=${value}`, {
+                                            cancelToken: cancelTokenSource.token
+                                        }).then(response => {
+                                            const filteredSuggestions = response.data.filter(suggestion =>
+                                                suggestion.type === 'Common Stock' && !suggestion.symbol.includes('.')
+                                            );
+                                            setSuggestions(filteredSuggestions);
+                                            setAutoSuggestLoader(false);
+                                        }).catch(error => {
+                                            if (axios.isCancel(error)) {
+                                                console.log('Request canceled:', error.message);
+                                            } else {
+                                                console.error('Failed to fetch suggestions:', error);
                                                 setAutoSuggestLoader(false);
-                                            }).catch(error => {
-                                                if (axios.isCancel(error)) {
-                                                    console.log('Request canceled:', error.message);
-                                                } else {
-                                                    console.error('Failed to fetch suggestions:', error);
-                                                    setAutoSuggestLoader(false);
-                                                }
-                                            });
-                                        }, 10); // 300ms delay
+                                            }
+                                        });
+                                        // }, 100); // 300ms delay
                                     } else {
                                         setSuggestions([]);
                                         setAutoSuggestLoader(false);
@@ -350,17 +347,17 @@ export default function Search(props) {
                 <svg type="button" onClick={callBackend} style={{ marginTop: '8px' }} className="ms-auto bi bi-search" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                 </svg>
-                <svg type="button" style={{ marginTop: '8px' }} className="mx-3 bi bi-x-lg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <svg type="button" onClick={clearAll} style={{ marginTop: '8px' }} className="mx-3 bi bi-x-lg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                 </svg>
                 {/* <br/><br/><br/><br/><br/><br/><br/>
                 <p></p> */}
             </Container>
             <br />
-            <CompanyInfo info={summary_info} ticker_name={ticker_name} dataValid={dataValid} click={click} isLoading={isLoading} />
+            <CompanyInfo hide={hide} info={summary_info} ticker_name={ticker_name} dataValid={dataValid} click={click} isLoading={isLoading} />
             {/* <p>{company_info.peers}</p> */}
             <br />
-            <Tabs info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={dataValid} />
+            <Tabs hide={hide} info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={dataValid} />
             {/* <Summary news={news_info}/> */}
 
         </>

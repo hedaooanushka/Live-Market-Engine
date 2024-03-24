@@ -10,18 +10,28 @@ export default function Portfolio() {
     const [currentBalance, setCurrentBalance] = useState(0);
     const [showBuyModal, setShowBuyModal] = useState(false);
     const [showSellModal, setShowSellModal] = useState(false);
-    const[ticker, setTicker] = useState('');
-    const[current_price, setCurrentPrice] = useState(0);
-    const[company, setCompany] = useState('');
+    const [ticker, setTicker] = useState('');
+    const [current_price, setCurrentPrice] = useState(0);
+    const [company, setCompany] = useState('');
+    const [successBuyMessage, setSuccessBuyMessage] = useState(false);
+    const [successSellMessage, setSuccessSellMessage] = useState(false);
+    const [emptyResponse, setEmptyResponse] = useState(false);
     const toggleBuyModal = () => {
         setShowBuyModal(!showBuyModal);
-        setReRender(!reRender);
-        setShowAlert(false);
+
+        setSuccessBuyMessage(!successBuyMessage);
     }
     const toggleSellModal = () => {
         setShowSellModal(!showSellModal);
-        setReRender(!reRender);
-        setShowAlert(false);
+
+        setSuccessSellMessage(!successSellMessage);
+
+    }
+    const closeBuyMessage = () => {
+        setSuccessBuyMessage(false);
+    }
+    const closeSellMessage = () => {
+        setSuccessSellMessage(false);
     }
 
     useEffect(() => {
@@ -32,7 +42,12 @@ export default function Portfolio() {
             setCurrentBalance(result.data.current_balance);
             const combinedInvestments = {};
             const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
-
+            if (result.data.investments.length === 0) {
+                setEmptyResponse(true);
+            }
+            else {
+                setEmptyResponse(false);
+            }
             result.data?.investments?.forEach(item => {
 
                 combinedInvestments[item.ticker] = item;
@@ -57,7 +72,7 @@ export default function Portfolio() {
 
         fetchData();
         console.log("Prices == ", JSON.stringify(prices));
-    }, []);
+    }, [successBuyMessage, successSellMessage]);
 
     const buy = (item, currentPrice) => {
         console.log("buying ", ticker);
@@ -66,16 +81,46 @@ export default function Portfolio() {
         setCurrentPrice(currentPrice);
         setCompany(item.company);
     }
-    const sell = (item, currentPrice) => {  
+    const sell = (item, currentPrice) => {
         console.log("selling ", ticker);
         setShowSellModal(true);
         setTicker(item.ticker);
         setCurrentPrice(currentPrice);
         setCompany(item.company);
     }
-
+    useEffect(() => {
+        console.log("successBuyMessage = ", successBuyMessage)
+    }, [successBuyMessage])
     return (
         <div style={{ maxHeight: '80vh', overflow: 'auto' }}>
+            <div className='d-flex justify-content-center align-items-center'>
+                {successBuyMessage && (
+                    <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
+                        {ticker.toUpperCase()} bought successfully
+                        <button
+                            type="button"
+                            className="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"
+                            onClick={closeBuyMessage}
+                        />
+                    </div>
+
+                )}
+                {successSellMessage && (
+                    <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
+                        {ticker.toUpperCase()} sold successfully
+                        <button
+                            type="button"
+                            className="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"
+                            onClick={closeSellMessage}
+                        />
+                    </div>
+                )}
+
+            </div>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: "70%", marginTop: "5%", marginLeft: 'auto', marginRight: 'auto' }}>
                 < div className="container-fluid"  >
                     <div className="row">
@@ -85,6 +130,10 @@ export default function Portfolio() {
                         <div className="col-12">
                             <h3 style={{ color: "#323232" }}>Money in Wallet : ${currentBalance ? (currentBalance).toFixed(2) : '0.00'}</h3>
                         </div>
+                        {emptyResponse && (<div className="alert alert-warning alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
+                            Currently you don't have any stock in your portfolio.
+
+                        </div>)}
                         {data?.map((item, index) => (
                             <div className="col-12 mt-3" key={index} style={{ minWidth: '500px' }}>
                                 <div className='container-fluid' style={{ backgroundColor: "#f5f5f5", padding: '0px', border: 'solid 1px', borderRadius: '7px' }}>
@@ -146,12 +195,12 @@ export default function Portfolio() {
                                     <div className='row'>
                                         <div className='container'>
                                             <button className='btn btn-primary m-2' onClick={() => { buy(item, prices[index]?.price) }}>Buy</button>
-                                            <button className='btn btn-danger'onClick={() => { sell(item, prices[index]?.price) }}>Sell</button>
+                                            <button className='btn btn-danger' onClick={() => { sell(item, prices[index]?.price) }}>Sell</button>
                                         </div>
                                     </div>
                                 </div>
-                                <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance}  ticker={ticker} latest_price = {current_price} company = {company}/>
-                                <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} ticker={ticker} latest_price = {current_price} company = {company} />
+                                <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
+                                <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
                             </div>
                         ))}
                     </div>
