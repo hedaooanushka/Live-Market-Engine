@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 export default function Watchlist() {
     const [data, setData] = useState([]);
     const [prices, setPrices] = useState({});
     const [positive, setPositive] = useState(false);
     const [emptyResponse, setEmptyResponse] = useState(false);
-
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -46,7 +46,10 @@ export default function Watchlist() {
                 console.log(err);
             })
     }
-
+    const goToCompany = (ticker) => {
+        console.log("go to company")
+        navigate(`/search/${ticker.toUpperCase()}`);
+    }
     return (
         <>
 
@@ -61,7 +64,7 @@ export default function Watchlist() {
                     const price = prices[index];
                     console.log("card price = " + price)
                     return (
-                        <div class="card" style={{ marginBottom: '20px' }}>
+                        <div class="card" type="button" onClick={() => { goToCompany(item.ticker) }} style={{ marginBottom: '20px' }}>
 
                             <svg type="button" style={{ marginTop: '10px', marginLeft: '10px', cursor: 'pointer' }} onClick={() => deleteStock(item.ticker)} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
 
