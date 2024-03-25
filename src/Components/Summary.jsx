@@ -73,13 +73,6 @@ export default function Summary(props) {
                             <b>Industry: </b> {props?.info?.profile?.finnhubIndustry} <br />
                             <b>Webpage: </b> <a href={props?.info?.profile?.weburl}>{props?.info?.profile?.weburl}</a><br />
                             <b>Company peers</b>
-                            {/* <div>
-                                {props?.info?.peers.map((company, index) => (
-                                    <span>
-                                        <a href={`${baseURL}${company}`}>{company} </a>,
-                                    </span>
-                                ))}
-                            </div> */}
                             <div>
                                 {props?.info?.peers.map((company, index) => (
                                     <span key={index}>

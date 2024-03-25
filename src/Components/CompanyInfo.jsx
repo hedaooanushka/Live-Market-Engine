@@ -185,7 +185,7 @@ export default function CompanyInfo(props) {
                     console.error('An error occurred:', error);
                 });
 
-            setTimeout(() => {
+            //setTimeout(() => {
                 axios.get(`http://localhost:3000/watchlist`).then(response => {
                     const watchlist = response.data;
                     console.log("watchlist = " + JSON.stringify(watchlist));
@@ -198,8 +198,10 @@ export default function CompanyInfo(props) {
                 }).catch(error => {
                     console.error('An error occurred:', error);
                 });
-            }, 2000); // 2000 milliseconds = 2 seconds
+            //}, 2000); // 2000 milliseconds = 2 seconds
         }, [])
+
+
         const handleStarClick = async () => {
             setIsStarSelected(!isStarSelected);
 

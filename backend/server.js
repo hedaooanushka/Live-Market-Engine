@@ -34,34 +34,37 @@ const client = new MongoClient(uri, {
     }
 });
 
+client.connect();
+let lastDayClosed;
+
 
 async function run() {
     try {
         // To get all the watchlist items
         app.get('/watchlist', async (req, res) => {
-            await client.connect();
+            // await client.connect();
             await client.db(dbName).command({ ping: 1 });
-            console.log("Connected successfully to MongoDB server");
+            // console.log("Connected successfully to MongoDB server");
             const watchlist = client.db(dbName).collection('watchlist');
             const watchlistItems = await watchlist.find({ userId: 'user1' }).toArray();
-            await client.close();
+            // await client.close();
             res.json(watchlistItems[0].watchlist);
         });
 
         // To add a new item to the watchlist
         app.post('/watchlist', async (req, res) => {
             const body = req.body;
-            console.log("request = " + JSON.stringify(body))
+            // console.log("request = " + JSON.stringify(body))
             // console.log("data sent to backend = "+body)
-            await client.connect();
+            // await client.connect();
             const ticker = body.ticker || "";
-            console.log("Connected successfully to MongoDB server");
+            // console.log("Connected successfully to MongoDB server");
             const watchlist = client.db(dbName).collection('watchlist');
             const watchlistItems = await watchlist.find({ userId: 'user1' }).toArray();
             const watchlistData = watchlistItems[0].watchlist;
             for (let i = 0; i < watchlistData.length; i++) {
                 if (watchlistData[i].ticker === ticker) {
-                    await client.close();
+                    // await client.close();
                     return res.json({ status: 'ALready present', message: 'Ticker already present in the watchlist.' });
                 }
             }
@@ -69,33 +72,33 @@ async function run() {
                 { userId: 'user1' },
                 { $push: { watchlist: body } }
             );
-            console.log("result = " + JSON.stringify(result))
+            // console.log("result = " + JSON.stringify(result))
 
-            await client.close();
+            // await client.close();
             res.json(result);
         });
 
         // To delete an item from the watchlist
         app.post("/deleteWatchlistItem", async (req, res) => {
             const body = req.body;
-            console.log("request = " + JSON.stringify(body))
+            // console.log("request = " + JSON.stringify(body))
             const ticker = body.ticker || "";
-            await client.connect();
-            console.log("Connected successfully to MongoDB server");
+            // await client.connect();
+            // console.log("Connected successfully to MongoDB server");
             const watchlist = client.db(dbName).collection('watchlist');
             const result = await watchlist.updateOne(
                 { userId: 'user1' },
                 { $pull: { watchlist: { ticker: ticker } } }
             );
-            console.log("result = " + JSON.stringify(result))
-            await client.close();
+            // console.log("result = " + JSON.stringify(result))
+            // await client.close();
             res.json(result);
         });
         // Fetch documents from the portfolio collection where userId is "user1"
         app.get('/portfolio', async (req, res) => {
-            await client.connect();
+            // await client.connect();
             await client.db(dbName).command({ ping: 1 });
-            console.log("Connected successfully to MongoDB server");
+            // console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
             // find userId == user1 and ticker=="${ticker_name}"
             const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
@@ -103,8 +106,8 @@ async function run() {
                 current_balance: portfolioItems[0].current_balance,
                 investments: portfolioItems[0].investments
             }
-            console.log(finalData)
-            await client.close();
+            // console.log(finalData)
+            // await client.close();
             res.json(finalData);
         });
 
@@ -112,18 +115,18 @@ async function run() {
         app.post('/buy', async (req, res) => {
             const body = req.body;
             const price = body.price || 0;
-            console.log("price = " + price)
+            // console.log("price = " + price)
             const quantity = body.quantity || 0;
             const ticker = body.ticker || "";
-            await client.connect();
-            console.log("Connected successfully to MongoDB server");
+            // await client.connect();
+            // console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
             const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
             let investments = portfolioItems[0].investments;
             let isPresent = false;
             for (let i = 0; i < investments.length; i++) {
                 if (investments[i].ticker === ticker) {
-                    console.log("Found the ticker investments[i].ticker = " + investments[i].ticker)
+                    // console.log("Found the ticker investments[i].ticker = " + investments[i].ticker)
                     investments[i].quantity += quantity;
                     investments[i].price = parseFloat(investments[i].price) + parseFloat(price);
                     isPresent = true;
@@ -142,22 +145,22 @@ async function run() {
                 },
                 { returnOriginal: false } // Option to return the updated document
             );
-            console.log("result = " + JSON.stringify(result))
-            await client.close();
+            // console.log("result = " + JSON.stringify(result))
+            // await client.close();
             res.json(result.value); // Send the updated document to the client
         });
 
         // To delete an item from the watchlist
         app.post("/sell", async (req, res) => {
             const body = req.body;
-            console.log("request = " + JSON.stringify(body))
+            // console.log("request = " + JSON.stringify(body))
             const price = body.price || 0;
             const quantity = body.quantity || 0;
             const ticker = body.ticker || "";
-            console.log("price = " + price)
+            // console.log("price = " + price)
 
-            await client.connect();
-            console.log("Connected successfully to MongoDB server");
+            // await client.connect();
+            // console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
             const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
             const investments = portfolioItems[0].investments;
@@ -180,8 +183,8 @@ async function run() {
                 { returnOriginal: false } // Option to return the updated document
             );
             //remove the item from the investments array
-            console.log("result = " + JSON.stringify(result))
-            await client.close();
+            // console.log("result = " + JSON.stringify(result))
+            // await client.close();
             res.json(result.value); // Send the updated document to the client
         });
 
@@ -191,7 +194,7 @@ async function run() {
 
         app.get('/autocomplete', (req, res) => {
             const query = req.query.query;
-            console.log(query)
+            // console.log(query)
             axios.get(`https://finnhub.io/api/v1/search?q=${query}&token=${finnhub_API_KEY}`)
                 .then((result) => {
                     const suggestions = result.data.result
@@ -218,6 +221,8 @@ async function run() {
                     const latestPrice = results[1].data;
                     const peers = results[2].data;
                     const marketStatus = results[3].data;
+                    lastDayClosed = results[1].data.t;
+                    console.log("last day closed = "+JSON.stringify(results[1].data.t))
 
                     res.json({ profile: profile, latest_price: latestPrice, peers: peers, marketStatus: marketStatus });
                     // console.log(latestPrice)
@@ -246,11 +251,25 @@ async function run() {
         })
 
         app.get('/summary-charts', (req, res) => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = ('0' + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
+            const day = ('0' + now.getDate()).slice(-2);
+
+            const hours = ('0' + now.getHours()).slice(-2);
+            const minutes = ('0' + now.getMinutes()).slice(-2);
+            const seconds = ('0' + now.getSeconds()).slice(-2);
+
+            const currentDate = `${year}-${month}-${day}`;
+            const currentTime = `${hours}:${minutes}:${seconds}`;
+            const currentDateTime = `${currentDate} ${currentTime}`;
+            console.log(currentDate)
+
             const ticker_name = req.query.ticker_name.toUpperCase();
             const multiplier = 1
             const timespan = "hour"
-            const from_date = "2024-02-13"
-            const to_date = "2024-02-15"
+            const from_date = "2024-02-13"  // today's date - 1
+            const to_date = "2024-02-15"  // today's date
 
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
             axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/${timespan}/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=${POLYGON_API_KEY}`)
@@ -352,7 +371,7 @@ async function run() {
         })
     } finally {
         // Ensures that the client will close when you finish/error
-        await client.close();
+        // await client.close();
     }
 }
 

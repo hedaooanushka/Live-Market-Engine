@@ -90,15 +90,11 @@ export default function Search(props) {
             setIsLoading(true);
             setDataValid(false);
             if (storedTickerName !== "") {
-                // console.log("go backkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
                 console.log("ticker_name: " + storedTickerName)
                 axios.get(`http://localhost:3000/summary?ticker_name=${storedTickerName}`)
                     .then(response => {
                         setSummaryInfo(response.data);
-                        // console.log("Summary Data: " + JSON.stringify(response.data));
-                        // console.log("Peers: " + response.data.peers.length)
                         setIsLoading(false);
-
                         if (response.data.peers.length > 0) {
                             setDataValid(true);
                         }
@@ -113,21 +109,15 @@ export default function Search(props) {
         }
         else {
             navigate(`/search/${ticker_name}`);
-            console.log("ticker name in callbackend = " + ticker_name)
-            console.log("i clicked")
             setClick(true);
             setIsLoading(true);
             setDataValid(false);
             if (ticker_name !== "") {
-                // console.log("go backkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
                 console.log("ticker_name: " + ticker_name)
                 axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
                     .then(response => {
                         setSummaryInfo(response.data);
-                        // console.log("Summary Data: " + JSON.stringify(response.data));
-                        // console.log("Peers: " + response.data.peers.length)
                         setIsLoading(false);
-
                         if (response.data.peers.length > 0) {
                             setDataValid(true);
                         }
@@ -140,17 +130,13 @@ export default function Search(props) {
                     });
             }
         }
-        // else console.log("isDataValid: " + isDataValid)
-
     }
 
     var handleInputChange = (event, { newValue }) => {
         const inputValue = typeof newValue === 'string' ? newValue : event.target.value;
-        // console.log("input value" + inputValue);
         setTickerName(inputValue);
         setClick(false);
         setIsSuggestionSet(false);
-
     }
 
     const handleSubmit = (event) => {
@@ -170,8 +156,6 @@ export default function Search(props) {
                 });
             axios.get(`http://localhost:3000/summary-charts?ticker_name=${ticker_name}`)
                 .then(response => {
-                    // console.log("############################")
-                    // console.log(response.data);
                     setSummaryChart(response.data);
                 })
                 .catch(error => {
@@ -179,8 +163,6 @@ export default function Search(props) {
                 });
             axios.get(`http://localhost:3000/charts?ticker_name=${ticker_name}`)
                 .then(response => {
-                    // console.log("############################")
-                    // console.log(JSON.stringify(response.data));
                     setChartsInfo(response.data);
                 })
                 .catch(error => {
@@ -188,8 +170,6 @@ export default function Search(props) {
                 });
             axios.get(`http://localhost:3000/insights?ticker_name=${ticker_name}`)
                 .then(response => {
-                    // console.log("############################")
-                    // console.log(JSON.stringify(response.data));
                     setInsightsInfo(response.data);
                 })
                 .catch(error => {
@@ -218,32 +198,32 @@ export default function Search(props) {
         navigate("/search/home");
         setHide(true);
     }
-    useEffect(() => {
-        // Set up a timer to refresh the page every 15 seconds
-        const timer = setInterval(() => {
-            setHide(false);
-            if(ticker_name !== ""){
-                // navigate(`/search/${ticker_name}`);
-                console.log("ticker name in callbackend = " + ticker_name)
-                console.log("i clicked")
-    
-                if (ticker_name !== "") {
-                    console.log("ticker_name: " + ticker_name)
-                    axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
-                        .then(response => {
-                            setSummaryInfo(response.data);
-                        })
-                        .catch(error => {
-                            console.error('An error occurred:', error);
-                        });
-                }
-    
-            }
-        }, 15000);
-    
-        // Clean up the timer when the component is unmounted
-        return () => clearInterval(timer);
-    }, [ticker_name]); // Include ticker_name in the dependency array
+    // useEffect(() => {
+    //     // Set up a timer to refresh the page every 15 seconds
+    //     const timer = setInterval(() => {
+    //         setHide(false);
+    //         if (ticker_name !== "") {
+    //             // navigate(`/search/${ticker_name}`);
+    //             console.log("ticker name in callbackend = " + ticker_name)
+    //             console.log("i clicked")
+
+    //             if (ticker_name !== "") {
+    //                 console.log("ticker_name: " + ticker_name)
+    //                 axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
+    //                     .then(response => {
+    //                         setSummaryInfo(response.data);
+    //                     })
+    //                     .catch(error => {
+    //                         console.error('An error occurred:', error);
+    //                     });
+    //             }
+
+    //         }
+    //     }, 15000);
+
+    //     // Clean up the timer when the component is unmounted
+    //     return () => clearInterval(timer);
+    // }, [ticker_name]); // Include ticker_name in the dependency array
     return (
         <>
             <br />
@@ -252,7 +232,6 @@ export default function Search(props) {
             <Container className="d-flex" style={{ borderRadius: '25px', border: 'blue solid 1px', padding: '6px', width: '33%', position: 'relative' }}>
                 <Form style={{ width: "100%" }} onSubmit={handleSubmit}>
                     <Form.Group>
-                        {/* <Form.Control onChange={handleInputChange} id="ticker_name" style={{ border: 'none' }} type="text" placeholder="Enter stock ticker symbol" /> */}
                         <Autosuggest
                             theme={{
                                 suggestionsContainer: {
@@ -264,9 +243,8 @@ export default function Search(props) {
                                     padding: '10px',
                                 },
                                 suggestionsList: {
-                                    listStyleType: 'none', // This line should remove the dot
+                                    listStyleType: 'none',
                                     paddingLeft: '0'
-                                    // fontWeight: '600',
                                 }
                             }}
                             renderSuggestionsContainer={({ containerProps, children, query }) => {
@@ -350,15 +328,11 @@ export default function Search(props) {
                 <svg type="button" onClick={clearAll} style={{ marginTop: '8px' }} className="mx-3 bi bi-x-lg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                 </svg>
-                {/* <br/><br/><br/><br/><br/><br/><br/>
-                <p></p> */}
             </Container>
             <br />
             <CompanyInfo hide={hide} info={summary_info} ticker_name={ticker_name} dataValid={dataValid} click={click} isLoading={isLoading} />
-            {/* <p>{company_info.peers}</p> */}
             <br />
             <Tabs hide={hide} info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={dataValid} />
-            {/* <Summary news={news_info}/> */}
 
         </>
     )

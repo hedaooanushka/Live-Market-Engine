@@ -141,7 +141,7 @@ export default function Portfolio() {
                                         <div className='col-2 mx-3'>
                                             <h2>{item.ticker}</h2>
                                         </div>
-                                        <div className='col-2 ms-0' style={{ marginTop: '6px' }}>
+                                        <div className='col-8 ms-0' style={{ marginTop: '6px' }}>
                                             <h4 style={{ color: "#555a5a" }}>{item.company}</h4>
                                         </div>
                                     </div>
