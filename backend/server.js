@@ -222,7 +222,7 @@ async function run() {
                     const peers = results[2].data;
                     const marketStatus = results[3].data;
                     lastDayClosed = results[1].data.t;
-                    console.log("last day closed = "+JSON.stringify(results[1].data.t))
+                    console.log("last day closed = " + JSON.stringify(results[1].data.t))
 
                     res.json({ profile: profile, latest_price: latestPrice, peers: peers, marketStatus: marketStatus });
                     // console.log(latestPrice)
@@ -241,6 +241,7 @@ async function run() {
             axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker_name}&token=${finnhub_API_KEY}`)
                 .then((result) => {
                     const status = result.data;
+                    console.log(status)
                     // console.log(summary_chart)
                     res.json(status);
                 })
