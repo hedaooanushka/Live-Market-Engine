@@ -7,10 +7,11 @@ export default function Watchlist() {
     const [positive, setPositive] = useState(false);
     const [emptyResponse, setEmptyResponse] = useState(false);
     const navigate = useNavigate();
-
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
+            setIsLoading(true);
             const result = await axios.get('http://localhost:3000/watchlist');
             const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
             console.log("Data = ", JSON.stringify(result.data));
@@ -31,6 +32,7 @@ export default function Watchlist() {
                 setPrices(prices); // Store the prices as an array
                 console.log("Prices = ", JSON.stringify(prices));
             }
+            setIsLoading(false);
         };
         fetchData();
 
@@ -60,7 +62,12 @@ export default function Watchlist() {
                     Currently you don't have any stock in your watchlist.
 
                 </div>)}
-                {data.map((item, index) => {
+                {isLoading && (<div>
+                    <div className="d-flex justify-content-center">
+                        <div className="spinner-border" role="status"></div>
+                    </div>
+                </div>)}
+                {!isLoading && data.map((item, index) => {
                     const price = prices[index];
                     console.log("card price = " + price)
                     return (

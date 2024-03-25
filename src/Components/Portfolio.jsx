@@ -16,6 +16,8 @@ export default function Portfolio() {
     const [successBuyMessage, setSuccessBuyMessage] = useState(false);
     const [successSellMessage, setSuccessSellMessage] = useState(false);
     const [emptyResponse, setEmptyResponse] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [color, setColor] = useState('green');
     const toggleBuyModal = () => {
         setShowBuyModal(!showBuyModal);
 
@@ -36,6 +38,7 @@ export default function Portfolio() {
 
     useEffect(() => {
         const fetchData = async () => {
+            setIsLoading(true)
             const result = await axios.get('http://localhost:3000/portfolio');
 
             console.log("Data == ", JSON.stringify(result.data));
@@ -68,6 +71,7 @@ export default function Portfolio() {
                 const prices = await Promise.all(pricePromises);
                 setPrices(prices); // Store the prices as an array
             }
+            setIsLoading(false);
         };
 
         fetchData();
@@ -92,7 +96,7 @@ export default function Portfolio() {
         console.log("successBuyMessage = ", successBuyMessage)
     }, [successBuyMessage])
     return (
-        <div style={{ maxHeight: '80vh', overflow: 'auto' }}>
+        <div>
             <div className='d-flex justify-content-center align-items-center'>
                 {successBuyMessage && (
                     <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
@@ -121,12 +125,18 @@ export default function Portfolio() {
                 )}
 
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: "70%", marginTop: "5%", marginLeft: 'auto', marginRight: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: "70%", marginTop: "5%", marginLeft: 'auto', marginRight: 'auto', marginBottom: '25%' }}>
                 < div className="container-fluid"  >
-                    <div className="row">
-                        <div className="col-12">
-                            <h1>My Portfolio</h1>
+                    <div className="col-12">
+                        <h1>My Portfolio</h1>
+                    </div>
+                    {isLoading && (<div>
+                        <div className="d-flex justify-content-center">
+                            <div className="spinner-border" role="status"></div>
                         </div>
+                    </div>)}
+                    {!isLoading && <div className="row">
+
                         <div className="col-12">
                             <h3 style={{ color: "#323232" }}>Money in Wallet : ${currentBalance ? (currentBalance).toFixed(2) : '0.00'}</h3>
                         </div>
@@ -135,6 +145,7 @@ export default function Portfolio() {
 
                         </div>)}
                         {data?.map((item, index) => (
+
                             <div className="col-12 mt-3" key={index} style={{ minWidth: '500px' }}>
                                 <div className='container-fluid' style={{ backgroundColor: "#f5f5f5", padding: '0px', border: 'solid 1px', borderRadius: '7px' }}>
                                     <div className='row'>
@@ -157,8 +168,21 @@ export default function Portfolio() {
                                             <div className='col-4'>
                                                 <h5>Change:</h5>
                                             </div>
-                                            <div className='col-2'>
-                                                <h5>{(item.price / item.quantity - prices[index]?.price).toFixed(2)}</h5>
+                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : 'green' }}>
+                                                <div className='row'>
+                                                    <div className='col-1' >
+                                                        {prices[index]?.price - (item.price / item.quantity) >= 0 ?
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                                                <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                                            </svg> : <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                                                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                                            </svg>
+                                                        }
+                                                    </div>
+                                                    <div className='col-1' >
+                                                        <h5>{(prices[index]?.price - (item.price / item.quantity)).toFixed(2)}</h5>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         {/* Similar changes for other rows */}
@@ -172,7 +196,7 @@ export default function Portfolio() {
                                             <div className='col-4'>
                                                 <h5>Current Price:</h5>
                                             </div>
-                                            <div className='col-2'>
+                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : 'green' }}>
                                                 <h5>{prices[index]?.price}</h5>
                                             </div>
                                         </div>
@@ -186,7 +210,7 @@ export default function Portfolio() {
                                             <div className='col-4'>
                                                 <h5>Market Value:</h5>
                                             </div>
-                                            <div className='col-2'>
+                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : 'green' }}>
                                                 <h5>{(prices[index]?.price * item.quantity).toFixed(2)}</h5>
                                             </div>
                                         </div>
@@ -203,7 +227,7 @@ export default function Portfolio() {
                                 <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
                             </div>
                         ))}
-                    </div>
+                    </div>}
 
                 </div>
             </div>

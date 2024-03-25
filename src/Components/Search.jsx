@@ -11,6 +11,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 
 
+
 export default function Search(props) {
     // console.log(props.ticker_name)
     // let url = useLocation().pathname;
@@ -20,9 +21,10 @@ export default function Search(props) {
 
     // console.log("url = " + location);
     // console.log("endsWithHome = " + endsWithHome);
-
-
     let cancelTokenSource = axios.CancelToken.source();
+    let myData = JSON.parse(localStorage.getItem('myData'));
+
+
     const [ticker_name, setTickerName] = useState("");
     const [summary_info, setSummaryInfo] = useState("default");
     const [summary_chart, setSummaryChart] = useState({ results: [] });
@@ -43,13 +45,22 @@ export default function Search(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (props?.ticker_name) {
-            setTickerName(props?.ticker_name);
+        if (myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
+            console.log("myData = ", myData);
+            console.log("ticker_name = ", myData.ticker_name);
+            console.log("Normal ticker_name = ", ticker_name )
+            setTickerName(myData.ticker_name);
+            setSummaryInfo(myData.summary_info);
+            setSummaryChart(myData.summary_chart);
+            setNewsInfo(myData.news_info);
+            setChartsInfo(myData.charts_info);
+            setInsightsInfo(myData.insights_info);
+            setDataValid(true);
+            setAutoSuggestLoader(false);
+            setIsSuggestionSet(false)
 
-            console.log("new ticker" + ticker_name)
-            callBackend();
         }
-    })
+    }, []);
 
 
 
@@ -180,6 +191,7 @@ export default function Search(props) {
 
 
     useEffect(() => {
+
         const path = window.location.pathname;
         setUrl(path);
         console.log(path)
@@ -191,39 +203,62 @@ export default function Search(props) {
             setTickerName(storedTickerName);
             callBackend(storedTickerName);
         }
+        // else {
+        //     setTickerName("")
+        // }
     }, [window.location.pathname])
 
     function clearAll() {
-        setTickerName("");
         navigate("/search/home");
+        setTickerName("");
         setHide(true);
     }
-    // useEffect(() => {
-    //     // Set up a timer to refresh the page every 15 seconds
-    //     const timer = setInterval(() => {
-    //         setHide(false);
-    //         if (ticker_name !== "") {
-    //             // navigate(`/search/${ticker_name}`);
-    //             console.log("ticker name in callbackend = " + ticker_name)
-    //             console.log("i clicked")
+    useEffect(() => {
+        // Set up a timer to refresh the page every 15 seconds
+        const timer = setInterval(() => {
 
-    //             if (ticker_name !== "") {
-    //                 console.log("ticker_name: " + ticker_name)
-    //                 axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
-    //                     .then(response => {
-    //                         setSummaryInfo(response.data);
-    //                     })
-    //                     .catch(error => {
-    //                         console.error('An error occurred:', error);
-    //                     });
-    //             }
+            console.log("=====================================")
+            console.log("hide is set to false, and the actual is = " + hide);
+            console.log("ticker_name = " + ticker_name);
+            console.log("pathname = " + window.location.pathname);
+            console.log("=====================================")
+            if (ticker_name && window.location.pathname !== "/search/home") {
+                setHide(false);
+                // navigate(`/search/${ticker_name}`);
+                console.log("ticker name in callbackend = " + ticker_name)
+                console.log("i clicked")
+                
+                if (ticker_name !== "") {
+                    console.log("ticker_name: " + ticker_name)
+                    axios.get(`http://localhost:3000/current_stock_price?ticker_name=${ticker_name}`)
+                        .then(response => {
+                            let last_summary = summary_info;
+                            last_summary.latest_price = response.data;
+                            console.log("new response = ", response.data);
+                            console.log("new summary = ", last_summary);
+                            setSummaryInfo(last_summary);
+                            console.log("new summary = ", summary_info);
+                        })
+                        .catch(error => {
+                            console.error('An error occurred:', error);
+                        });
+                }
 
-    //         }
-    //     }, 15000);
+            }
+        }, 15000);
 
-    //     // Clean up the timer when the component is unmounted
-    //     return () => clearInterval(timer);
-    // }, [ticker_name]); // Include ticker_name in the dependency array
+        // Clean up the timer when the component is unmounted
+        return () => clearInterval(timer);
+    }, [ticker_name]); // Include ticker_name in the dependency array
+    // Save data to local storage
+    // const [ticker_name, setTickerName] = useState("");
+    // const [summary_info, setSummaryInfo] = useState("default");
+    // const [summary_chart, setSummaryChart] = useState({ results: [] });
+    // const [news_info, setNewsInfo] = useState([]);
+    // const [charts_info, setChartsInfo] = useState({ results: [] });
+    if (ticker_name && news_info.length > 0 && summary_info !== "default") {
+        localStorage.setItem('myData', JSON.stringify({ ticker_name, summary_info, summary_chart, news_info, charts_info, insights_info }));
+    }
     return (
         <>
             <br />
@@ -330,10 +365,11 @@ export default function Search(props) {
                 </svg>
             </Container>
             <br />
-            <CompanyInfo hide={hide} info={summary_info} ticker_name={ticker_name} dataValid={dataValid} click={click} isLoading={isLoading} />
-            <br />
-            <Tabs hide={hide} info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={dataValid} />
-
+            {ticker_name && <div>
+                <CompanyInfo hide={hide} info={summary_info} ticker_name={ticker_name} dataValid={dataValid} click={click} isLoading={isLoading} />
+                <br />
+                <Tabs hide={hide} info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={dataValid} />
+            </div>}
         </>
     )
 }

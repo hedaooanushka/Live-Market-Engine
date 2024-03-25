@@ -7,6 +7,7 @@ import SellModal from './SellModal.jsx'
 
 
 
+
 export default function CompanyInfo(props) {
     // console.log("isdatavalid = " + props.dataValid)
     // console.log("isClick = " + props.click)
@@ -16,6 +17,7 @@ export default function CompanyInfo(props) {
     // console.log("isLoading = " + props?.isLoading)
     // const [doneLoading, setDoneLoading] = useState(false);
     console.log("hide = " + props.hide)
+
     if ((props?.ticker_name === "default" && props?.dataValid === false) || props.hide) {
         return (
             <></>
@@ -61,7 +63,7 @@ export default function CompanyInfo(props) {
         //         ('0' + date.getSeconds()).slice(-2);
         //     return formattedDate;
         // }
-
+        console.log("ticker_name in company info = " + props?.ticker_name)
         const currentDate = () => {
             const now = new Date();
             const year = now.getFullYear();
@@ -78,7 +80,19 @@ export default function CompanyInfo(props) {
 
             return currentDateTime
         }
+        const [currentTime, setCurrentTime] = useState(currentDate());
+        useEffect(() => {
+            // Set up a timer to refresh the page every 15 seconds
+            const timer = setInterval(() => {
 
+                setCurrentTime(currentDate());
+
+
+            }, 15000);
+
+            // Clean up the timer when the component is unmounted
+            return () => clearInterval(timer);
+        }, [currentTime]);
         // t converted to actual format
         const unixTimestamp = props?.info?.latest_price?.t;
         const date = new Date(unixTimestamp * 1000);
@@ -186,18 +200,18 @@ export default function CompanyInfo(props) {
                 });
 
             //setTimeout(() => {
-                axios.get(`http://localhost:3000/watchlist`).then(response => {
-                    const watchlist = response.data;
-                    console.log("watchlist = " + JSON.stringify(watchlist));
-                    for (let i = 0; i < watchlist.length; i++) {
-                        if (watchlist[i].ticker.toLowerCase() === props?.ticker_name.toLowerCase()) {
-                            setIsStarSelected(true);
-                            return;
-                        }
+            axios.get(`http://localhost:3000/watchlist`).then(response => {
+                const watchlist = response.data;
+                console.log("watchlist = " + JSON.stringify(watchlist));
+                for (let i = 0; i < watchlist.length; i++) {
+                    if (watchlist[i].ticker.toLowerCase() === props?.ticker_name.toLowerCase()) {
+                        setIsStarSelected(true);
+                        return;
                     }
-                }).catch(error => {
-                    console.error('An error occurred:', error);
-                });
+                }
+            }).catch(error => {
+                console.error('An error occurred:', error);
+            });
             //}, 2000); // 2000 milliseconds = 2 seconds
         }, [])
 
@@ -313,7 +327,7 @@ export default function CompanyInfo(props) {
                         }
 
                         <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d} ({props?.info?.latest_price?.dp}%)</span> <br />
-                        <span style={{ fontSize: '13px' }}> {currentDate()}</span>
+                        <span style={{ fontSize: '13px' }}> {currentTime}</span>
                     </div>
                 </div>
                 <div className="container" style={{ textAlign: 'center' }}>

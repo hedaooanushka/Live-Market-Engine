@@ -68,7 +68,7 @@ export default function SellModal(props) {
     return (
         <>
             {/* SELL MODAL */}
-            <Modal className="my-modal" show={props?.showSellModal} onHide={props?.toggleSellModal} >
+            <Modal  show={props?.showSellModal} onHide={props?.toggleSellModal} >
                 <Modal.Dialog style={{ width: '100%', height: '100%' }}>
                     <Modal.Header closeButton>
                         <Modal.Title>{props?.ticker}</Modal.Title>

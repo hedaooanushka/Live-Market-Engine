@@ -43,7 +43,7 @@ export default function BuyModal(props) {
         <>
             {/* BUY MODAL */}
            
-            <Modal className="my-modal" show={props?.showBuyModal} onHide={props?.toggleBuyModal} >
+            <Modal show={props?.showBuyModal} onHide={props?.toggleBuyModal} >
                 <Modal.Dialog style={{ width: '100%', height: '100%' }}>
                     <Modal.Header closeButton>
                         <Modal.Title>{props?.ticker}</Modal.Title>
