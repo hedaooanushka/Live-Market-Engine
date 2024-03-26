@@ -61,8 +61,15 @@
 }
 
 
-/* MODAL */
-/* .custom-modal{
-    width: 1400px;
-    height: 10px;
-} */
+
+.my-modal .modal-dialog {
+    max-width: auto !important;
+    margin: auto !important;
+    padding: 0 !important;
+    
+}
+.my-modal .modal-dialog .modal-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+}
