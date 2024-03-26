@@ -40,7 +40,7 @@ export default function Charts(props) {
                 alignTicks: false,
             },
             title: {
-                text: `${props?.info?.profile?.ticker} Historical`
+                text: `${props?.ticker_name} Historical`
             },
             subtitle: {
                 text: `With SMA and Volume by Price technical indicators`
@@ -65,7 +65,7 @@ export default function Charts(props) {
             },
 
             rangeSelector: {
-                selected: 1,
+                selected: 2,
                 buttons: [{
                     type: 'month',
                     count: 1,
@@ -98,7 +98,7 @@ export default function Charts(props) {
             },
             yAxis: [{
                 title: {
-                    text: 'Stock Price'
+                    text: 'OHLC'
                 },
                 labels: {
                     align: 'right',

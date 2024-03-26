@@ -60,7 +60,7 @@ export default function Tabs(props) {
 
 
                 {/* CHARTS TAB */}
-                <Charts toggle={toggle} data={props.summary_chart} charts={props.charts} info={props.info}/>
+                <Charts toggle={toggle} data={props.summary_chart} charts={props.charts} info={props.info} ticker_name={props?.ticker_name}/>
 
                 {/* INSIGHTS TAB */}
                 <Insights toggle={toggle} insights={props.insights} info={props.info}/>

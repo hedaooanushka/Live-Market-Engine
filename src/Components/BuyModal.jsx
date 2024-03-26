@@ -59,8 +59,8 @@ export default function BuyModal(props) {
                         </Form>
                         {showAlert && <p style={{ color: 'red' }}>Not enough money in wallet!</p>}
                     </Modal.Body>
-                    <Modal.Footer>
-                        <p className="text-left">Total:{totalPrice}</p>
+                    <Modal.Footer classname="d-flex justify-content-between mt-0">
+                        <p className="start">Total:{totalPrice}</p>
                         <Button variant="success" onClick={callBackend} type='submit' disabled={totalPrice > props?.currentBalance}>Buy</Button>
                     </Modal.Footer>
                 </Modal.Dialog>

@@ -317,7 +317,7 @@ export default function CompanyInfo(props) {
                         <img src={props?.info?.profile?.logo} style={{ width: '100px' }}></img>
                     </div>
                     <div className="p-2 pe-5 bd-highlight">
-                        <span style={{ fontSize: '20px', fontWeight: 'bold', color: color }}>{props?.info?.latest_price?.c}</span> <br />
+                        <span style={{ fontSize: '20px', fontWeight: 'bold', color: color }}>{props?.info?.latest_price?.c.toFixed(2)}</span> <br />
                         {props?.info?.latest_price?.d > 0 ?
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
                                 <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
@@ -326,7 +326,7 @@ export default function CompanyInfo(props) {
                             </svg>
                         }
 
-                        <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d} ({props?.info?.latest_price?.dp}%)</span> <br />
+                        <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d.toFixed(2)} ({props?.info?.latest_price?.dp.toFixed(2)}%)</span> <br />
                         <span style={{ fontSize: '13px' }}> {currentTime}</span>
                     </div>
                 </div>

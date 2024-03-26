@@ -53,7 +53,7 @@ export default function Insights(props) {
         hold.push(recommendation[i]?.hold);
         sell.push(recommendation[i]?.sell);
         strongSell.push(recommendation[i]?.strongSell);
-        recom_period.push(recommendation[i]?.period);
+        recom_period.push(recommendation[i]?.period.slice(0, -3));
     }
     const xAxisEps = eps.map((item) => ({
         period: item.period,
@@ -66,10 +66,10 @@ export default function Insights(props) {
 
 
     const recommendationOptions = {
-        
+
         chart: {
             type: 'column',
-            backgroundColor: '#eee',
+            backgroundColor: '#eee'
         },
         title: {
             text: 'Recommendation Trends'
@@ -88,7 +88,14 @@ export default function Insights(props) {
             }
         },
         xAxis: {
-            categories: ['Strong Buy', 'Buy', 'Hold', 'Sell', 'Strong Sell'],
+            // type: 'datetime',
+            // dateTimeLabelFormats: {
+            //     month: '%Y-%m' // Formats the date in an hour:minute format
+            // },
+            // labels: {
+            //     showLastLabel: true
+            // }
+            categories: recom_period
         },
         series: [{
             name: 'Strong Buy',
@@ -127,7 +134,7 @@ export default function Insights(props) {
             }
         },
         xAxis: {
-            categories: xAxisEps.map(item => `${item.period} Surprise: ${item.surprise}`)
+            categories: xAxisEps.map(item => `${item.period}       Surprise: ${item.surprise}`)
         },
         series: [{
             data: actual_eps,
@@ -155,18 +162,18 @@ export default function Insights(props) {
                     <tbody>
                         <tr>
                             <th>Total</th>
-                            <td>{mspr_total}</td>
-                            <td>{change_total}</td>
+                            <td>{mspr_total.toFixed(2)}</td>
+                            <td>{change_total.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <th>Positvie</th>
-                            <td>{mspr_positive}</td>
-                            <td>{change_positive}</td>
+                            <td>{mspr_positive.toFixed(2)}</td>
+                            <td>{change_positive.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <th> Negative</th>
-                            <td >{mspr_negative}</td>
-                            <td> {change_negative}</td>
+                            <td >{mspr_negative.toFixed(2)}</td>
+                            <td> {change_negative.toFixed(2)}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -3,7 +3,7 @@ import SmallChart from "./SmallChart"
 // import Search, { callBackend } from '../Components/Search';
 // import Search from '../Components/Search.jsx';
 import Search from './Search.jsx';
-import {  useState } from "react";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 // import Search from '../Components/Search.jsx';
 
@@ -41,21 +41,84 @@ export default function Summary(props) {
     // SUMMARY-CHARTS
     let xaxis = []
     const data = props?.summary_chart?.results;
-    if (!data) {
-        return <></>;
+    // if (!data) {
+    //     return <></>;
+    // }
+    console.log("chartssssss data = "+JSON.stringify(data))
+    if (data) {
+        for (let i = 0; i < data.length; i++) {
+            xaxis.push(data[i].c)
+        }
     }
-    for (let i = 0; i < data.length; i++) {
-        xaxis.push(data[i].c)
-    }
-    let options = {
+    // let options = {
+    //     title: {
+    //         text: 'Hourly Price Variation'
+    //     },
+    //     xAxis: {
+    //         type: 'datetime',
+    //         dateTimeLabelFormats: {hour:'%H:%M' },// don't display the dummy year
+            
+
+    //     },
+    //     series: [{
+    //         data: xaxis,
+    //         type: 'spline'
+    //     }]
+    // }
+
+    const options = {
         title: {
-            text: 'Hourly Price Variation'
+          text: `${props?.info?.profile?.ticker} Hourly Price Variation`
+        },
+        chart: {
+          backgroundColor: '#f0f0f0' // Light gray background
+        },
+        xAxis: {
+          type: 'datetime',
+          dateTimeLabelFormats: {
+            hour: '%H:%M' // Formats the date in an hour:minute format
+          },
+          labels: {
+            showLastLabel: true
+          }
+        },
+        yAxis: {
+          title: {
+            text: ''
+          },
+          opposite: true, // Puts the yAxis on the right side
+          labels: {
+            align: 'left', // Aligns labels to the left side of the axis
+            x: -20, // Positions the labels on the inside of the chart area
+            y: -5
+          }
+        },
+        plotOptions: {
+            line: {
+              marker: {
+                enabled: false, // Enables the data point markers
+                radius: 3 // Adjusts the size of the markers
+              },
+              lineWidth: 2 // Sets the width of the line
+            }
+        },
+        legend: {
+            enabled: false // Hides the legend
+        },
+        tooltip: {
+            headerFormat: '', 
+            pointFormat: '{series.name}: <b>{point.y}</b>',
+            valueDecimals: 2
         },
         series: [{
-            data: xaxis,
-            type: 'spline'
+          name: props?.info?.profile?.ticker,
+          data: xaxis,
+          pointInterval: 3 * 3600 * 1000,
+        //   color: marketStatus === 'Open' ? 'green' : 'red'
+          color: 'red'
         }]
-    }
+    };
+
     return (
         <div className={props.toggle === 1 ? "show-content" : "content"}>
             <div className="d-flex flex-row ms-5">

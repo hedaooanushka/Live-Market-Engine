@@ -35,8 +35,71 @@ const client = new MongoClient(uri, {
 });
 
 client.connect();
-let lastDayClosed;
+let last;
 
+function getCurrentTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = ('0' + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
+    const day = ('0' + now.getDate()).slice(-2);
+    const dayIndex = now.getDay();
+
+    const hours = ('0' + now.getHours()).slice(-2);
+    const minutes = ('0' + now.getMinutes()).slice(-2);
+    const seconds = ('0' + now.getSeconds()).slice(-2);
+
+    const currentDate = `${year}-${month}-${day}`;
+    const currentTime = `${hours}:${minutes}:${seconds}`;
+    const currentDateTime = `${currentDate} ${currentTime}`;
+    return {
+        year: year,
+        month: month,
+        day: day,
+        dayIndex: dayIndex,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        Date: currentDate,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        Date: currentDate,
+        Time: currentTime,
+        DateTime: currentDateTime
+    }
+}
+
+function unixToOriginal(unixTimestamp) {
+    const now = new Date(unixTimestamp * 1000);
+    const year = now.getFullYear();
+    const month = ('0' + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
+    const day = ('0' + now.getDate()).slice(-2);
+    const dayIndex = now.getDay();
+
+    const hours = ('0' + now.getHours()).slice(-2);
+    const minutes = ('0' + now.getMinutes()).slice(-2);
+    const seconds = ('0' + now.getSeconds()).slice(-2);
+
+    const currentDate = `${year}-${month}-${day}`;
+    const currentTime = `${hours}:${minutes}:${seconds}`;
+    const currentDateTime = `${currentDate} ${currentTime}`;
+    return {
+        year: year,
+        month: month,
+        day: day,
+        dayIndex: dayIndex,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        Date: currentDate,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        Date: currentDate,
+        Time: currentTime,
+        DateTime: currentDateTime
+    }
+}
 
 async function run() {
     try {
@@ -221,8 +284,7 @@ async function run() {
                     const latestPrice = results[1].data;
                     const peers = results[2].data;
                     const marketStatus = results[3].data;
-                    lastDayClosed = results[1].data.t;
-                    console.log("last day closed = " + JSON.stringify(results[1].data.t))
+                    last = unixToOriginal(results[1].data.t);
 
                     res.json({ profile: profile, latest_price: latestPrice, peers: peers, marketStatus: marketStatus });
                     // console.log(latestPrice)
@@ -236,12 +298,11 @@ async function run() {
         app.get('/current_stock_price', (req, res) => {
             const ticker_name = req.query.ticker_name.toUpperCase();
 
-
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
             axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker_name}&token=${finnhub_API_KEY}`)
                 .then((result) => {
                     const status = result.data;
-                    console.log(status)
+                    // console.log(status)
                     // console.log(summary_chart)
                     res.json(status);
                 })
@@ -252,28 +313,22 @@ async function run() {
         })
 
         app.get('/summary-charts', (req, res) => {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = ('0' + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
-            const day = ('0' + now.getDate()).slice(-2);
-
-            const hours = ('0' + now.getHours()).slice(-2);
-            const minutes = ('0' + now.getMinutes()).slice(-2);
-            const seconds = ('0' + now.getSeconds()).slice(-2);
-
-            const currentDate = `${year}-${month}-${day}`;
-            const currentTime = `${hours}:${minutes}:${seconds}`;
-            const currentDateTime = `${currentDate} ${currentTime}`;
-            console.log(currentDate)
+            const current = getCurrentTime();
+            // console.log("now = " + JSON.stringify(current))
+            // console.log("last = " + JSON.stringify(last))
 
             const ticker_name = req.query.ticker_name.toUpperCase();
-            const multiplier = 1
             const timespan = "hour"
-            const from_date = "2024-02-13"  // today's date - 1
-            const to_date = "2024-02-15"  // today's date
+            const to_date = current.Date
+            let from_date = new Date(to_date);
+            from_date.setDate(from_date.getDate() - 1);
+            from_date = from_date.toISOString().split('T')[0];
+            // console.log("from date =" + from_date)
+
+            // implement weekday logic
 
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
-            axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/${timespan}/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=${POLYGON_API_KEY}`)
+            axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/${timespan}/${from_date}/${to_date}?adjusted=true&sort=asc&limit=120&apiKey=${POLYGON_API_KEY}`)
                 .then((result) => {
                     const summary_chart = result.data;
                     // console.log(summary_chart)
@@ -288,20 +343,14 @@ async function run() {
         app.get("/news", (req, res) => {
             const ticker_name = req.query.ticker_name.toUpperCase();
 
-            const date = new Date();
-            let year = date.getFullYear();
-            let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
-            let day = ("0" + date.getDate()).slice(-2);
-            let formattedDate = `${year}-${month}-${day}`;
-            // console.log(formattedDate);
-            const to_date = formattedDate;
+            const current = getCurrentTime();
+            const to_date = current.Date;
 
-            date.setDate(date.getDate() - 7)
-            year = date.getFullYear();
-            month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
-            day = ("0" + date.getDate()).slice(-2);
-            formattedDate = `${year}-${month}-${day}`;
-            const from_date = formattedDate;
+            let from_date = new Date(to_date);
+            from_date.setDate(from_date.getDate() - 7);
+            from_date = from_date.toISOString().split('T')[0];
+            // console.log("from date =" + from_date)
+
 
             axios.get(`https://finnhub.io/api/v1/company-news?symbol=${ticker_name}&from=${from_date}&to=${to_date}&token=${finnhub_API_KEY}`)
                 .then((result) => {
@@ -318,23 +367,18 @@ async function run() {
         app.get("/charts", (req, res) => {
             const ticker_name = req.query.ticker_name.toUpperCase();
 
-            // const date = new Date();
-            // let year = date.getFullYear();
-            // let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
-            // let day = ("0" + date.getDate()).slice(-2);
-            // let formattedDate = `${year}-${ month }-${ day }`;
-            // console.log(formattedDate);
-            // const to_date = formattedDate;
+            const current = getCurrentTime();
+            // console.log("now = " + JSON.stringify(current))
+            // console.log("last = " + JSON.stringify(last))
 
-            // date.setDate(date.getDate()-7) 
-            // year = date.getFullYear();
-            // month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
-            // day = ("0" + date.getDate()).slice(-2);
-            // formattedDate = `${ year }-${ month }-${ day }`;
-            // const from_date = formattedDate;
+            const to_date = current.Date
+            let from_date = new Date(to_date);
+            from_date.setFullYear(from_date.getFullYear() - 2);
+            from_date = from_date.toISOString().split('T')[0];
+            // console.log("from date =" + from_date)
 
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2022-03-16/2024-03-17?adjusted=true&sort=asc&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
-            axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/day/2022-03-16/2024-03-17?adjusted=true&sort=asc&apiKey=${POLYGON_API_KEY}`)
+            axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/day/${from_date}/${to_date}?adjusted=true&sort=asc&apiKey=${POLYGON_API_KEY}`)
                 .then((result) => {
                     const big_chart = result.data;
                     // console.log(big_chart)

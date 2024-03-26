@@ -101,30 +101,29 @@ export default function Portfolio() {
                 {successBuyMessage && (
                     <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
                         {ticker.toUpperCase()} bought successfully
-                        <button
-                            type="button"
-                            className="btn-close"
+                        <div
+                            // type="button"
+                            // className="btn-close"
                             data-bs-dismiss="alert"
                             aria-label="Close"
-                            onClick={closeBuyMessage}
+                            // onClick={closeBuyMessage}
                         />
                     </div>
-
                 )}
                 {successSellMessage && (
                     <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
                         {ticker.toUpperCase()} sold successfully
-                        <button
-                            type="button"
-                            className="btn-close"
+                        <div
+                            // type="button"
+                            // className="btn-close"
                             data-bs-dismiss="alert"
                             aria-label="Close"
-                            onClick={closeSellMessage}
+                            // onClick={closeSellMessage}
                         />
                     </div>
                 )}
-
             </div>
+
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: "70%", marginTop: "5%", marginLeft: 'auto', marginRight: 'auto', marginBottom: '25%' }}>
                 < div className="container-fluid"  >
                     <div className="col-12">
@@ -168,15 +167,19 @@ export default function Portfolio() {
                                             <div className='col-4'>
                                                 <h5>Change:</h5>
                                             </div>
-                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : 'green' }}>
+                                            <div className='col-2' style={{color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black'}}>
                                                 <div className='row'>
                                                     <div className='col-1' >
-                                                        {prices[index]?.price - (item.price / item.quantity) >= 0 ?
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
-                                                                <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
-                                                            </svg> : <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
-                                                                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-                                                            </svg>
+                                                        {
+                                                            prices[index]?.price - (item.price / item.quantity) > 0 ? (
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                                                    <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                                                </svg>
+                                                            ) : prices[index]?.price - (item.price / item.quantity) < 0 ? (
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                                                </svg>
+                                                            ) : null
                                                         }
                                                     </div>
                                                     <div className='col-1' >
@@ -196,7 +199,7 @@ export default function Portfolio() {
                                             <div className='col-4'>
                                                 <h5>Current Price:</h5>
                                             </div>
-                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : 'green' }}>
+                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
                                                 <h5>{prices[index]?.price}</h5>
                                             </div>
                                         </div>
@@ -210,7 +213,7 @@ export default function Portfolio() {
                                             <div className='col-4'>
                                                 <h5>Market Value:</h5>
                                             </div>
-                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : 'green' }}>
+                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
                                                 <h5>{(prices[index]?.price * item.quantity).toFixed(2)}</h5>
                                             </div>
                                         </div>
