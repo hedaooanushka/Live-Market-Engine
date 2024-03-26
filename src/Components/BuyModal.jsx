@@ -29,10 +29,16 @@ export default function BuyModal(props) {
         console.log(props.info)
     }
 
+    const hide = (e) => {
+        e.preventDefault();
+        props.toggleBuyModal();
+    }
+
     const callBackend = () => {
         axios.post('http://localhost:3000/buy', { price: totalPrice, quantity: numStocks, ticker: props?.ticker, company: props?.company })
             .then((res) => {
                 props.toggleBuyModal();
+                props.toggleBuyMessage()
        
             }).catch((err) => {
                 console.log(err);
@@ -43,7 +49,7 @@ export default function BuyModal(props) {
         <>
             {/* BUY MODAL */}
            
-            <Modal show={props?.showBuyModal} onHide={props?.toggleBuyModal} >
+            <Modal show={props?.showBuyModal} onHide={props?.toggleBuyModal} className='my-modal'>
                 <Modal.Dialog style={{ width: '100%', height: '100%' }}>
                     <Modal.Header closeButton>
                         <Modal.Title>{props?.ticker}</Modal.Title>

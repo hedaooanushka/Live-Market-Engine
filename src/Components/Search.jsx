@@ -12,6 +12,10 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 
 
+
+
+
+
 export default function Search(props) {
     // console.log(props.ticker_name)
     // let url = useLocation().pathname;
@@ -22,7 +26,7 @@ export default function Search(props) {
     // console.log("url = " + location);
     // console.log("endsWithHome = " + endsWithHome);
     let cancelTokenSource = axios.CancelToken.source();
-    let myData = JSON.parse(localStorage.getItem('myData'));
+
 
 
     const [ticker_name, setTickerName] = useState("");
@@ -43,12 +47,12 @@ export default function Search(props) {
     const [hide, setHide] = useState(false);
     const getSuggestionValue = suggestion => suggestion.displaySymbol;
     const navigate = useNavigate();
-
+    const myData = JSON.parse(localStorage.getItem('myData'));
     useEffect(() => {
+        console.log("myData = ", myData);
         if (myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
-            console.log("myData = ", myData);
             console.log("ticker_name = ", myData.ticker_name);
-            console.log("Normal ticker_name = ", ticker_name )
+            console.log("Normal ticker_name = ", ticker_name)
             setTickerName(myData.ticker_name);
             setSummaryInfo(myData.summary_info);
             setSummaryChart(myData.summary_chart);
@@ -76,7 +80,9 @@ export default function Search(props) {
     const onSuggestionSelected = (event, { suggestion }) => {
         event.preventDefault();
         setIsSuggestionSet(true);
-        console.log("Selected: " + suggestion.displaySymbol)
+        console.log("Selected: " + JSON.stringify(suggestion))
+        console.log("Selected keys: " + Object.keys(suggestion))
+        console.log("Selected symbol: " + suggestion.displaySymbol)
         setTickerName(suggestion.displaySymbol);
         setIsSuggestionSelected(true);
 
@@ -84,7 +90,7 @@ export default function Search(props) {
     useEffect(() => {
         if (isSuggestionSet) {
             // setIsValid(false);
-            callBackend();
+            callBackend(ticker_name);
         }
     }, [isSuggestionSet]);
 
@@ -92,55 +98,31 @@ export default function Search(props) {
 
     var callBackend = (storedTickerName) => {
         setHide(false);
-        if (props?.ticker_name) setTickerName(props?.ticker_name)
-        if (storedTickerName) {
-            navigate(`/search/${storedTickerName}`);
-            console.log("ticker name in callbackend = " + storedTickerName)
-            console.log("i clicked")
-            setClick(true);
-            setIsLoading(true);
-            setDataValid(false);
-            if (storedTickerName !== "") {
-                console.log("ticker_name: " + storedTickerName)
-                axios.get(`http://localhost:3000/summary?ticker_name=${storedTickerName}`)
-                    .then(response => {
-                        setSummaryInfo(response.data);
-                        setIsLoading(false);
-                        if (response.data.peers.length > 0) {
-                            setDataValid(true);
-                        }
-                        else {
-                            setDataValid(false);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('An error occurred:', error);
-                    });
-            }
+        console.log("In storedTickerName = ", storedTickerName)
+        navigate(`/search/${storedTickerName}`);
+        console.log("ticker name in callbackend = " + storedTickerName)
+        console.log("i clicked")
+        setClick(true);
+        setIsLoading(true);
+        setDataValid(false);
+        if (storedTickerName !== "") {
+            console.log("ticker_name: " + storedTickerName)
+            axios.get(`http://localhost:3000/summary?ticker_name=${storedTickerName}`)
+                .then(response => {
+                    setSummaryInfo(response.data);
+                    setIsLoading(false);
+                    if (response.data.peers.length > 0) {
+                        setDataValid(true);
+                    }
+                    else {
+                        setDataValid(false);
+                    }
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
         }
-        else {
-            navigate(`/search/${ticker_name}`);
-            setClick(true);
-            setIsLoading(true);
-            setDataValid(false);
-            if (ticker_name !== "") {
-                console.log("ticker_name: " + ticker_name)
-                axios.get(`http://localhost:3000/summary?ticker_name=${ticker_name}`)
-                    .then(response => {
-                        setSummaryInfo(response.data);
-                        setIsLoading(false);
-                        if (response.data.peers.length > 0) {
-                            setDataValid(true);
-                        }
-                        else {
-                            setDataValid(false);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('An error occurred:', error);
-                    });
-            }
-        }
+
     }
 
     var handleInputChange = (event, { newValue }) => {
@@ -153,13 +135,15 @@ export default function Search(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
         navigate(`/search/${ticker_name}`);
-        callBackend();
+        callBackend(ticker_name);
     };
 
     useEffect(() => {
         if (dataValid) {
+            let context = { ticker_name, summary_info, summary_chart, news_info, charts_info, insights_info}
             axios.get(`http://localhost:3000/news?ticker_name=${ticker_name}`)
                 .then(response => {
+                    context.news_info = response.data;
                     setNewsInfo(response.data);
                 })
                 .catch(error => {
@@ -168,6 +152,7 @@ export default function Search(props) {
             axios.get(`http://localhost:3000/summary-charts?ticker_name=${ticker_name}`)
                 .then(response => {
                     setSummaryChart(response.data);
+                    context.summary_chart = response.data;
                 })
                 .catch(error => {
                     console.error('An error occurred:', error);
@@ -175,6 +160,7 @@ export default function Search(props) {
             axios.get(`http://localhost:3000/charts?ticker_name=${ticker_name}`)
                 .then(response => {
                     setChartsInfo(response.data);
+                    context.charts_info = response.data;
                 })
                 .catch(error => {
                     console.error('An error occurred:', error);
@@ -182,10 +168,15 @@ export default function Search(props) {
             axios.get(`http://localhost:3000/insights?ticker_name=${ticker_name}`)
                 .then(response => {
                     setInsightsInfo(response.data);
+                    context.insights_info = response.data;
                 })
                 .catch(error => {
                     console.error('An error occurred:', error);
                 });
+
+            console.log("localStorage set")
+            localStorage.setItem('myData', JSON.stringify({ ...context}));
+
         }
     }, [dataValid]);
 
@@ -212,53 +203,54 @@ export default function Search(props) {
         navigate("/search/home");
         setTickerName("");
         setHide(true);
+        localStorage.setItem('myData', JSON.stringify({}));
     }
-    useEffect(() => {
-        // Set up a timer to refresh the page every 15 seconds
-        const timer = setInterval(() => {
+    // useEffect(() => {
+    //     // Set up a timer to refresh the page every 15 seconds
+    //     const timer = setInterval(() => {
 
-            console.log("=====================================")
-            console.log("hide is set to false, and the actual is = " + hide);
-            console.log("ticker_name = " + ticker_name);
-            console.log("pathname = " + window.location.pathname);
-            console.log("=====================================")
-            if (ticker_name && window.location.pathname !== "/search/home") {
-                setHide(false);
-                // navigate(`/search/${ticker_name}`);
-                console.log("ticker name in callbackend = " + ticker_name)
-                console.log("i clicked")
-                
-                if (ticker_name !== "") {
-                    console.log("ticker_name: " + ticker_name)
-                    axios.get(`http://localhost:3000/current_stock_price?ticker_name=${ticker_name}`)
-                        .then(response => {
-                            let last_summary = summary_info;
-                            last_summary.latest_price = response.data;
-                            console.log("new response = ", response.data);
-                            console.log("new summary = ", last_summary);
-                            setSummaryInfo(last_summary);
-                            console.log("new summary = ", summary_info);
-                        })
-                        .catch(error => {
-                            console.error('An error occurred:', error);
-                        });
-                }
+    //         console.log("=====================================")
+    //         console.log("hide is set to false, and the actual is = " + hide);
+    //         console.log("ticker_name = " + ticker_name);
+    //         console.log("pathname = " + window.location.pathname);
+    //         console.log("=====================================")
+    //         if (ticker_name && window.location.pathname !== "/search/home") {
+    //             setHide(false);
+    //             // navigate(`/search/${ticker_name}`);
+    //             console.log("ticker name in callbackend = " + ticker_name)
+    //             console.log("i clicked")
 
-            }
-        }, 15000);
+    //             if (ticker_name !== "") {
+    //                 console.log("ticker_name: " + ticker_name)
+    //                 axios.get(`http://localhost:3000/current_stock_price?ticker_name=${ticker_name}`)
+    //                     .then(response => {
+    //                         let last_summary = summary_info;
+    //                         last_summary.latest_price = response.data;
+    //                         console.log("new response = ", response.data);
+    //                         console.log("new summary = ", last_summary);
+    //                         setSummaryInfo(last_summary);
+    //                         console.log("new summary = ", summary_info);
+    //                     })
+    //                     .catch(error => {
+    //                         console.error('An error occurred:', error);
+    //                     });
+    //             }
 
-        // Clean up the timer when the component is unmounted
-        return () => clearInterval(timer);
-    }, [ticker_name]); // Include ticker_name in the dependency array
-    // Save data to local storage
-    // const [ticker_name, setTickerName] = useState("");
-    // const [summary_info, setSummaryInfo] = useState("default");
-    // const [summary_chart, setSummaryChart] = useState({ results: [] });
-    // const [news_info, setNewsInfo] = useState([]);
-    // const [charts_info, setChartsInfo] = useState({ results: [] });
-    if (ticker_name && news_info.length > 0 && summary_info !== "default") {
-        localStorage.setItem('myData', JSON.stringify({ ticker_name, summary_info, summary_chart, news_info, charts_info, insights_info }));
-    }
+    //         }
+    //     }, 15000);
+
+    //     // Clean up the timer when the component is unmounted
+    //     return () => clearInterval(timer);
+    // }, [ticker_name]); // Include ticker_name in the dependency array
+    // // Save data to local storage
+    // // const [ticker_name, setTickerName] = useState("");
+    // // const [summary_info, setSummaryInfo] = useState("default");
+    // // const [summary_chart, setSummaryChart] = useState({ results: [] });
+    // // const [news_info, setNewsInfo] = useState([]);
+    // // const [charts_info, setChartsInfo] = useState({ results: [] });
+    // if (ticker_name && news_info.length > 0 && summary_info !== "default") {
+    //     localStorage.setItem('myData', JSON.stringify({ ticker_name, summary_info, summary_chart, news_info, charts_info, insights_info }));
+    // }
     return (
         <>
             <br />
@@ -305,32 +297,32 @@ export default function Search(props) {
 
                                     if (value.length > 0) {
                                         // Set a delay before fetching the suggestions
-                                        // timeoutId = setTimeout(() => {
-                                        setAutoSuggestLoader(true);
-                                        setSuggestions([]);
-                                        // Cancel the previous request
-                                        cancelTokenSource.cancel();
+                                        timeoutId = setTimeout(() => {
+                                            setAutoSuggestLoader(true);
+                                            setSuggestions([]);
+                                            // Cancel the previous request
+                                            cancelTokenSource.cancel();
 
-                                        // Create a new CancelToken source
-                                        cancelTokenSource = axios.CancelToken.source();
+                                            // Create a new CancelToken source
+                                            cancelTokenSource = axios.CancelToken.source();
 
-                                        axios.get(`http://localhost:3000/autocomplete?query=${value}`, {
-                                            cancelToken: cancelTokenSource.token
-                                        }).then(response => {
-                                            const filteredSuggestions = response.data.filter(suggestion =>
-                                                suggestion.type === 'Common Stock' && !suggestion.symbol.includes('.')
-                                            );
-                                            setSuggestions(filteredSuggestions);
-                                            setAutoSuggestLoader(false);
-                                        }).catch(error => {
-                                            if (axios.isCancel(error)) {
-                                                console.log('Request canceled:', error.message);
-                                            } else {
-                                                console.error('Failed to fetch suggestions:', error);
+                                            axios.get(`http://localhost:3000/autocomplete?query=${value}`, {
+                                                cancelToken: cancelTokenSource.token
+                                            }).then(response => {
+                                                const filteredSuggestions = response.data.filter(suggestion =>
+                                                    suggestion.type === 'Common Stock' && !suggestion.symbol.includes('.')
+                                                );
+                                                setSuggestions(filteredSuggestions);
                                                 setAutoSuggestLoader(false);
-                                            }
-                                        });
-                                        // }, 100); // 300ms delay
+                                            }).catch(error => {
+                                                if (axios.isCancel(error)) {
+                                                    console.log('Request canceled:', error.message);
+                                                } else {
+                                                    console.error('Failed to fetch suggestions:', error);
+                                                    setAutoSuggestLoader(false);
+                                                }
+                                            });
+                                        }, 100); // 300ms delay
                                     } else {
                                         setSuggestions([]);
                                         setAutoSuggestLoader(false);
@@ -352,12 +344,12 @@ export default function Search(props) {
                                 placeholder: "Enter stock ticker symbol",
                                 value: ticker_name,
                                 onChange: handleInputChange,
-                                style: { ouline: 'none', border: '0px', width: '100%' }
+                                style: { outline: 'none', border: '0px', width: '100%' }
                             }}
                         />
                     </Form.Group>
                 </Form>
-                <svg type="button" onClick={callBackend} style={{ marginTop: '8px' }} className="ms-auto bi bi-search" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <svg type="button" onClick={() => { callBackend(ticker_name) }} style={{ marginTop: '8px' }} className="ms-auto bi bi-search" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                 </svg>
                 <svg type="button" onClick={clearAll} style={{ marginTop: '8px' }} className="mx-3 bi bi-x-lg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">

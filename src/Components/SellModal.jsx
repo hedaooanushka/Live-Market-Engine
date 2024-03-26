@@ -60,6 +60,7 @@ export default function SellModal(props) {
         axios.post('http://localhost:3000/sell', { price: totalPrice, quantity: numStocks, ticker: props?.ticker, company: props?.company })
             .then((res) => {
                 props.toggleSellModal();
+                props.toggleSellMessage();
             }).catch((err) => {
                 console.log(err);
             })
@@ -68,7 +69,7 @@ export default function SellModal(props) {
     return (
         <>
             {/* SELL MODAL */}
-            <Modal  show={props?.showSellModal} onHide={props?.toggleSellModal} >
+            <Modal  show={props?.showSellModal} onHide={props?.toggleSellModal} className='my-modal' >
                 <Modal.Dialog style={{ width: '100%', height: '100%' }}>
                     <Modal.Header closeButton>
                         <Modal.Title>{props?.ticker}</Modal.Title>

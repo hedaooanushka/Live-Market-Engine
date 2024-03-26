@@ -16,14 +16,14 @@ export default function CompanyInfo(props) {
     // console.log(props?.info?.marketStatus?.exchanges?.nasdaq)
     // console.log("isLoading = " + props?.isLoading)
     // const [doneLoading, setDoneLoading] = useState(false);
-    console.log("hide = " + props.hide)
+    // console.log("hide = " + props.hide)
 
-    if ((props?.ticker_name === "default" && props?.dataValid === false) || props.hide) {
+    if ((props?.ticker_name === "default" && props?.dataValid === false) || props?.hide) {
         return (
             <></>
         )
     }
-    else if (props?.ticker_name === "" && props?.dataValid === false && props.click === true) {
+    else if (props?.ticker_name === "" && props?.dataValid === false && props?.click === true) {
         return (
             <div className='d-flex justify-content-center align-items-center'>
                 <div className='alert alert-danger' role='alert' style={{ textAlign: 'center', width: '60%' }}>
@@ -32,7 +32,7 @@ export default function CompanyInfo(props) {
             </div>
         )
     }
-    else if (props?.isLoading === true && props?.ticker_name !== "" && props?.dataValid === false && props.click === true) {
+    else if (props?.isLoading === true && props?.ticker_name !== "" && props?.dataValid === false && props?.click === true) {
         return (
             <div>
                 <div className="d-flex justify-content-center">
@@ -41,7 +41,7 @@ export default function CompanyInfo(props) {
             </div>
         )
     }
-    else if (props?.isLoading === false && props?.ticker_name !== "" && props?.dataValid === false && props.click === true) {
+    else if (props?.isLoading === false && props?.ticker_name !== "" && props?.dataValid === false && props?.click === true) {
         return (
             <div className='d-flex justify-content-center align-items-center'>
                 <div className='alert alert-danger' role='alert' style={{ textAlign: 'center', width: '60%' }}>
@@ -50,7 +50,7 @@ export default function CompanyInfo(props) {
             </div>
         )
     }
-    else if (props.dataValid) {
+    else if (props?.dataValid) {
 
         // const lastClosedDate = () => {
         //     const unixTimestamp = props?.info?.latest_price?.t;
@@ -136,15 +136,35 @@ export default function CompanyInfo(props) {
         const toggleBuyModal = () => {
             setShowBuyModal(!showBuyModal);
             setReRender(!reRender);
-            setSuccessBuyMessage(!successBuyMessage);
         }
         const toggleSellModal = () => {
             setShowSellModal(!showSellModal);
             setReRender(!reRender);
+
+
+        }
+        const toggleBuyMessage = () => {
+            setSuccessBuyMessage(!successBuyMessage);
+            axios.get(`http://localhost:3000/portfolio`)
+                .then(response => {
+                    const investments = response.data.investments;
+                    console.log("investments = " + JSON.stringify(investments));
+                    for (let i = 0; i < investments.length; i++) {
+                        if (investments[i].ticker === props?.ticker_name.toUpperCase()) {
+                            setShowSellButton(true);
+                            return;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
+
+        }
+        const toggleSellMessage = () => {
             setSuccessSellMessage(!successSellMessage);
 
         }
-
         // const getValues = ()=>{
         //     axios.get(`http://localhost:3000/portfolio?ticker_name=${props?.ticker_name}`)
         //         .then(response => {
@@ -217,19 +237,31 @@ export default function CompanyInfo(props) {
 
 
         const handleStarClick = async () => {
+            console.log("star clicked, before changing the state = " + isStarSelected);
             setIsStarSelected(!isStarSelected);
+            console.log("star clicked, after changing the state = " + isStarSelected);
+            if (!isStarSelected) {
+                // console.log("item sent to handle star click = " + JSON.stringify(item))
+                // call the backend to add the ticker to the watchlist
 
-            // console.log("item sent to handle star click = " + JSON.stringify(item))
-            // call the backend to add the ticker to the watchlist
-
-            axios.post(`http://localhost:3000/watchlist`, { ticker: props?.ticker_name, name: props?.info?.profile?.name })
-                .then(response => {
-                    console.log("Added company = " + JSON.stringify(response))
-                })
-                .catch(error => {
-                    console.error('An error occurred:', error);
-                });
-            setShowAlert(true);
+                axios.post(`http://localhost:3000/watchlist`, { ticker: props?.ticker_name, name: props?.info?.profile?.name })
+                    .then(response => {
+                        console.log("Added company = " + JSON.stringify(response))
+                    })
+                    .catch(error => {
+                        console.error('An error occurred:', error);
+                    });
+                setShowAlert(true);
+            }
+            else {
+                axios.post('http://localhost:3000/deleteWatchlistItem', { ticker: props?.ticker_name })
+                    .then((res) => {
+                        console.log("Deleted")
+                        console.log("response ===", JSON.stringify(res.data))
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+            }
         };
 
 
@@ -258,7 +290,17 @@ export default function CompanyInfo(props) {
         const closeSellMessage = () => {
             setSuccessSellMessage(false);
         }
+        useEffect(() => {
+            if (showAlert || successBuyMessage || successSellMessage) {
+                const timer = setTimeout(() => {
+                    setShowAlert(false);
+                    setSuccessBuyMessage(false);
+                    setSuccessSellMessage(false);
+                }, 3000);
 
+                return () => clearTimeout(timer);
+            }
+        }, [showAlert, successBuyMessage, successSellMessage]);
         return (
             <><div key={reRender}>
                 <div className='d-flex justify-content-center align-items-center'>
@@ -309,8 +351,8 @@ export default function CompanyInfo(props) {
                         <div style={{ position: 'relative', top: '-15px' }}>
                             {showBuyButton && <Button className='me-2' onClick={() => { buy() }} variant="success">Buy</Button>}
                             {showSellButton && <Button variant="danger" onClick={() => { sell() }}>Sell</Button>}
-                            <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
-                            <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
+                            <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} toggleBuyMessage={toggleBuyMessage} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
+                            <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} toggleSellMessage={toggleSellMessage} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
                         </div>
                     </div>
                     <div className="pt-4 pe-5 bd-highlight">

@@ -20,62 +20,59 @@ export default function Portfolio() {
     const [color, setColor] = useState('green');
     const toggleBuyModal = () => {
         setShowBuyModal(!showBuyModal);
-
-        setSuccessBuyMessage(!successBuyMessage);
     }
     const toggleSellModal = () => {
         setShowSellModal(!showSellModal);
-
+    }
+    const toggleBuyMessage = () => {
+        setSuccessBuyMessage(!successBuyMessage);
+    }
+    const toggleSellMessage = () => {
         setSuccessSellMessage(!successSellMessage);
-
-    }
-    const closeBuyMessage = () => {
-        setSuccessBuyMessage(false);
-    }
-    const closeSellMessage = () => {
-        setSuccessSellMessage(false);
     }
 
     useEffect(() => {
+        if (!successBuyMessage && !successSellMessage) {
         const fetchData = async () => {
-            setIsLoading(true)
-            const result = await axios.get('http://localhost:3000/portfolio');
+                setIsLoading(true)
+                const result = await axios.get('http://localhost:3000/portfolio');
 
-            console.log("Data == ", JSON.stringify(result.data));
-            setCurrentBalance(result.data.current_balance);
-            const combinedInvestments = {};
-            const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
-            if (result.data.investments.length === 0) {
-                setEmptyResponse(true);
-            }
-            else {
-                setEmptyResponse(false);
-            }
-            result.data?.investments?.forEach(item => {
+                console.log("Data == ", JSON.stringify(result.data));
+                setCurrentBalance(result.data.current_balance);
+                const combinedInvestments = {};
+                const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
+                if (result.data.investments.length === 0) {
+                    setEmptyResponse(true);
+                }
+                else {
+                    setEmptyResponse(false);
+                }
+                result.data?.investments?.forEach(item => {
 
-                combinedInvestments[item.ticker] = item;
+                    combinedInvestments[item.ticker] = item;
 
-            });
+                });
 
-            // Convert the combined investments object back into an array
-            const combinedInvestmentsArray = Object.values(combinedInvestments);
-            setData(combinedInvestmentsArray);
-            console.log("combinedInvestmentsArray == ", JSON.stringify(combinedInvestmentsArray));
-            // Fetch the current prices
-            const pricePromises = combinedInvestmentsArray.map(async (item, index) => {
-                await delay(1000); // Wait for 1 second between each request
-                const priceResult = await axios.get(`http://localhost:3000/current_stock_price?ticker_name=${item.ticker}`);
-                return { ticker: item.ticker, price: priceResult.data.c, quantity: item.quantity };
-            });
-            if (pricePromises) {
-                const prices = await Promise.all(pricePromises);
-                setPrices(prices); // Store the prices as an array
-            }
-            setIsLoading(false);
-        };
+                // Convert the combined investments object back into an array
+                const combinedInvestmentsArray = Object.values(combinedInvestments);
+                setData(combinedInvestmentsArray);
+                console.log("combinedInvestmentsArray == ", JSON.stringify(combinedInvestmentsArray));
+                // Fetch the current prices
+                const pricePromises = combinedInvestmentsArray.map(async (item, index) => {
+                    await delay(1000); // Wait for 1 second between each request
+                    const priceResult = await axios.get(`http://localhost:3000/current_stock_price?ticker_name=${item.ticker}`);
+                    return { ticker: item.ticker, price: priceResult.data.c, quantity: item.quantity };
+                });
+                if (pricePromises) {
+                    const prices = await Promise.all(pricePromises);
+                    setPrices(prices); // Store the prices as an array
+                }
+                setIsLoading(false);
+            };
 
-        fetchData();
-        console.log("Prices == ", JSON.stringify(prices));
+            fetchData();
+            console.log("Prices == ", JSON.stringify(prices));
+        }
     }, [successBuyMessage, successSellMessage]);
 
     const buy = (item, currentPrice) => {
@@ -93,8 +90,15 @@ export default function Portfolio() {
         setCompany(item.company);
     }
     useEffect(() => {
-        console.log("successBuyMessage = ", successBuyMessage)
-    }, [successBuyMessage])
+        if (successBuyMessage || successSellMessage) {
+            const timer = setTimeout(() => {
+                setSuccessBuyMessage(false);
+                setSuccessSellMessage(false);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [successBuyMessage, successSellMessage]);
     return (
         <div>
             <div className='d-flex justify-content-center align-items-center'>
@@ -106,7 +110,7 @@ export default function Portfolio() {
                             // className="btn-close"
                             data-bs-dismiss="alert"
                             aria-label="Close"
-                            // onClick={closeBuyMessage}
+                        // onClick={closeBuyMessage}
                         />
                     </div>
                 )}
@@ -118,7 +122,7 @@ export default function Portfolio() {
                             // className="btn-close"
                             data-bs-dismiss="alert"
                             aria-label="Close"
-                            // onClick={closeSellMessage}
+                        // onClick={closeSellMessage}
                         />
                     </div>
                 )}
@@ -167,7 +171,7 @@ export default function Portfolio() {
                                             <div className='col-4'>
                                                 <h5>Change:</h5>
                                             </div>
-                                            <div className='col-2' style={{color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black'}}>
+                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
                                                 <div className='row'>
                                                     <div className='col-1' >
                                                         {
@@ -226,10 +230,11 @@ export default function Portfolio() {
                                         </div>
                                     </div>
                                 </div>
-                                <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
-                                <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
+
                             </div>
                         ))}
+                        <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} toggleBuyMessage={toggleBuyMessage} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
+                        <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} toggleSellMessage={toggleSellMessage} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
                     </div>}
 
                 </div>

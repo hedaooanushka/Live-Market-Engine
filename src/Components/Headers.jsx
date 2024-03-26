@@ -29,6 +29,7 @@ export default function Headers(props) {
         backgroundColor: '#2424ab',
         border: '1px solid white',
         borderRadius: '12px',
+        textDecoration: 'underline',
         color: 'white'
     };
     return (
