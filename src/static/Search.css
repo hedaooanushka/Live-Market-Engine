@@ -1,0 +1,85 @@
+.title {
+    font-size: xxx-large;
+    text-align: center;
+}
+
+.search-container {
+    border-radius: 25px;
+    border: blue solid 3px;
+    padding: 6px;
+    width: 33%;
+    position: relative;
+    padding-left: 15px;
+}
+
+.search-bar {
+    width: 90%;
+    padding: 0px;
+    margin: 5px 0;
+}
+
+.input-box {
+    width: 100%;
+    border: none;
+    outline: none;
+    margin-left: 15px
+}
+
+.icon {
+    max-width: fit-content;
+    padding: 0px;
+}
+
+.render-suggestion {
+    font-size: 16px;
+    cursor: pointer;
+    margin: 20px;
+    position: relative;
+    top: 0;
+    z-index: 1;
+}
+
+/* Styles for iPhone 12 Pro screens */
+@media only screen and (min-device-width: 390px) and (max-device-width: 844px) and (-webkit-min-device-pixel-ratio: 3) {
+
+    .title {
+        font-size: xx-large;
+    }
+
+    .search-container {
+        width: max-content;
+        border: solid 2px blue;
+        border-radius: 25px;
+        margin: auto;
+        justify-content: center;
+        font-size: 16px;
+
+    }
+
+    .search-bar {
+        width: 70%;
+        padding: 0px;
+        margin: 5px 0;
+
+    }
+
+    .input-box {
+        width: 100%;
+        border: none;
+        outline: none;
+        margin-left: 5px
+    }
+
+    .icon {
+        max-width: fit-content;
+        padding: 0px;
+    }
+
+    .render-suggestion {
+        font-size: 13px;
+        cursor: pointer;
+        margin: 10px;
+        position: relative;
+        z-index: 1;
+    }
+}
