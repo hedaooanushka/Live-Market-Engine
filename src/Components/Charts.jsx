@@ -47,17 +47,17 @@ export default function Charts(props) {
             },
             plotOptions: {
                 candlestick: {
-                    color: 'blue',
-                    lineColor: 'red',
-                    upColor: 'lightgreen',
-                    upLineColor: 'green',
+                    color: '#ADD8EF',
+                    lineColor: 'black',
+                    upColor: 'white',
+                    upLineColor: 'black',
                     pointWidth: 5,
                     groupPadding: 0.5,
                     borderWidth: 1
                 },
                 column: {
                     pointWidth: 5,
-                    color: 'black',
+                    color: '#0000BB',
                     borderColor: 'white',
                     borderWidth: 1
                 }
@@ -122,7 +122,7 @@ export default function Charts(props) {
                 opposite: true,
                 // min: 0,
                 height: '40%',
-                top: '85%',
+                top: '82%',
                 pointPlacement: 'on',
                 offset: 0
             }],

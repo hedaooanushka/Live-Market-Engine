@@ -204,7 +204,7 @@ export default function Portfolio() {
                                                 <h5>Current Price:</h5>
                                             </div>
                                             <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
-                                                <h5>{prices[index]?.price}</h5>
+                                                <h5>{prices[index]?.price.toFixed(2)}</h5>
                                             </div>
                                         </div>
                                         <div className='row'>

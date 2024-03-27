@@ -9,37 +9,6 @@ import SellModal from './SellModal.jsx'
 
 
 export default function CompanyInfo(props) {
-    // console.log("isdatavalid = " + props.dataValid)
-    // console.log("isClick = " + props.click)
-    // console.log("ticker name = " + props?.ticker_name)
-    // console.log("info", props?.info)
-    // console.log(props?.info?.marketStatus?.exchanges?.nasdaq)
-    // console.log("isLoading = " + props?.isLoading)
-    // const [doneLoading, setDoneLoading] = useState(false);
-    // console.log("hide = " + props.hide)
-
-    // console.log("props.last = "+JSON.stringify(props?.last))
-    // console.log("props.now = "+JSON.stringify(props?.now))
-    // const last = props?.last?.DateTime;
-    // const now = props?.now?.DateTime;
-    // console.log("last = " + JSON.stringify(last));
-    // console.log("now = " + JSON.stringify(now));
-
-    // const isMarketOpen = (now, last) => {
-    //     let curr = new Date(now);
-    //     let lastClosed = new Date(last);
-
-    //     let differenceInMilliseconds = curr - lastClosed;
-    //     let differenceInSeconds = differenceInMilliseconds / 1000;
-    //     let differenceInMinutes = differenceInSeconds / 60;
-    //     console.log("difference ms = " + differenceInMilliseconds)
-    //     console.log("difference sec = " + differenceInSeconds)
-    //     console.log("difference min = " + differenceInMinutes)
-    //     if (differenceInMinutes > 5) return false;
-    //     else return true;
-    // }
-
-
     if ((props?.ticker_name === "default" && props?.dataValid === false) || props?.hide) {
         return (
             <></>
@@ -101,22 +70,6 @@ export default function CompanyInfo(props) {
             return () => clearInterval(timer);
         }, [currentTime]);
 
-        // t converted to actual format
-        // const unixTimestamp = props?.info?.latest_price?.t;
-        // const date = new Date(unixTimestamp * 1000);
-        // const formattedDate = date.getFullYear() + '-' +
-        //     ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-        //     ('0' + date.getDate()).slice(-2) + ' ' +
-        //     ('0' + date.getHours()).slice(-2) + ':' +
-        //     ('0' + date.getMinutes()).slice(-2) + ':' +
-        //     ('0' + date.getSeconds()).slice(-2);
-
-        // // getting wrong hours, minutes, seconds, need to fix this
-        // const currentDay = date.getDay();
-        // const currentHour = date.getHours();
-        // const currentMinute = date.getMinutes();
-        // const currentSecond = date.getSeconds();
-
         const [isStarSelected, setIsStarSelected] = useState(false);
         const [showAlert, setShowAlert] = useState(false);
         const [color, setColor] = useState('red');
@@ -139,12 +92,12 @@ export default function CompanyInfo(props) {
             setShowBuyModal(!showBuyModal);
             setReRender(!reRender);
         }
+
         const toggleSellModal = () => {
             setShowSellModal(!showSellModal);
             setReRender(!reRender);
-
-
         }
+
         const toggleBuyMessage = () => {
             setSuccessBuyMessage(!successBuyMessage);
             axios.get(`http://localhost:3000/portfolio`)
@@ -183,9 +136,7 @@ export default function CompanyInfo(props) {
             // axios call to fetch total money in wallet
             axios.get(`http://localhost:3000/portfolio`)
                 .then(response => {
-                    // console.log(response.data.current_balance)
                     setCurrentBalance(response.data.current_balance)
-                    // console.log("CB"+currentBalance);
                 })
                 .catch(error => {
                     console.error('An error occurred:', error);
@@ -243,9 +194,6 @@ export default function CompanyInfo(props) {
             setIsStarSelected(!isStarSelected);
             console.log("star clicked, after changing the state = " + isStarSelected);
             if (!isStarSelected) {
-                // console.log("item sent to handle star click = " + JSON.stringify(item))
-                // call the backend to add the ticker to the watchlist
-
                 axios.post(`http://localhost:3000/watchlist`, { ticker: props?.ticker_name, name: props?.info?.profile?.name })
                     .then(response => {
                         console.log("Added company = " + JSON.stringify(response))
@@ -269,16 +217,6 @@ export default function CompanyInfo(props) {
 
 
         const d = props?.info?.latest_price?.d;
-
-        // Calculate today's date
-        // const date = new Date();
-        // let year = date.getFullYear();
-        // let month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed, so we add one
-        // let day = ("0" + date.getDate()).slice(-2);
-        // let formattedDate = `${year}-${month}-${day}`;
-        // // console.log(formattedDate);
-        // const to_date = formattedDate;
-
         useEffect(() => {
             if (d > 0) {
                 setColor('green')
@@ -307,10 +245,23 @@ export default function CompanyInfo(props) {
             <>
                 <div key={reRender}>
                     <div className='d-flex justify-content-center align-items-center'>
-                        {showAlert && (
+                        {/* {showAlert && (
                             <div className='alert alert-success' role='alert' style={{ textAlign: 'center', width: '60%' }}>
                                 Ticker added to watchlist
                             </div>
+                        )} */}
+                        {showAlert && (
+                            <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
+                                {props?.ticker_name.toUpperCase()} added to Watchlist
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close"
+                                    onClick={()=> setShowAlert(false)}
+                                />
+                            </div>
+
                         )}
                         {successBuyMessage && (
                             <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
@@ -345,9 +296,6 @@ export default function CompanyInfo(props) {
                                 <svg onClick={() => handleStarClick()} type="button" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: '15px', marginLeft: '10px' }} width="20" height="20" fill={isStarSelected ? "yellow" : "white"} stroke='black' class="bi bi-star-fill" viewBox="0 0 16 16">
                                     <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
                                 </svg>
-                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="yellow" class="bi bi-star-fill" viewBox="0 0 16 16">
-                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg> */}
                                 <br /><span style={{ fontSize: '22px', color: 'gray', position: 'relative', top: '-15px' }}>{props?.info?.profile?.name}</span><br />
                                 <span style={{ color: 'gray', fontSize: '15px', position: 'relative', top: '-15px' }}>{props?.info?.profile?.exchange} </span>
                             </p>
@@ -370,7 +318,6 @@ export default function CompanyInfo(props) {
                                     <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
                                 </svg>
                             }
-
                             <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d.toFixed(2)} ({props?.info?.latest_price?.dp.toFixed(2)}%)</span> <br />
                             <span style={{ fontSize: '13px' }}> {currentTime}</span>
                         </div>
@@ -382,5 +329,4 @@ export default function CompanyInfo(props) {
             </>
         )
     }
-
 }

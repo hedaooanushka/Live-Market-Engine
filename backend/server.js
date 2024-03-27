@@ -246,6 +246,7 @@ async function run() {
             axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker_name}&token=${finnhub_API_KEY}`)
                 .then((result) => {
                     const status = result.data;
+                    // console.log("quote data"+ result.data)
                     res.json(status);
                 })
                 .catch((error) => {
@@ -259,8 +260,6 @@ async function run() {
             const current = getCurrentTime();
             let to_date;
             let from_date;
-            // console.log("now = " + JSON.stringify(current))
-            // console.log("last = " + JSON.stringify(last))
             if ((current.dayIndex == 6) || (current.dayIndex == 0)) {  // saturday
                 to_date = last.Date;
                 from_date = new Date(to_date);
@@ -272,8 +271,6 @@ async function run() {
                 from_date.setDate(from_date.getDate() - 1);
                 from_date = from_date.toISOString().split('T')[0];
             }
-            // console.log("from date =" + from_date)
-            // console.log("to date =" + to_date)
 
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
             axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/hour/${from_date}/${to_date}?adjusted=true&sort=asc&apiKey=${POLYGON_API_KEY}`)
@@ -296,8 +293,6 @@ async function run() {
             let from_date = new Date(to_date);
             from_date.setDate(from_date.getDate() - 7);
             from_date = from_date.toISOString().split('T')[0];
-            // console.log("from date =" + from_date)
-
 
             axios.get(`https://finnhub.io/api/v1/company-news?symbol=${ticker_name}&from=${from_date}&to=${to_date}&token=${finnhub_API_KEY}`)
                 .then((result) => {
@@ -313,22 +308,17 @@ async function run() {
 
         app.get("/charts", (req, res) => {
             const ticker_name = req.query.ticker_name.toUpperCase();
-
             const current = getCurrentTime();
-            // console.log("now = " + JSON.stringify(current))
-            // console.log("last = " + JSON.stringify(last))
 
             const to_date = current.Date
             let from_date = new Date(to_date);
             from_date.setFullYear(from_date.getFullYear() - 2);
             from_date = from_date.toISOString().split('T')[0];
-            // console.log("from date =" + from_date)
 
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2022-03-16/2024-03-17?adjusted=true&sort=asc&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
             axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/day/${from_date}/${to_date}?adjusted=true&sort=asc&apiKey=${POLYGON_API_KEY}`)
                 .then((result) => {
                     const big_chart = result.data;
-                    // console.log(big_chart)
                     res.json(big_chart);
                 })
                 .catch((error) => {

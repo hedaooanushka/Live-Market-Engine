@@ -41,30 +41,12 @@ export default function Summary(props) {
     // SUMMARY-CHARTS
     let xaxis = []
     const data = props?.summary_chart?.results;
-    // if (!data) {
-    //     return <></>;
-    // }
     console.log("chartssssss data = "+JSON.stringify(data))
     if (data) {
         for (let i = 0; i < data.length; i++) {
             xaxis.push([data[i].t, data[i].c])
         }
     }
-    // let options = {
-    //     title: {
-    //         text: 'Hourly Price Variation'
-    //     },
-    //     xAxis: {
-    //         type: 'datetime',
-    //         dateTimeLabelFormats: {hour:'%H:%M' },// don't display the dummy year
-            
-
-    //     },
-    //     series: [{
-    //         data: xaxis,
-    //         type: 'spline'
-    //     }]
-    // }
 
     const options = {
         title: {
@@ -135,14 +117,16 @@ export default function Summary(props) {
                             <b><u>About the company</u></b> <br /> <br />
                             <b>IPO Start Date: </b> {props?.info?.profile?.ipo} <br />
                             <b>Industry: </b> {props?.info?.profile?.finnhubIndustry} <br />
-                            <b>Webpage: </b> <a href={props?.info?.profile?.weburl}>{props?.info?.profile?.weburl}</a><br />
+                            <b>Webpage: </b> <a href={props?.info?.profile?.weburl} target="_blank">{props?.info?.profile?.weburl}</a><br />
                             <b>Company peers</b>
                             <div>
                                 {props?.info?.peers.map((company, index) => (
                                     <span key={index}>
-                                        <button onClick={() => handleClick(company)} style={{ textDecoration: 'underline', color: 'blue', background: 'none', border: 'none', cursor: 'pointer' }}>
+                                      {!company.charAt(0).match(/^\d/) ?
+                                        <span><button onClick={() => handleClick(company)} style={{ textDecoration: 'underline', color: 'blue', background: 'none', border: 'none', cursor: 'pointer' }}>
                                             {company}
-                                        </button>,
+                                        </button>, </span> : <></>
+                                      }
                                     </span>
                                 ))}
                             </div>

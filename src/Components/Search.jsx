@@ -107,7 +107,7 @@ export default function Search(props) {
         console.log("myData = ", myData);
         if (myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
             console.log("ticker_name = ", myData.ticker_name);
-            console.log("Normal ticker_name = ", ticker_name)
+            console.log("Normal ticker_name = ", ticker_name);
             setTickerName(myData.ticker_name);
             setSummaryInfo(myData.summary_info);
             setSummaryChart(myData.summary_chart);
@@ -246,9 +246,6 @@ export default function Search(props) {
             }).catch(error => {
                 console.error('An error occurred:', error);
             });
-
-
-
         }
     }, [dataValid]);
 
@@ -282,43 +279,46 @@ export default function Search(props) {
         setHide(true);
         localStorage.setItem('myData', JSON.stringify({}));
     }
-    // useEffect(() => {
-    //     // Set up a timer to refresh the page every 15 seconds
-    //     const timer = setInterval(() => {
 
-    //         console.log("=====================================")
-    //         console.log("hide is set to false, and the actual is = " + hide);
-    //         console.log("ticker_name = " + ticker_name);
-    //         console.log("pathname = " + window.location.pathname);
-    //         console.log("=====================================")
-    //         if (ticker_name && window.location.pathname !== "/search/home") {
-    //             setHide(false);
-    //             // navigate(`/search/${ticker_name}`);
-    //             console.log("ticker name in callbackend = " + ticker_name)
-    //             console.log("i clicked")
 
-    //             if (ticker_name !== "") {
-    //                 console.log("ticker_name: " + ticker_name)
-    //                 axios.get(`http://localhost:3000/current_stock_price?ticker_name=${ticker_name}`)
-    //                     .then(response => {
-    //                         let last_summary = summary_info;
-    //                         last_summary.latest_price = response.data;
-    //                         console.log("new response = ", response.data);
-    //                         console.log("new summary = ", last_summary);
-    //                         setSummaryInfo(last_summary);
-    //                         console.log("new summary = ", summary_info);
-    //                     })
-    //                     .catch(error => {
-    //                         console.error('An error occurred:', error);
-    //                     });
-    //             }
+    useEffect(() => {
+        // Set up a timer to refresh the page every 15 seconds
+        const timer = setInterval(() => {
 
-    //         }
-    //     }, 15000);
+            // console.log("=====================================")
+            // console.log("hide is set to false, and the actual is = " + hide);
+            // console.log("ticker_name = " + ticker_name);
+            // console.log("pathname = " + window.location.pathname);
+            // console.log("=====================================")
+            if (ticker_name && window.location.pathname !== "/search/home") {
+                setHide(false);
+                // navigate(`/search/${ticker_name}`);
+                console.log("ticker name in callbackend = " + ticker_name)
+                console.log("i clicked")
 
-    //     // Clean up the timer when the component is unmounted
-    //     return () => clearInterval(timer);
-    // }, [ticker_name]); // Include ticker_name in the dependency array
+                if (ticker_name !== "") {
+                    console.log("ticker_name: " + ticker_name)
+                    axios.get(`http://localhost:3000/current_stock_price?ticker_name=${ticker_name}`)
+                        .then(response => {
+                            let last_summary = summary_info;
+                            last_summary.latest_price = response.data;
+                            console.log("new response = ", response.data);
+                            console.log("new summary = ", last_summary);
+                            setSummaryInfo(last_summary);
+                            console.log("new summary = ", summary_info);
+                        })
+                        .catch(error => {
+                            console.error('An error occurred:', error);
+                        });
+                }
+            }
+        }, 15000);
+
+        // Clean up the timer when the component is unmounted
+        return () => clearInterval(timer);
+    }, [ticker_name, summary_info]); // Include ticker_name in the dependency array
+
+
     // // Save data to local storage
     // // const [ticker_name, setTickerName] = useState("");
     // // const [summary_info, setSummaryInfo] = useState("default");
@@ -421,8 +421,7 @@ export default function Search(props) {
                                         placeholder: "Enter stock ticker symbol",
                                         value: ticker_name,
                                         onChange: handleInputChange,
-                                        className: 'input-box',
-                                        
+                                        className: 'input-box',                          
                                     }}
                                 />
                             </Form.Group>
