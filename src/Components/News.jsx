@@ -78,7 +78,7 @@ export default function News({ toggle, newsItems }) {
                             {pair.map((item, idx) => (
                                 <Col md={6}>
                                     <Container fluid>
-                                        <Row className="news p-3" type="button" onClick={() => handleNewsClick(index, idx)} stye={{ textAlign: 'center', pointer:'cursor' }}>
+                                        <Row className="news p-3" type="button" onClick={() => handleNewsClick(index, idx)} stye={{ textAlign: 'center', pointer:'cursor', marginBottom:'20px' }}>
                                             <Col xs={3}>
                                                 <img src={item.image} className="news-img" alt="" style={{ maxWidth: '140px', maxHeight: '70px', height: '80px' }} />
                                             </Col>

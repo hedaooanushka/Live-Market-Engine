@@ -52,17 +52,6 @@ function getCurrentTime() {
     const currentTime = `${hours}:${minutes}:${seconds}`;
     const currentDateTime = `${currentDate} ${currentTime}`;
     return {
-        year: year,
-        month: month,
-        day: day,
-        dayIndex: dayIndex,
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds,
-        Date: currentDate,
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds,
         Date: currentDate,
         Time: currentTime,
         DateTime: currentDateTime
@@ -84,17 +73,6 @@ function unixToOriginal(unixTimestamp) {
     const currentTime = `${hours}:${minutes}:${seconds}`;
     const currentDateTime = `${currentDate} ${currentTime}`;
     return {
-        year: year,
-        month: month,
-        day: day,
-        dayIndex: dayIndex,
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds,
-        Date: currentDate,
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds,
         Date: currentDate,
         Time: currentTime,
         DateTime: currentDateTime
@@ -117,17 +95,12 @@ async function run() {
         // To add a new item to the watchlist
         app.post('/watchlist', async (req, res) => {
             const body = req.body;
-            // console.log("request = " + JSON.stringify(body))
-            // console.log("data sent to backend = "+body)
-            // await client.connect();
             const ticker = body.ticker || "";
-            // console.log("Connected successfully to MongoDB server");
             const watchlist = client.db(dbName).collection('watchlist');
             const watchlistItems = await watchlist.find({ userId: 'user1' }).toArray();
             const watchlistData = watchlistItems[0].watchlist;
             for (let i = 0; i < watchlistData.length; i++) {
                 if (watchlistData[i].ticker === ticker) {
-                    // await client.close();
                     return res.json({ status: 'ALready present', message: 'Ticker already present in the watchlist.' });
                 }
             }
@@ -135,42 +108,30 @@ async function run() {
                 { userId: 'user1' },
                 { $push: { watchlist: body } }
             );
-            // console.log("result = " + JSON.stringify(result))
-
-            // await client.close();
             res.json(result);
         });
 
         // To delete an item from the watchlist
         app.post("/deleteWatchlistItem", async (req, res) => {
             const body = req.body;
-            // console.log("request = " + JSON.stringify(body))
             const ticker = body.ticker || "";
-            // await client.connect();
-            // console.log("Connected successfully to MongoDB server");
             const watchlist = client.db(dbName).collection('watchlist');
             const result = await watchlist.updateOne(
                 { userId: 'user1' },
                 { $pull: { watchlist: { ticker: ticker } } }
             );
-            // console.log("result = " + JSON.stringify(result))
-            // await client.close();
             res.json(result);
         });
+
         // Fetch documents from the portfolio collection where userId is "user1"
         app.get('/portfolio', async (req, res) => {
-            // await client.connect();
             await client.db(dbName).command({ ping: 1 });
-            // console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
-            // find userId == user1 and ticker=="${ticker_name}"
             const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
             const finalData = {
                 current_balance: portfolioItems[0].current_balance,
                 investments: portfolioItems[0].investments
             }
-            // console.log(finalData)
-            // await client.close();
             res.json(finalData);
         });
 
@@ -178,11 +139,8 @@ async function run() {
         app.post('/buy', async (req, res) => {
             const body = req.body;
             const price = body.price || 0;
-            // console.log("price = " + price)
             const quantity = body.quantity || 0;
             const ticker = body.ticker || "";
-            // await client.connect();
-            // console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
             const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
             let investments = portfolioItems[0].investments;
@@ -208,22 +166,15 @@ async function run() {
                 },
                 { returnOriginal: false } // Option to return the updated document
             );
-            // console.log("result = " + JSON.stringify(result))
-            // await client.close();
             res.json(result.value); // Send the updated document to the client
         });
 
         // To delete an item from the watchlist
         app.post("/sell", async (req, res) => {
             const body = req.body;
-            // console.log("request = " + JSON.stringify(body))
             const price = body.price || 0;
             const quantity = body.quantity || 0;
             const ticker = body.ticker || "";
-            // console.log("price = " + price)
-
-            // await client.connect();
-            // console.log("Connected successfully to MongoDB server");
             const portfolio = client.db(dbName).collection('portfolio');
             const portfolioItems = await portfolio.find({ userId: 'user1' }).toArray();
             const investments = portfolioItems[0].investments;
@@ -245,9 +196,6 @@ async function run() {
                 },
                 { returnOriginal: false } // Option to return the updated document
             );
-            //remove the item from the investments array
-            // console.log("result = " + JSON.stringify(result))
-            // await client.close();
             res.json(result.value); // Send the updated document to the client
         });
 
@@ -257,11 +205,9 @@ async function run() {
 
         app.get('/autocomplete', (req, res) => {
             const query = req.query.query;
-            // console.log(query)
             axios.get(`https://finnhub.io/api/v1/search?q=${query}&token=${finnhub_API_KEY}`)
                 .then((result) => {
                     const suggestions = result.data.result
-                    // console.log(suggestions)
                     res.json(suggestions);
                 })
                 .catch((error) => {
@@ -285,9 +231,7 @@ async function run() {
                     const peers = results[2].data;
                     const marketStatus = results[3].data;
                     last = unixToOriginal(results[1].data.t);
-
                     res.json({ profile: profile, latest_price: latestPrice, peers: peers, marketStatus: marketStatus });
-                    // console.log(latestPrice)
                 })
                 .catch((error) => {
                     console.error('An error occurred:', error);
@@ -302,8 +246,6 @@ async function run() {
             axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker_name}&token=${finnhub_API_KEY}`)
                 .then((result) => {
                     const status = result.data;
-                    // console.log(status)
-                    // console.log(summary_chart)
                     res.json(status);
                 })
                 .catch((error) => {
@@ -313,25 +255,30 @@ async function run() {
         })
 
         app.get('/summary-charts', (req, res) => {
+            const ticker_name = req.query.ticker_name.toUpperCase();
             const current = getCurrentTime();
+            let to_date;
+            let from_date;
             // console.log("now = " + JSON.stringify(current))
             // console.log("last = " + JSON.stringify(last))
-
-            const ticker_name = req.query.ticker_name.toUpperCase();
-            const timespan = "hour"
-            const to_date = current.Date
-            let from_date = new Date(to_date);
-            from_date.setDate(from_date.getDate() - 1);
-            from_date = from_date.toISOString().split('T')[0];
+            if ((current.dayIndex == 6) || (current.dayIndex == 0)) {  // saturday
+                to_date = last.Date;
+                from_date = new Date(to_date);
+                from_date.setDate(from_date.getDate() - 1);
+                from_date = from_date.toISOString().split('T')[0];
+            } else {
+                to_date = current.Date
+                from_date = new Date(to_date);
+                from_date.setDate(from_date.getDate() - 1);
+                from_date = from_date.toISOString().split('T')[0];
+            }
             // console.log("from date =" + from_date)
-
-            // implement weekday logic
+            // console.log("to date =" + to_date)
 
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv
-            axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/${timespan}/${from_date}/${to_date}?adjusted=true&sort=asc&limit=120&apiKey=${POLYGON_API_KEY}`)
+            axios.get(`https://api.polygon.io/v2/aggs/ticker/${ticker_name}/range/1/hour/${from_date}/${to_date}?adjusted=true&sort=asc&apiKey=${POLYGON_API_KEY}`)
                 .then((result) => {
                     const summary_chart = result.data;
-                    // console.log(summary_chart)
                     res.json(summary_chart);
                 })
                 .catch((error) => {

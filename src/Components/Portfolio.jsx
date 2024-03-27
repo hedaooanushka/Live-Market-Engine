@@ -115,7 +115,7 @@ export default function Portfolio() {
                     </div>
                 )}
                 {successSellMessage && (
-                    <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
+                    <div className="container alert alert-danger alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
                         {ticker.toUpperCase()} sold successfully
                         <div
                             // type="button"

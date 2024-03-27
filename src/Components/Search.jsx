@@ -7,28 +7,8 @@ import Autosuggest from 'react-autosuggest'
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 
-
-
-
-
-
-
-
-
-
 export default function Search(props) {
-    // console.log(props.ticker_name)
-    // let url = useLocation().pathname;
-    // let ishome = url.endsWith("/home");
-    // const [endsWithHome, setEndsWithHome] = useState(true);
-    // setEndsWithHome(ishome)
-
-    // console.log("url = " + location);
-    // console.log("endsWithHome = " + endsWithHome);
     let cancelTokenSource = axios.CancelToken.source();
-
-
-
     const [ticker_name, setTickerName] = useState("");
     const [summary_info, setSummaryInfo] = useState("default");
     const [summary_chart, setSummaryChart] = useState({ results: [] });
@@ -48,6 +28,79 @@ export default function Search(props) {
     const getSuggestionValue = suggestion => suggestion.displaySymbol;
     const navigate = useNavigate();
     const myData = JSON.parse(localStorage.getItem('myData'));
+
+    const currentDate = () => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = ('0' + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
+        const day = ('0' + now.getDate()).slice(-2);
+        const dayIndex = now.getDay();
+    
+        const hours = ('0' + now.getHours()).slice(-2);
+        const minutes = ('0' + now.getMinutes()).slice(-2);
+        const seconds = ('0' + now.getSeconds()).slice(-2);
+    
+        const currentDate = `${year}-${month}-${day}`;
+        const currentTime = `${hours}:${minutes}:${seconds}`;
+        const currentDateTime = `${currentDate} ${currentTime}`;
+        return {
+            year: year,
+            month: month,
+            day: day,
+            dayIndex: dayIndex,
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds,
+            Date: currentDate,
+            Time: currentTime,
+            DateTime: currentDateTime
+        }
+    }
+    
+    function unixToOriginal(unixTimestamp = summary_info?.latest_price?.t) {
+        const now = new Date(unixTimestamp * 1000);
+        const year = now.getFullYear();
+        const month = ('0' + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
+        const day = ('0' + now.getDate()).slice(-2);
+        const dayIndex = now.getDay();
+    
+        const hours = ('0' + now.getHours()).slice(-2);
+        const minutes = ('0' + now.getMinutes()).slice(-2);
+        const seconds = ('0' + now.getSeconds()).slice(-2);
+    
+        const currentDate = `${year}-${month}-${day}`;
+        const currentTime = `${hours}:${minutes}:${seconds}`;
+        const currentDateTime = `${currentDate} ${currentTime}`;
+        return {
+            year: year,
+            month: month,
+            day: day,
+            dayIndex: dayIndex,
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds,
+            Date: currentDate,
+            Time: currentTime,
+            DateTime: currentDateTime
+        }
+    }
+
+    const isMarketOpen = (now, last) => {
+        let curr = new Date(now);
+        let lastClosed = new Date(last);
+
+        let differenceInMilliseconds = curr - lastClosed;
+        let differenceInSeconds = differenceInMilliseconds / 1000;
+        let differenceInMinutes = differenceInSeconds / 60;
+        console.log("difference ms = " + differenceInMilliseconds)
+        console.log("difference sec = " + differenceInSeconds)
+        console.log("difference min = " + differenceInMinutes)
+        if (differenceInMinutes > 5) return false;
+        else return true;
+    }
+    const last = unixToOriginal(summary_info?.latest_price?.t);
+    const now = currentDate(); 
+
     useEffect(() => {
         console.log("myData = ", myData);
         if (myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
@@ -254,8 +307,7 @@ export default function Search(props) {
     return (
         <>
             <br />
-            <p style={{ textAlign: 'center', fontSize: '32px', fontFamily: 'sans-serif' }}>STOCK SEARCH</p>
-            <br />
+            <p style={{ textAlign: 'center', fontSize: '32px', fontFamily: 'sans-serif' }}>STOCK SEARCH</p><br />
             <Container className="d-flex" style={{ borderRadius: '25px', border: 'blue solid 1px', padding: '6px', width: '33%', position: 'relative' }}>
                 <Form style={{ width: "100%" }} onSubmit={handleSubmit}>
                     <Form.Group>
@@ -288,13 +340,10 @@ export default function Search(props) {
                             }}
 
                             suggestions={suggestions}
-                            // when you want to fetch something
-                            // Declare a variable to hold the timeout ID
+                            // when you want to fetch something. Declare a variable to hold the timeout ID
                             onSuggestionsFetchRequested={({ value }) => {
                                 if (!isSuggestionSelected) {
                                     // Cancel the previous delay
-
-
                                     if (value.length > 0) {
                                         // Set a delay before fetching the suggestions
                                         timeoutId = setTimeout(() => {
@@ -302,10 +351,8 @@ export default function Search(props) {
                                             setSuggestions([]);
                                             // Cancel the previous request
                                             cancelTokenSource.cancel();
-
                                             // Create a new CancelToken source
                                             cancelTokenSource = axios.CancelToken.source();
-
                                             axios.get(`http://localhost:3000/autocomplete?query=${value}`, {
                                                 cancelToken: cancelTokenSource.token
                                             }).then(response => {
@@ -344,7 +391,7 @@ export default function Search(props) {
                                 placeholder: "Enter stock ticker symbol",
                                 value: ticker_name,
                                 onChange: handleInputChange,
-                                style: { outline: 'none', border: '0px', width: '100%' }
+                                style: { outline: 'none', border: '0px', width: '100%', minWidth:'200px' }
                             }}
                         />
                     </Form.Group>
@@ -358,9 +405,9 @@ export default function Search(props) {
             </Container>
             <br />
             {ticker_name && <div>
-                <CompanyInfo hide={hide} info={summary_info} ticker_name={ticker_name} dataValid={dataValid} click={click} isLoading={isLoading} />
+                <CompanyInfo hide={hide} info={summary_info} ticker_name={ticker_name} dataValid={dataValid} click={click} isLoading={isLoading} last={last} now={now} isMarketOpen={isMarketOpen(now.DateTime, last.DateTime)} />
                 <br />
-                <Tabs hide={hide} info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={dataValid} />
+                <Tabs hide={hide} info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={dataValid} isMarketOpen={isMarketOpen(now.DateTime, last.DateTime)}/>
             </div>}
         </>
     )

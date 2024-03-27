@@ -47,7 +47,7 @@ export default function Summary(props) {
     console.log("chartssssss data = "+JSON.stringify(data))
     if (data) {
         for (let i = 0; i < data.length; i++) {
-            xaxis.push(data[i].c)
+            xaxis.push([data[i].t, data[i].c])
         }
     }
     // let options = {
@@ -114,10 +114,11 @@ export default function Summary(props) {
           name: props?.info?.profile?.ticker,
           data: xaxis,
           pointInterval: 3 * 3600 * 1000,
-        //   color: marketStatus === 'Open' ? 'green' : 'red'
-          color: 'red'
+          color: props?.isMarketOpen ? 'green' : 'red'
+          // color: 'green'
         }]
     };
+    console.log("ismarketopen = "+props?.isMarketOpen)
 
     return (
         <div className={props.toggle === 1 ? "show-content" : "content"}>

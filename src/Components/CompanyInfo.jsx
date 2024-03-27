@@ -18,6 +18,28 @@ export default function CompanyInfo(props) {
     // const [doneLoading, setDoneLoading] = useState(false);
     // console.log("hide = " + props.hide)
 
+    // console.log("props.last = "+JSON.stringify(props?.last))
+    // console.log("props.now = "+JSON.stringify(props?.now))
+    // const last = props?.last?.DateTime;
+    // const now = props?.now?.DateTime;
+    // console.log("last = " + JSON.stringify(last));
+    // console.log("now = " + JSON.stringify(now));
+
+    // const isMarketOpen = (now, last) => {
+    //     let curr = new Date(now);
+    //     let lastClosed = new Date(last);
+
+    //     let differenceInMilliseconds = curr - lastClosed;
+    //     let differenceInSeconds = differenceInMilliseconds / 1000;
+    //     let differenceInMinutes = differenceInSeconds / 60;
+    //     console.log("difference ms = " + differenceInMilliseconds)
+    //     console.log("difference sec = " + differenceInSeconds)
+    //     console.log("difference min = " + differenceInMinutes)
+    //     if (differenceInMinutes > 5) return false;
+    //     else return true;
+    // }
+
+
     if ((props?.ticker_name === "default" && props?.dataValid === false) || props?.hide) {
         return (
             <></>
@@ -51,69 +73,49 @@ export default function CompanyInfo(props) {
         )
     }
     else if (props?.dataValid) {
-
-        // const lastClosedDate = () => {
-        //     const unixTimestamp = props?.info?.latest_price?.t;
-        //     const date = new Date(unixTimestamp * 1000);
-        //     const formattedDate = date.getFullYear() + '-' +
-        //         ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-        //         ('0' + date.getDate()).slice(-2) + ' ' +
-        //         ('0' + date.getHours()).slice(-2) + ':' +
-        //         ('0' + date.getMinutes()).slice(-2) + ':' +
-        //         ('0' + date.getSeconds()).slice(-2);
-        //     return formattedDate;
-        // }
         console.log("ticker_name in company info = " + props?.ticker_name)
         const currentDate = () => {
             const now = new Date();
             const year = now.getFullYear();
             const month = ('0' + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
             const day = ('0' + now.getDate()).slice(-2);
-
+            const dayIndex = now.getDay();
+        
             const hours = ('0' + now.getHours()).slice(-2);
             const minutes = ('0' + now.getMinutes()).slice(-2);
             const seconds = ('0' + now.getSeconds()).slice(-2);
-
+        
             const currentDate = `${year}-${month}-${day}`;
             const currentTime = `${hours}:${minutes}:${seconds}`;
             const currentDateTime = `${currentDate} ${currentTime}`;
-
-            return currentDateTime
+            return {
+                DateTime: currentDateTime
+            }
         }
-        const [currentTime, setCurrentTime] = useState(currentDate());
+        const [currentTime, setCurrentTime] = useState(currentDate().DateTime);
         useEffect(() => {
-            // Set up a timer to refresh the page every 15 seconds
             const timer = setInterval(() => {
-
-                setCurrentTime(currentDate());
-
-
+                setCurrentTime(currentDate().DateTime);
+                console.log(currentTime)
             }, 15000);
-
-            // Clean up the timer when the component is unmounted
             return () => clearInterval(timer);
         }, [currentTime]);
+
         // t converted to actual format
-        const unixTimestamp = props?.info?.latest_price?.t;
-        const date = new Date(unixTimestamp * 1000);
-        const formattedDate = date.getFullYear() + '-' +
-            ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-            ('0' + date.getDate()).slice(-2) + ' ' +
-            ('0' + date.getHours()).slice(-2) + ':' +
-            ('0' + date.getMinutes()).slice(-2) + ':' +
-            ('0' + date.getSeconds()).slice(-2);
+        // const unixTimestamp = props?.info?.latest_price?.t;
+        // const date = new Date(unixTimestamp * 1000);
+        // const formattedDate = date.getFullYear() + '-' +
+        //     ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+        //     ('0' + date.getDate()).slice(-2) + ' ' +
+        //     ('0' + date.getHours()).slice(-2) + ':' +
+        //     ('0' + date.getMinutes()).slice(-2) + ':' +
+        //     ('0' + date.getSeconds()).slice(-2);
 
-        // getting wrong hours, minutes, seconds, need to fix this
-        const currentDay = date.getDay();
-        const currentHour = date.getHours();
-        const currentMinute = date.getMinutes();
-        const currentSecond = date.getSeconds();
-
-        // console.log("hours" + currentHour)
-        // console.log("minutes" + currentMinute)
-        // console.log("sec" + currentSecond)
-
-
+        // // getting wrong hours, minutes, seconds, need to fix this
+        // const currentDay = date.getDay();
+        // const currentHour = date.getHours();
+        // const currentMinute = date.getMinutes();
+        // const currentSecond = date.getSeconds();
 
         const [isStarSelected, setIsStarSelected] = useState(false);
         const [showAlert, setShowAlert] = useState(false);
@@ -302,80 +304,81 @@ export default function CompanyInfo(props) {
             }
         }, [showAlert, successBuyMessage, successSellMessage]);
         return (
-            <><div key={reRender}>
-                <div className='d-flex justify-content-center align-items-center'>
-                    {showAlert && (
-                        <div className='alert alert-success' role='alert' style={{ textAlign: 'center', width: '60%' }}>
-                            Ticker added to watchlist
-                        </div>
-                    )}
-                    {successBuyMessage && (
-                        <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
-                            {props?.ticker_name.toUpperCase()} bought successfully
-                            <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="alert"
-                                aria-label="Close"
-                                onClick={closeBuyMessage}
-                            />
-                        </div>
+            <>
+                <div key={reRender}>
+                    <div className='d-flex justify-content-center align-items-center'>
+                        {showAlert && (
+                            <div className='alert alert-success' role='alert' style={{ textAlign: 'center', width: '60%' }}>
+                                Ticker added to watchlist
+                            </div>
+                        )}
+                        {successBuyMessage && (
+                            <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
+                                {props?.ticker_name.toUpperCase()} bought successfully
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close"
+                                    onClick={closeBuyMessage}
+                                />
+                            </div>
 
-                    )}
-                    {successSellMessage && (
-                        <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
-                            {props?.ticker_name.toUpperCase()} sold successfully
-                            <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="alert"
-                                aria-label="Close"
-                                onClick={closeSellMessage}
-                            />
-                        </div>
-                    )}
+                        )}
+                        {successSellMessage && (
+                            <div className="container alert alert-danger alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
+                                {props?.ticker_name.toUpperCase()} sold successfully
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close"
+                                    onClick={closeSellMessage}
+                                />
+                            </div>
+                        )}
 
-                </div>
-                <div className="d-flex flex-row bd-highlight mx-auto" style={{ textAlign: 'center', justifyContent: 'space-around', width: '80%' }}>
-                    <div className="p-2 bd-highlight">
-                        <p><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{props?.info?.profile?.ticker}</span>
-                            <svg onClick={() => handleStarClick()} type="button" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: '15px', marginLeft: '10px' }} width="20" height="20" fill={isStarSelected ? "yellow" : "white"} stroke='black' class="bi bi-star-fill" viewBox="0 0 16 16">
-                                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                            </svg>
-                            {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="yellow" class="bi bi-star-fill" viewBox="0 0 16 16">
+                    </div>
+                    <div className="d-flex flex-row bd-highlight mx-auto" style={{ textAlign: 'center', justifyContent: 'space-around', width: '80%' }}>
+                        <div className="p-2 bd-highlight">
+                            <p><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{props?.info?.profile?.ticker}</span>
+                                <svg onClick={() => handleStarClick()} type="button" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: '15px', marginLeft: '10px' }} width="20" height="20" fill={isStarSelected ? "yellow" : "white"} stroke='black' class="bi bi-star-fill" viewBox="0 0 16 16">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                                </svg>
+                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="yellow" class="bi bi-star-fill" viewBox="0 0 16 16">
                             <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
                         </svg> */}
-                            <br /><span style={{ fontSize: '22px', color: 'gray', position: 'relative', top: '-15px' }}>{props?.info?.profile?.name}</span><br />
-                            <span style={{ color: 'gray', fontSize: '15px', position: 'relative', top: '-15px' }}>{props?.info?.profile?.exchange} </span>
-                        </p>
-                        <div style={{ position: 'relative', top: '-15px' }}>
-                            {showBuyButton && <Button className='me-2' onClick={() => { buy() }} variant="success">Buy</Button>}
-                            {showSellButton && <Button variant="danger" onClick={() => { sell() }}>Sell</Button>}
-                            <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} toggleBuyMessage={toggleBuyMessage} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
-                            <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} toggleSellMessage={toggleSellMessage} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
+                                <br /><span style={{ fontSize: '22px', color: 'gray', position: 'relative', top: '-15px' }}>{props?.info?.profile?.name}</span><br />
+                                <span style={{ color: 'gray', fontSize: '15px', position: 'relative', top: '-15px' }}>{props?.info?.profile?.exchange} </span>
+                            </p>
+                            <div style={{ position: 'relative', top: '-15px' }}>
+                                {showBuyButton && <Button className='me-2' onClick={() => { buy() }} variant="success">Buy</Button>}
+                                {showSellButton && <Button variant="danger" onClick={() => { sell() }}>Sell</Button>}
+                                <BuyModal showBuyModal={showBuyModal} toggleBuyModal={toggleBuyModal} toggleBuyMessage={toggleBuyMessage} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
+                                <SellModal showSellModal={showSellModal} toggleSellModal={toggleSellModal} toggleSellMessage={toggleSellMessage} currentBalance={currentBalance} ticker={ticker} latest_price={current_price} company={company} />
+                            </div>
+                        </div>
+                        <div className="pt-4 pe-5 bd-highlight">
+                            <img src={props?.info?.profile?.logo} style={{ width: '100px' }}></img>
+                        </div>
+                        <div className="p-2 pe-5 bd-highlight">
+                            <span style={{ fontSize: '20px', fontWeight: 'bold', color: color }}>{props?.info?.latest_price?.c.toFixed(2)}</span> <br />
+                            {props?.info?.latest_price?.d > 0 ?
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                                    <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                                </svg> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            }
+
+                            <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d.toFixed(2)} ({props?.info?.latest_price?.dp.toFixed(2)}%)</span> <br />
+                            <span style={{ fontSize: '13px' }}> {currentTime}</span>
                         </div>
                     </div>
-                    <div className="pt-4 pe-5 bd-highlight">
-                        <img src={props?.info?.profile?.logo} style={{ width: '100px' }}></img>
-                    </div>
-                    <div className="p-2 pe-5 bd-highlight">
-                        <span style={{ fontSize: '20px', fontWeight: 'bold', color: color }}>{props?.info?.latest_price?.c.toFixed(2)}</span> <br />
-                        {props?.info?.latest_price?.d > 0 ?
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" className="bi bi-caret-up-fill" viewBox="0 0 16 16">
-                                <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
-                            </svg> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-caret-down-fill" viewBox="0 0 16 16">
-                                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-                            </svg>
-                        }
-
-                        <span style={{ fontSize: '17px', color: color }}> {props?.info?.latest_price?.d.toFixed(2)} ({props?.info?.latest_price?.dp.toFixed(2)}%)</span> <br />
-                        <span style={{ fontSize: '13px' }}> {currentTime}</span>
+                    < div className="mx-auto" style={{ textAlign: 'center' }}>
+                        {(!props?.isMarketOpen) ? <span style={{ color: 'red', fontWeight: 'bold' }}>Market closed on {props?.last.DateTime}</span> : <span style={{ color: 'green', fontWeight: 'bold' }}>Market is Open</span>}
                     </div>
                 </div>
-                <div className="container" style={{ textAlign: 'center' }}>
-                    {(currentDay == 0 || currentDay == 6 || (currentHour <= 12 && currentMinute >= 0 && currentSecond >= 0) || (currentHour >= 9 && currentMinute >= 0 && currentSecond >= 0)) ? <span style={{ color: 'red', fontWeight: 'bold' }}>Market closed on {formattedDate}</span> : <span style={{ color: 'green', fontWeight: 'bold' }}>Market is open!</span>}
-                </div>
-            </div>
             </>
         )
     }

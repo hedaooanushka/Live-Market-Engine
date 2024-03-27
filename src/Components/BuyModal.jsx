@@ -12,7 +12,7 @@ export default function BuyModal(props) {
     const [totalPrice, setTotalPrice] = useState(0)
     const [numStocks, setNumStocks] = useState(0)
     const [showAlert, setShowAlert] = useState(false);
-    
+
 
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function BuyModal(props) {
             .then((res) => {
                 props.toggleBuyModal();
                 props.toggleBuyMessage()
-       
+
             }).catch((err) => {
                 console.log(err);
             })
@@ -48,7 +48,7 @@ export default function BuyModal(props) {
     return (
         <>
             {/* BUY MODAL */}
-           
+
             <Modal show={props?.showBuyModal} onHide={props?.toggleBuyModal} className='my-modal'>
                 <Modal.Dialog style={{ width: '100%', height: '100%' }}>
                     <Modal.Header closeButton>
@@ -57,18 +57,27 @@ export default function BuyModal(props) {
                     <Modal.Body>
                         <p>Current Price: {props?.latest_price}</p>
                         <p>Money in wallet: ${props?.currentBalance.toFixed(2)}</p>
-                        <p>Quantity: </p>
                         <Form>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Control type="text" placeholder="No of stocks to buy" value={numStocks} onChange={handleNumStocksChange} autoComplete="off" />
+                            <Form.Group className="mb-3 d-flex align-items-center" controlId="exampleForm.ControlInput1">
+                                <Form.Label className="mb-0" style={{ marginRight: '10px' }}>Quantity:</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="No of stocks to buy"
+                                    value={numStocks}
+                                    onChange={handleNumStocksChange}
+                                    autoComplete="off"
+                                    style={{ flex: '1' }} // Take up remaining space
+                                />
                             </Form.Group>
                         </Form>
+
                         {showAlert && <p style={{ color: 'red' }}>Not enough money in wallet!</p>}
                     </Modal.Body>
-                    <Modal.Footer classname="d-flex justify-content-between mt-0">
-                        <p className="start">Total:{totalPrice}</p>
+                    <Modal.Footer className="d-flex justify-content-between">
+                        <p>Total: {totalPrice}</p>
                         <Button variant="success" onClick={callBackend} type='submit' disabled={totalPrice > props?.currentBalance}>Buy</Button>
                     </Modal.Footer>
+
                 </Modal.Dialog>
             </Modal>
         </>

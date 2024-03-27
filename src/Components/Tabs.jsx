@@ -1,6 +1,6 @@
 import { Row, Col, Card, Container } from 'react-bootstrap';
 import { useState } from 'react';
-import '../static/Tabs.css'
+// import '../static/Tabs.css'
 import News from './News';
 import Insights from './Insights';
 import Summary from './Summary';
@@ -15,31 +15,10 @@ export default function Tabs(props) {
     const [toggle, setToggle] = useState(1);
     const [active, setActive] = useState(1);
     const newsItems = props.news;
-    // const summaryData = {
-    //     'High Price': '78.32',
-    //     'Low Price': '78.32',
-    //     'Open Price': '78.32',
-    //     'Prev Price': '78.32',
-    //     'IPO Start Date': '2023-90-56',
-    //     'Industry': 'Technology',
-    //     'Webpage': 'https://www.com',
-    //     'Company peers': ['Dell', 'HP', 'Apple', 'Microsoft']
-    // }
-
-
-    // const options = {
-    //     title: {
-    //         text: 'My chart'
-    //     },
-    //     series: [{
-    //         data: [1, 2, 3]
-    //     }]
-    // }
     function updateToggle(id) {
         setToggle(id);
         setActive(id)
     }
-
 
     return (
         <>
@@ -52,7 +31,7 @@ export default function Tabs(props) {
                 </ul>
 
                 {/* SUMMARY TAB */}
-                <Summary toggle={toggle} info={props.info} summary_chart = {props.summary_chart}/>
+                <Summary toggle={toggle} info={props.info} summary_chart = {props.summary_chart} last={props?.last} now={props?.now} isMarketOpen={props?.isMarketOpen}/>
 
                 {/* NEWS TAB */}
                 <News toggle={toggle} newsItems={newsItems} />

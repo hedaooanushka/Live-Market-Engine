@@ -40,7 +40,7 @@ export default function Charts(props) {
                 alignTicks: false,
             },
             title: {
-                text: `${props?.ticker_name} Historical`
+                text: `${props?.ticker_name}`.toUpperCase() + ` Historical`
             },
             subtitle: {
                 text: `With SMA and Volume by Price technical indicators`
@@ -131,7 +131,8 @@ export default function Charts(props) {
             },
             series: [{
                 type: 'candlestick',
-                name: 'USD to EUR',
+                showInLegend: false,
+                name: `${props?.ticker_name}`.toUpperCase(),
                 data: candlestick,
                 yAxis: 0,
                 pointPlacement: 'on',
@@ -140,6 +141,7 @@ export default function Charts(props) {
             {
                 name: 'Volume',
                 type: 'column',
+                showInLegend: false,
                 data: stockVolumeData,
                 yAxis: 1,
                 tooltip: {
@@ -151,7 +153,10 @@ export default function Charts(props) {
             {
                 type: 'sma',
                 linkedTo: 'candles',
-                color: 'red'
+                color: 'red',
+                marker: {
+                    enabled: false
+                }
             },
             {
                 type: 'vbp',
@@ -162,6 +167,9 @@ export default function Charts(props) {
                     enabled: false
                 },
                 zoneLines: {
+                    enabled: false
+                },
+                marker: {
                     enabled: false
                 }
             }]

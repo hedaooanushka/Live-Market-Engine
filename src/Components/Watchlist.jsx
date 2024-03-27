@@ -38,18 +38,19 @@ export default function Watchlist() {
 
     }, [])
     const deleteStock = (ticker) => {
-        console.log("delete stock")
+        // console.log("delete stock")
         axios.post('http://localhost:3000/deleteWatchlistItem', { ticker: ticker })
             .then((res) => {
                 console.log("Deleted")
                 console.log("response ===", JSON.stringify(res.data))
                 window.location.reload();
+                // navigate(`/watchlist`);
             }).catch((err) => {
                 console.log(err);
             })
     }
     const goToCompany = (ticker) => {
-        console.log("go to company")
+        // console.log("go to company")
         navigate(`/search/${ticker.toUpperCase()}`);
     }
     return (

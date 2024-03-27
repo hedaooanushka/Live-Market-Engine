@@ -88,13 +88,6 @@ export default function Insights(props) {
             }
         },
         xAxis: {
-            // type: 'datetime',
-            // dateTimeLabelFormats: {
-            //     month: '%Y-%m' // Formats the date in an hour:minute format
-            // },
-            // labels: {
-            //     showLastLabel: true
-            // }
             categories: recom_period
         },
         series: [{
