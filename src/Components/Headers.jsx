@@ -7,7 +7,7 @@
 // import Col from 'react-bootstrap/Row';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
-import "../static/Tabs.css";
+import '../static/Header.css'
 
 import { useState } from 'react';
 
@@ -35,31 +35,24 @@ export default function Headers(props) {
     };
     return (
         <>
-            <Navbar style={navbar}>
-                <Navbar.Brand className="mx-3" style={{ color: 'white' }}>Stock Search</Navbar.Brand>
-                <Nav className="ms-auto px-3">
-                    <div className="mx-1"><Button  className="navbutton" style={activeTab === 'home' ? activeButton : button} onClick={() => setActiveTab('home')}><Link to={{pathname: "/search/home",state: { myData: "Some data" }}} style={button}>Search</Link></Button></div>
-                    <div className="mx-1"><Button className="navbutton" style={activeTab === 'watchlist' ? activeButton : button} onClick={() => setActiveTab('watchlist')}><Link to="/watchlist" style={button}>Watchlist</Link></Button></div>
-                    <div className="mx-1"><Button className="navbutton" style={activeTab === 'portfolio' ? activeButton : button} onClick={() => setActiveTab('portfolio')}><Link to="/portfolio" style={button}>Portfolio</Link></Button></div>
-                </Nav>
-            </Navbar>
-            {/* <Navbar collapseOnSelect expand="lg" style={navbar} variant="dark">
-                <Navbar.Brand className="mx-3">Stock Search</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="ms-auto px-3 flex-grow-1 justify-content-end">
-                        <Nav.Link as={Link} to={{pathname: "/search/home",state: { myData: "Some data"}}} style={button} className={activeTab === 'home' ? 'active' : ''} onClick={() => setActiveTab('home')}>
-                            <Button>Search</Button>
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className="custom-navbar">
+                <Navbar.Brand className="custom-brand">Stock Search</Navbar.Brand>
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" className="custom-toggle" />
+                <Navbar.Collapse id="responsive-navbar-nav" className="custom-collapse">
+                    <Nav className="ml-auto custom-nav">
+                        <Nav.Link eventKey={1} onClick={() => setActiveTab('home')} className={`custom-link ${activeTab === 'home' ? 'text-primary' : 'text-secondary'}`}>
+                            <Link to={{ pathname: "/search/home" }} className="text-white text-decoration-none">Search</Link>
                         </Nav.Link>
-                        <Nav.Link as={Link} to="/watchlist" className={activeTab === 'watchlist' ? 'active' : ''} onClick={() => setActiveTab('watchlist')}>
-                            Watchlist
+                        <Nav.Link eventKey={2} onClick={() => setActiveTab('watchlist')} className={`custom-link ${activeTab === 'watchlist' ? 'text-primary' : 'text-secondary'}`}>
+                            <Link to="/watchlist" className="text-white text-decoration-none">Watchlist</Link>
                         </Nav.Link>
-                        <Nav.Link as={Link} to="/portfolio" className={activeTab === 'portfolio' ? 'active' : ''} onClick={() => setActiveTab('portfolio')}>
-                            Portfolio
+                        <Nav.Link eventKey={3} onClick={() => setActiveTab('portfolio')} className={`custom-link ${activeTab === 'portfolio' ? 'text-primary' : 'text-secondary'}`}>
+                            <Link to="/portfolio" className="text-white text-decoration-none">Portfolio</Link>
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
-            </Navbar> */}
+            </Navbar>
+           
         </>
     )
 }

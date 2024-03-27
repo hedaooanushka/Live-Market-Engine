@@ -8,46 +8,48 @@ export default function Watchlist() {
     const [emptyResponse, setEmptyResponse] = useState(false);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-
+    const fetchData = async () => {
+        setIsLoading(true);
+        const result = await axios.get('http://localhost:3000/watchlist');
+        const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
+        console.log("Data = ", JSON.stringify(result.data));
+        if (result.data.length === 0) {
+            setEmptyResponse(true);
+        }
+        else {
+            setEmptyResponse(false);
+        }
+        setData(result.data);
+        const pricePromises = result?.data.map(async (item, index) => {
+            await delay(1000); // Wait for 1 second between each request
+            const priceResult = await axios.get(`http://localhost:3000/current_stock_price?ticker_name=${item.ticker}`);
+            return priceResult.data;
+        });
+        if (pricePromises) {
+            const prices = await Promise.all(pricePromises);
+            setPrices(prices); // Store the prices as an array
+            console.log("Prices = ", JSON.stringify(prices));
+        }
+        setIsLoading(false);
+    };
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            const result = await axios.get('http://localhost:3000/watchlist');
-            const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
-            console.log("Data = ", JSON.stringify(result.data));
-            if (result.data.length === 0) {
-                setEmptyResponse(true);
-            }
-            else {
-                setEmptyResponse(false);
-            }
-            setData(result.data);
-            const pricePromises = result?.data.map(async (item, index) => {
-                await delay(1000); // Wait for 1 second between each request
-                const priceResult = await axios.get(`http://localhost:3000/current_stock_price?ticker_name=${item.ticker}`);
-                return priceResult.data;
-            });
-            if (pricePromises) {
-                const prices = await Promise.all(pricePromises);
-                setPrices(prices); // Store the prices as an array
-                console.log("Prices = ", JSON.stringify(prices));
-            }
-            setIsLoading(false);
-        };
         fetchData();
 
     }, [])
-    const deleteStock = (ticker) => {
+    const deleteStock = (ticker, event) => {
         // console.log("delete stock")
         axios.post('http://localhost:3000/deleteWatchlistItem', { ticker: ticker })
             .then((res) => {
                 console.log("Deleted")
                 console.log("response ===", JSON.stringify(res.data))
-                window.location.reload();
                 // navigate(`/watchlist`);
             }).catch((err) => {
                 console.log(err);
             })
+            fetchData();
+        // here I want to rerender the component
+
+
     }
     const goToCompany = (ticker) => {
         // console.log("go to company")
