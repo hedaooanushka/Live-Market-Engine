@@ -106,11 +106,11 @@ export default function Portfolio() {
                     <div className="container alert alert-success alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
                         {ticker.toUpperCase()} bought successfully
                         <div
-                            // type="button"
-                            // className="btn-close"
+                            type="button"
+                            className="btn-close"
                             data-bs-dismiss="alert"
                             aria-label="Close"
-                        // onClick={closeBuyMessage}
+                            onClick={toggleBuyMessage}
                         />
                     </div>
                 )}
@@ -118,18 +118,18 @@ export default function Portfolio() {
                     <div className="container alert alert-danger alert-dismissible fade show" role="alert" style={{ textAlign: 'center' }}>
                         {ticker.toUpperCase()} sold successfully
                         <div
-                            // type="button"
-                            // className="btn-close"
+                            type="button"
+                            className="btn-close"
                             data-bs-dismiss="alert"
                             aria-label="Close"
-                        // onClick={closeSellMessage}
+                            onClick={toggleSellMessage}
                         />
                     </div>
                 )}
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: "70%", marginTop: "5%", marginLeft: 'auto', marginRight: 'auto', marginBottom: '25%' }}>
-                < div className="container-fluid"  >
+            <div className="col-12 col-lg-8" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: "5%", marginLeft: 'auto', marginRight: 'auto', marginBottom: '25%' }}>
+                < div className="container-fluid">
                     <div className="col-12">
                         <h1>My Portfolio</h1>
                     </div>
@@ -149,29 +149,29 @@ export default function Portfolio() {
                         </div>)}
                         {data?.map((item, index) => (
 
-                            <div className="col-12 mt-3" key={index} style={{ minWidth: '500px' }}>
+                            <div className="col-12 mt-3" key={index}>
                                 <div className='container-fluid' style={{ backgroundColor: "#f5f5f5", padding: '0px', border: 'solid 1px', borderRadius: '7px' }}>
                                     <div className='row'>
-                                        <div className='col-2 mx-3'>
+                                        <div className='col-3 col-md-2 mx-3'>
                                             <h2>{item.ticker}</h2>
                                         </div>
-                                        <div className='col-8 ms-0' style={{ marginTop: '6px' }}>
+                                        <div className='col-8  ms-0' style={{ marginTop: '6px' }}>
                                             <h4 style={{ color: "#555a5a" }}>{item.company}</h4>
                                         </div>
                                     </div>
                                     <hr className='m-0' />
                                     <div className='container-fluid mt-0' style={{ backgroundColor: 'white', paddingTop: "1%", paddingBottom: "1%", fontSize: '10px' }}>
                                         <div className='row'>
-                                            <div className='col-4'>
+                                            <div className='col-6 col-md-4'>
                                                 <h5>Quantity:</h5>
                                             </div>
-                                            <div className='col-2'>
+                                            <div className='col-6 col-md-2'>
                                                 <h5>{item.quantity}</h5>
                                             </div>
-                                            <div className='col-4'>
+                                            <div className='col-6 col-md-4'>
                                                 <h5>Change:</h5>
                                             </div>
-                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
+                                            <div className='col-6 col-md-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
                                                 <div className='row'>
                                                     <div className='col-1' >
                                                         {
@@ -192,32 +192,31 @@ export default function Portfolio() {
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* Similar changes for other rows */}
                                         <div className='row'>
-                                            <div className='col-4'>
+                                            <div className='col-6 col-md-4'>
                                                 <h5>Avg Cost / Share:</h5>
                                             </div>
-                                            <div className='col-2'>
+                                            <div className='col-6 col-md-2'>
                                                 <h5>{(item.price / item.quantity).toFixed(2)}</h5>
                                             </div>
-                                            <div className='col-4'>
+                                            <div className='col-6 col-md-4'>
                                                 <h5>Current Price:</h5>
                                             </div>
-                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
+                                            <div className='col-6 col-md-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
                                                 <h5>{prices[index]?.price.toFixed(2)}</h5>
                                             </div>
                                         </div>
                                         <div className='row'>
-                                            <div className='col-4'>
+                                            <div className='col-6 col-md-4'>
                                                 <h5>Total Cost:</h5>
                                             </div>
-                                            <div className='col-2'>
+                                            <div className='col-6 col-md-2'>
                                                 <h5>{(parseFloat(item.price).toFixed(2))}</h5>
                                             </div>
-                                            <div className='col-4'>
+                                            <div className='col-6 col-md-4'>
                                                 <h5>Market Value:</h5>
                                             </div>
-                                            <div className='col-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
+                                            <div className='col-6 col-md-2' style={{ color: prices[index]?.price - (item.price / item.quantity) < 0 ? 'red' : prices[index]?.price - (item.price / item.quantity) > 0 ? 'green' : 'black' }}>
                                                 <h5>{(prices[index]?.price * item.quantity).toFixed(2)}</h5>
                                             </div>
                                         </div>
