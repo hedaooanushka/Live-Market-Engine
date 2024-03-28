@@ -148,7 +148,6 @@ export default function Portfolio() {
 
                         </div>)}
                         {data?.map((item, index) => (
-
                             <div className="col-12 mt-3" key={index}>
                                 <div className='container-fluid' style={{ backgroundColor: "#f5f5f5", padding: '0px', border: 'solid 1px', borderRadius: '7px' }}>
                                     <div className='row'>

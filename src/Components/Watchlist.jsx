@@ -52,7 +52,7 @@ export default function Watchlist() {
 
     }
     const goToCompany = (ticker) => {
-        // console.log("go to company")
+        console.log("watchlist ticker = "+ticker)
         navigate(`/search/${ticker.toUpperCase()}`);
     }
     return (

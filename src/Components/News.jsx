@@ -72,17 +72,17 @@ export default function News({ toggle, newsItems }) {
     return (
         <div key={reRender}>
             <div className={toggle === 2 ? "show-content" : "content"}>
-                <Container fluid className="m-2">
+                {/* <Container fluid > */}
                     {newsItemPairs.map((pair, index) => (
-                        <Row className="mt-3" key={index}>
+                        <Row key={index} >
                             {pair.map((item, idx) => (
-                                <Col md={6}>
+                                <Col xs={12} md={6}>
                                     <Container fluid>
-                                        <Row className="news p-3" type="button" onClick={() => handleNewsClick(index, idx)} stye={{ textAlign: 'center', pointer:'cursor', marginBottom:'20px' }}>
-                                            <Col xs={3}>
-                                                <img src={item.image} className="news-img" alt="" style={{ maxWidth: '140px', maxHeight: '70px', height: '80px' }} />
+                                        <Row className="news p-3" type="button" onClick={() => handleNewsClick(index, idx)} stlye={{ textAlign: 'center', pointer:'cursor', height: 'auto', maxHeight: '10px'}}>
+                                            <Col xs={12} md={3}>
+                                                <img src={item.image} className="news-img" alt="" style={{ objectFit:'contain' }} />
                                             </Col>
-                                            <Col xs={9} className="mt-3" style={{ maxHeight: '70px' }}>
+                                            <Col xs={12} md={9} className="mt-3" style={{ maxHeight: '70px', overflow:'hidden' }}>
                                                 {item.headline.length > 50 ? <p>{item.headline.slice(0, 100) + "..."}</p> : <p>{item.headline}</p>}
                                             </Col>
                                         </Row>
@@ -93,7 +93,7 @@ export default function News({ toggle, newsItems }) {
                             <br /><br />
                         </Row>
                     ))}
-                </Container>
+                {/* </Container> */}
             </div>
             {(
                 <Modal show={showModal} onHide={toggleModal}>

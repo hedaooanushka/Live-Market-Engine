@@ -290,7 +290,7 @@ export default function CompanyInfo(props) {
                         )}
 
                     </div>
-                    <div className="d-flex flex-row bd-highlight mx-auto" style={{ textAlign: 'center', justifyContent: 'space-around', width: '80%' }}>
+                    <div className="d-flex flex-row bd-highlight" style={{ textAlign: 'center', justifyContent: 'space-around'}}>
                         <div className="p-2 bd-highlight">
                             <p><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{props?.info?.profile?.ticker}</span>
                                 <svg onClick={() => handleStarClick()} type="button" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: '15px', marginLeft: '10px' }} width="20" height="20" fill={isStarSelected ? "yellow" : "white"} stroke='black' class="bi bi-star-fill" viewBox="0 0 16 16">

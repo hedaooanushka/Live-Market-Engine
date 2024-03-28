@@ -179,7 +179,7 @@ export default function Charts(props) {
 
 
     return (
-        <div className={props.toggle === 3 ? "show-content" : "content"}>
+        <div className={props.toggle === 3 ? "show-content" : "content"} style={{marginBottom:'70px'}}>
             <HighchartsReact
                 highcharts={Highcharts}
                 constructorType={'stockChart'}

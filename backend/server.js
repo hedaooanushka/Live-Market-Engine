@@ -9,7 +9,7 @@ const uri = `mongodb+srv://${username}:${password}@cluster0.drk46si.mongodb.net/
 
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000;
 const finnhub_API_KEY = "cn23u1hr01qmg1p4fpjgcn23u1hr01qmg1p4fpk0"
 const POLYGON_API_KEY = "zwVPTZUN52Kmef7FZFscrMwGZClJpJiv"
 
@@ -231,6 +231,7 @@ async function run() {
                     const peers = results[2].data;
                     const marketStatus = results[3].data;
                     last = unixToOriginal(results[1].data.t);
+                    console.log("quote data"+ results[1].data)
                     res.json({ profile: profile, latest_price: latestPrice, peers: peers, marketStatus: marketStatus });
                 })
                 .catch((error) => {

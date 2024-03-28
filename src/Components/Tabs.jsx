@@ -22,8 +22,8 @@ export default function Tabs(props) {
 
     return (
         <>
-            <div className="p-5 tab">
-                <ul className="container-fluid row justify-content-center">
+            <div className="tab">
+                <ul className="container-fluid row justify-content-center" style={{marginLeft:'0px'}}>
                     <ul className="container-fluid row justify-content-center">
                         <li className="col-3" onClick={() => updateToggle(1)} style={{ borderBottom: toggle === 1 ? '2px solid #0000ff' : 'none', color: toggle === 1 ? '#0000ff' : 'currentcolor' }}>Summary</li>
                         <li className="col-3" onClick={() => updateToggle(2)} style={{ borderBottom: toggle === 2 ? '2px solid #0000ff' : 'none', color: toggle === 2 ? '#0000ff' : 'currentcolor' }}>Top News</li>

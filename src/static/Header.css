@@ -41,7 +41,6 @@
 }
 
 .custom-nav {
-    /* Styles for the nav */
     margin-left: 80%;
 }
 
@@ -69,7 +68,7 @@
     
     .custom-brand {
         /* Styles for the brand */
-        padding-left: 2%;
+        /* padding-left: 2%; */
     }
     
     .custom-toggle {

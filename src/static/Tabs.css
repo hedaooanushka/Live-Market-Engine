@@ -44,15 +44,15 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     text-align: center;
-    height: 100px;
     overflow: hidden;
+    margin-bottom: 20px;
 
 }
 
 .news-img {
     border-radius: 4px;
-    width: 100%;
-    height: auto;
+    /* width: 100%; */
+    /* height: auto; */
 }
 
 .star:hover {

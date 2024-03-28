@@ -105,9 +105,20 @@ export default function Search(props) {
     useEffect(() => {
         const myData = JSON.parse(localStorage.getItem('myData'));
         console.log("myData = ", myData);
-        if (myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
+        const path = window.location.pathname;
+        setUrl(path);
+        console.log('path === ', path)
+        let ishome = path.endsWith("/home");
+        let isTicker = path.endsWith(`/${myData?.ticker_name}`);
+        if(!ishome && !isTicker){
+            let storedTickerName = path.split("/search/")[1];
+            console.log("storedTickerName", storedTickerName)
+            setTickerName(storedTickerName);
+            callBackend(storedTickerName);
+        }
+        else if(myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
             console.log("ticker_name = ", myData.ticker_name);
-            console.log("Normal ticker_name = ", ticker_name);
+            console.log("Normal ticker_name = ", ticker_name)
             setTickerName(myData.ticker_name);
             setSummaryInfo(myData.summary_info);
             setSummaryChart(myData.summary_chart);
@@ -256,9 +267,9 @@ export default function Search(props) {
         setUrl(path);
         console.log(path)
         let ishome = path.endsWith("/home");
-        let isTicker = path.endsWith(`/${myData.ticker_name}`)
+        let isTicker = path.endsWith(`/${myData?.ticker_name}`)
         console.log("isHome and isTicker", ishome, isTicker)
-        if (!ishome && !isTicker) {
+        if (!ishome && isTicker) {
             console.log("Ohhhhh Noo")
             let storedTickerName = path.split("/search/")[1];
             console.log("storedTickerName", storedTickerName)
