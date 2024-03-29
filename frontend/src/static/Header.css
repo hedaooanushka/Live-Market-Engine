@@ -1,39 +1,18 @@
-/* .navbar {
-    background-color: #2424ab !important;
-    padding: 12px;
-}
 
-.navbutton {
-    background-color: #2424ab !important;
-    color: rgba(255, 255, 255, 0.747);
-    text-decoration: none;
-    border: none !important;
-}
-.btn-primary{
-    border: 1px solid white !important;
-    border-radius: 12px;
-    text-decoration: underline;
-    color: white;
-}
-
-.btn-secondary {
-    text-decoration: none !important;
-    border: none !important;
-} */
 
 .custom-navbar {
     /* Styles for the navbar */
     background-color: #2424ab !important;
-    padding-left: 12px;
+    padding-left: 1%;
+    padding-right: 3%;
 }
 
-.custom-nav {
-    margin-left: 80%;
-}
+
 
 .custom-link {
     /* Styles for the links */
-    margin-left: 4%;
+    padding-left: 2%;
+    margin-right: 2%;
 }
 .text-primary {
     border: 1px solid white !important;
@@ -43,44 +22,3 @@
     
 }
 
-@media only screen 
-  and (min-device-width: 390px) 
-  and (max-device-width: 844px) 
-  and (-webkit-min-device-pixel-ratio: 3) { 
-
-    .custom-navbar {
-        /* Styles for the navbar */
-       
-    }
-    
-    .custom-brand {
-        /* Styles for the brand */
-        /* padding-left: 2%; */
-    }
-    
-    .custom-toggle {
-        /* Styles for the toggle button */
-    }
-    
-    .custom-collapse {
-        /* Styles for the collapsible content */
-    }
-    
-    .custom-nav {
-        /* Styles for the nav */
-        margin-left: 0%;
-    }
-    
-    .custom-link {
-        /* Styles for the links */
-        padding-left: 4%;
-        margin-left: 0;
-    }
-    .text-primary {
-        border: 1px solid white !important;
-        border-radius: 8px;
-        color: white !important;
-        text-decoration: underline;
-        
-    }
-}
