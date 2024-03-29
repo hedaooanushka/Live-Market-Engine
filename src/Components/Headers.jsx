@@ -8,15 +8,15 @@
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
 import '../static/Header.css'
-
-import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 
 export default function Headers(props) {
     const [activeTab, setActiveTab] = useState('home');
     const navbar = {
         backgroundColor: '#2424ab',
-        // height: '45px',
+        // height: '15px',
         color: 'white'
     };
     const button = {
@@ -33,6 +33,21 @@ export default function Headers(props) {
         textDecoration: 'underline',
         color: 'white'
     };
+
+    // useEffect(() => {
+    //     // Extract the pathname and decide which tab should be active based on it
+    //     const path = location.pathname;
+    //     console.log("path = "+ path);
+        
+    //     // Assuming your search path looks like '/search/...' or '/search'
+    //     if (path.includes('/search')) {
+    //       setActiveTab('home');
+    //     } else if (path === '/watchlist') {
+    //       setActiveTab('watchlist');
+    //     } else if (path === '/portfolio') {
+    //       setActiveTab('portfolio');
+    //     }
+    //   }, [location]);
     return (
         <>
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className="custom-navbar">

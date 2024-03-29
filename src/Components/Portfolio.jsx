@@ -129,7 +129,7 @@ export default function Portfolio() {
             </div>
 
             <div className="col-12 col-lg-8" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: "5%", marginLeft: 'auto', marginRight: 'auto', marginBottom: '25%' }}>
-                < div className="container-fluid">
+                < div className="container-fluid" style={{marginTop:'-30px'}}>
                     <div className="col-12">
                         <h1>My Portfolio</h1>
                     </div>
@@ -165,7 +165,7 @@ export default function Portfolio() {
                                                 <h5>Quantity:</h5>
                                             </div>
                                             <div className='col-6 col-md-2'>
-                                                <h5>{item.quantity}</h5>
+                                                <h5>{item.quantity.toFixed(2)}</h5>
                                             </div>
                                             <div className='col-6 col-md-4'>
                                                 <h5>Change:</h5>

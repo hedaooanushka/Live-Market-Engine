@@ -74,7 +74,7 @@ export default function News({ toggle, newsItems }) {
             <div className={toggle === 2 ? "show-content" : "content"}>
                 {/* <Container fluid > */}
                     {newsItemPairs.map((pair, index) => (
-                        <Row key={index} >
+                        <Row key={index} style={{ marginBottom: index === newsItemPairs.length - 1 ? '50px' : '' }} >
                             {pair.map((item, idx) => (
                                 <Col xs={12} md={6}>
                                     <Container fluid>

@@ -42,9 +42,16 @@ export default function Summary(props) {
   let xaxis = []
   const data = props?.summary_chart?.results;
   console.log("chartssssss data = " + JSON.stringify(data))
+  const pdtOffsetInSeconds = 7 * 60 * 60 * 1000
   if (data) {
     for (let i = 0; i < data.length; i++) {
-      xaxis.push([data[i].t, data[i].c])
+      // const date = new Date(data[i].t * 1000);
+      // const pdt = date.toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+      // console.log("pdt = "+pdt)
+      // const dateUTC = new Date(data[i].t * 1000);
+      // const offsetPDT = 7 * 60 * 60 * 1000;
+      // const unixTimestampPDT = (dateUTC.getTime() - offsetPDT) / 1000;
+      xaxis.push([data[i].t - pdtOffsetInSeconds, data[i].c])
     }
   }
 
@@ -96,8 +103,7 @@ export default function Summary(props) {
       name: props?.info?.profile?.ticker,
       data: xaxis,
       pointInterval: 3 * 3600 * 1000,
-      color: props?.isMarketOpen ? 'green' : 'red'
-      // color: 'green'
+      color: props?.info?.latest_price?.d > 0 ? 'green' : 'red'
     }]
   };
   console.log("ismarketopen = " + props?.isMarketOpen)
@@ -135,7 +141,7 @@ export default function Summary(props) {
           </div>
 
         </div>
-        <div className="col-11 col-md-6" style={{marginBottom:'50px', marginTop:'10px'}}>
+        <div className="col-11 col-md-5" style={{marginBottom:'50px', marginTop:'10px', marginLeft:'15px'}}>
           <SmallChart data={options} />
         </div>
       </div>

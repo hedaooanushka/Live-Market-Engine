@@ -271,6 +271,8 @@ async function run() {
                 from_date = new Date(to_date);
                 from_date.setDate(from_date.getDate() - 1);
                 from_date = from_date.toISOString().split('T')[0];
+                console.log("from_date"+ from_date)
+                console.log("to_date"+ to_date)
             }
 
             // https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=120&apiKey=zwVPTZUN52Kmef7FZFscrMwGZClJpJiv

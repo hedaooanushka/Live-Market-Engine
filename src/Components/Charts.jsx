@@ -30,6 +30,12 @@ export default function Charts(props) {
         stockVolumeData.push([data[i].t, data[i].v]);
         candlestick.push(temp)
     }
+    const groupingUnits = [
+        ['week', [1]], // unit name and allowed multiples
+        ['month', [1, 2, 3, 4, 6]]
+    ];
+
+
     // console.log(candlestick)
     if (candlestick.length > 0) {
 
@@ -45,23 +51,37 @@ export default function Charts(props) {
             subtitle: {
                 text: `With SMA and Volume by Price technical indicators`
             },
-            plotOptions: {
-                candlestick: {
-                    color: '#ADD8EF',
-                    lineColor: 'black',
-                    upColor: 'white',
-                    upLineColor: 'black',
-                    pointWidth: 5,
-                    groupPadding: 0.5,
-                    borderWidth: 1
-                },
-                column: {
-                    pointWidth: 5,
-                    color: '#0000BB',
-                    borderColor: 'white',
-                    borderWidth: 1
-                }
+            // plotOptions: {
+            //     candlestick: {
+            //         color: '#ADD8EF',
+            //         lineColor: 'black',
+            //         upColor: 'white',
+            //         upLineColor: 'black',
+            //         pointWidth: 5,
+            //         groupPadding: 0.5,
+            //         borderWidth: 1
+            //     },
+            //     column: {
+            //         pointWidth: 5,
+            //         color: '#0000BB',
+            //         borderColor: 'white',
+            //         borderWidth: 1.5,
+            //         // pointPadding: 0.2,
+            //         // maxPointWidth: 5
+            //     },
+            //     series: {
+            //         dataGrouping: {
+            //             units: groupingUnits
+            //         }
+            //     }
 
+            // },
+            plotOptions: {
+                series: {
+                    dataGrouping: {
+                        units: groupingUnits
+                    }
+                }
             },
 
             rangeSelector: {
@@ -102,7 +122,7 @@ export default function Charts(props) {
                 },
                 labels: {
                     align: 'right',
-                      x: -3
+                    x: -3
                 },
                 lineWidth: 2,
                 height: '80%',
@@ -179,7 +199,7 @@ export default function Charts(props) {
 
 
     return (
-        <div className={props.toggle === 3 ? "show-content" : "content"} style={{marginBottom:'70px'}}>
+        <div className={props.toggle === 3 ? "show-content" : "content"} style={{ marginBottom: '70px' }}>
             <HighchartsReact
                 highcharts={Highcharts}
                 constructorType={'stockChart'}

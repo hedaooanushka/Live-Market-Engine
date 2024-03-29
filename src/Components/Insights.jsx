@@ -172,10 +172,10 @@ export default function Insights(props) {
                 </table>
             </div><br /><br />
             <div className='container-fluid row justify-content-center'>
-                <div className='col-12 col-md-6'>
+                <div className='col-12 col-md-5' style={{marginLeft:'20px'}}>
                     <SmallChart data={recommendationOptions} />
                 </div>
-                <div className='col-12 col-md-6' style={{marginBottom:'50px'}}>
+                <div className='col-12 col-md-5' style={{marginBottom:'50px', marginLeft:'20px'}}>
                     <SmallChart data={epsOptions} />
                 </div>
             </div>

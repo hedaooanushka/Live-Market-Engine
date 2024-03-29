@@ -26,6 +26,7 @@ export default function Search(props) {
     const [autoSuggestLoader, setAutoSuggestLoader] = useState(true);
     const [isSuggestionSelected, setIsSuggestionSelected] = useState(false);
     const [hide, setHide] = useState(false);
+    const [currentTime, setCurrentTime] = useState(new Date());
     const getSuggestionValue = suggestion => suggestion.displaySymbol;
     const navigate = useNavigate();
     let cancelTokenSource = axios.CancelToken.source();
@@ -44,6 +45,7 @@ export default function Search(props) {
         const currentDate = `${year}-${month}-${day}`;
         const currentTime = `${hours}:${minutes}:${seconds}`;
         const currentDateTime = `${currentDate} ${currentTime}`;
+        // setCurrentTime(currentDateTime);
         return {
             year: year,
             month: month,
@@ -114,6 +116,7 @@ export default function Search(props) {
             let storedTickerName = path.split("/search/")[1];
             console.log("storedTickerName", storedTickerName)
             setTickerName(storedTickerName);
+            console.log("ticker_name = ", ticker_name);
             callBackend(storedTickerName);
         }
         else if(myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
@@ -129,8 +132,16 @@ export default function Search(props) {
             setAutoSuggestLoader(false);
             setIsSuggestionSet(false)
             window.history.pushState({}, null, `/search/${myData.ticker_name}`);
+        }else{
+
         }
     }, []);
+
+    const text_primary = {
+        border: '1px solid white',
+        borderRadius: '8px',
+        color: 'white'
+    }
 
 
 
@@ -269,7 +280,7 @@ export default function Search(props) {
         let ishome = path.endsWith("/home");
         let isTicker = path.endsWith(`/${myData?.ticker_name}`)
         console.log("isHome and isTicker", ishome, isTicker)
-        if (!ishome && isTicker) {
+        if (!ishome && !isTicker) {
             console.log("Ohhhhh Noo")
             let storedTickerName = path.split("/search/")[1];
             console.log("storedTickerName", storedTickerName)
@@ -317,6 +328,7 @@ export default function Search(props) {
                             console.log("new summary = ", last_summary);
                             setSummaryInfo(last_summary);
                             console.log("new summary = ", summary_info);
+                            setCurrentTime(currentDate().currentDateTime)
                         })
                         .catch(error => {
                             console.error('An error occurred:', error);
@@ -342,7 +354,7 @@ export default function Search(props) {
     return (
         <>
             <br />
-            <p className='title'>STOCK SEARCH</p><br />
+            <p style={{textAlign:'center', fontSize:'30px', fontWeight:'400'}}>STOCK SEARCH</p><br />
             <Container className="search-container">
                 <Row>
                     <Col className='search-bar'>

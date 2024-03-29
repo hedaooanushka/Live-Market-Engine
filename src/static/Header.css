@@ -24,20 +24,7 @@
 .custom-navbar {
     /* Styles for the navbar */
     background-color: #2424ab !important;
-    padding: 12px;
-}
-
-.custom-brand {
-    /* Styles for the brand */
-}
-
-.custom-toggle {
-    /* Styles for the toggle button */
-    
-}
-
-.custom-collapse {
-    /* Styles for the collapsible content */
+    padding-left: 12px;
 }
 
 .custom-nav {
@@ -52,7 +39,7 @@
     border: 1px solid white !important;
     border-radius: 8px;
     color: white !important;
-    text-decoration: underline;
+    /* text-decoration: underline; */
     
 }
 

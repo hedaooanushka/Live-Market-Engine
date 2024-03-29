@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal, Form, InputGroup, FormControl } from 'react-bootstrap';
 import axios from 'axios'
 
 
@@ -41,18 +41,16 @@ export default function SellModal(props) {
     }, [])
 
     const handleNumStocksChange = (e) => {
-        const value = Number(e.target.value);
-        console.log("value = ", value);
-        setNumStocks(value);
-        console.log("stocksBoutght = ", stocksBought);
-        if (value > stocksBought) {
-            setShowAlert(true);
+        const { value } = e.target;
+        if (value === '') {
+            setNumStocks(''); // This will ensure the input clears on backspace
+        } else {
+            const numValue = parseInt(value, 10);
+            setNumStocks(isNaN(numValue) ? 0 : Math.max(0, numValue));
+            if (numValue > stocksBought) setShowAlert(true);
+            else setShowAlert(false);
         }
-        else {
-            setShowAlert(false);
-        }
-        // console.log(props.info)
-    }
+    };
 
     const callBackend = () => {
 
@@ -69,38 +67,30 @@ export default function SellModal(props) {
     return (
         <>
             {/* SELL MODAL */}
-            <Modal show={props?.showSellModal} onHide={props?.toggleSellModal} className='my-modal' >
+            <Modal show={props?.showSellModal} onHide={props?.toggleSellModal} className='my-modal mx-auto' style={{ width: '95%', top: '1%', left: '2%' }}  >
                 <Modal.Dialog style={{ width: '100%', height: '100%' }}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{props?.ticker}</Modal.Title>
+                        <Modal.Title style={{ padding: '0px' }}>{props?.ticker}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <p>Current Price: {props?.latest_price}</p>
-                        <p>Money in wallet: ${currentBalance}</p>
-                        <Form>
-                            <Form.Group className="mb-3 d-flex align-items-center" controlId="exampleForm.ControlInput1">
-                                <Form.Label className="mb-0" style={{ marginRight: '10px' }}>Quantity:</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="No of stocks to sell"
-                                    value={numStocks}
-                                    onChange={handleNumStocksChange}
-                                    autoComplete="off"
-                                    style={{ flex: '1' }} // Take up remaining space
-                                />
-                            </Form.Group>
-                        </Form>
+                        <p style={{ lineHeight: '0.4' }}>Current Price: {props?.latest_price.toFixed(2)}</p>
+                        <p style={{ lineHeight: '0.4' }}>Money in wallet: ${props?.currentBalance.toFixed(2)}</p>
+                        <InputGroup className="mb-3">
+                            <Form.Label className="mb-0" style={{ marginRight: '10px', lineHeight: '0.4', marginTop: '15px' }}>Quantity:</Form.Label>
+                            <FormControl
+                                aria-label="Quantity"
+                                value={numStocks}
+                                onChange={handleNumStocksChange}
+                                type="number"
+                                style={{ borderRadius: '5px' }}
+                            />
+                        </InputGroup>
                         {showAlert && <p style={{ color: 'red' }}>You cannot sell the stocks that you don't have!</p>}
                     </Modal.Body>
-                    {/* <Modal.Footer>
-                        <p className="text-left">Total:{totalPrice}</p>
-                        <Button variant="success" onClick={callBackend} type='submit' disabled={showAlert}>Sell</Button>
-                    </Modal.Footer> */}
                     <Modal.Footer className="d-flex justify-content-between">
                         <p>Total: {totalPrice}</p>
                         <Button variant="success" onClick={callBackend} type='submit' disabled={showAlert}>Sell</Button>
                     </Modal.Footer>
-
                 </Modal.Dialog>
             </Modal>
         </>
