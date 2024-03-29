@@ -59,9 +59,9 @@ export default function Insights(props) {
         period: item.period,
         surprise: item.surprise
     }));
-    // console.log(mspr_total);
-    // console.log(mspr_positive);
-    // console.log(mspr_negative);
+    // 
+    // 
+    // 
 
 
 

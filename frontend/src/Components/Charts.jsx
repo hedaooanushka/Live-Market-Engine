@@ -19,7 +19,7 @@ export default function Charts(props) {
     if (!data) {
         return <></>;
     }
-    // console.log(data)
+    // 
     for (let i = 0; i < data.length; i++) {
         let temp = [];
         temp.push(data[i].t)
@@ -36,7 +36,7 @@ export default function Charts(props) {
     ];
 
 
-    // console.log(candlestick)
+    // 
     if (candlestick.length > 0) {
 
         options = {

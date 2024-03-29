@@ -23,16 +23,16 @@ export default function Summary(props) {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const navigate = useNavigate();
   const handleClick = (company) => {
-    console.log("handling different company");
-    console.log(company);
+    
+    
     // Update the state to the clicked company
     navigate(`/search/${company}`);
     setSelectedCompany(company);
   };
 
   // const handleClick = (company) => {
-  //     console.log("handling different company");
-  //     console.log(company);
+  //     
+  //     
   //     return (<Search ticker_name={company}/>)
   // };
 
@@ -41,13 +41,13 @@ export default function Summary(props) {
   // SUMMARY-CHARTS
   let xaxis = []
   const data = props?.summary_chart?.results;
-  console.log("chartssssss data = " + JSON.stringify(data))
+  
   const pdtOffsetInSeconds = 7 * 60 * 60 * 1000
   if (data) {
     for (let i = 0; i < data.length; i++) {
       // const date = new Date(data[i].t * 1000);
       // const pdt = date.toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-      // console.log("pdt = "+pdt)
+      // 
       // const dateUTC = new Date(data[i].t * 1000);
       // const offsetPDT = 7 * 60 * 60 * 1000;
       // const unixTimestampPDT = (dateUTC.getTime() - offsetPDT) / 1000;
@@ -106,7 +106,7 @@ export default function Summary(props) {
       color: props?.info?.latest_price?.d > 0 ? 'green' : 'red'
     }]
   };
-  console.log("ismarketopen = " + props?.isMarketOpen)
+  
 
   return (
     <div className={props.toggle === 1 ? "show-content" : "content"}>

@@ -34,23 +34,23 @@ export default function News({ toggle, newsItems }) {
     }
 
     const handleNewsClick = (index, idx) => {
-        console.log("current index = "+ index)
-        console.log("current idx = "+ idx)
+        
+        
 
         // const org_indx = index * 2 + idx;
         setSelectedItem(newsItemPairs[index][idx]);
-        // console.log("news items = "+JSON.stringify(newsItemPairs))
-        console.log("org index = "+JSON.stringify(newsItemPairs[index][idx]))
+        // 
+        
         // setSelectedItem(item);
         // setNewsClicked(true);
-        console.log("selected item outside = " + selectedItem);
+        
         setShowModal(true);
     };
 
     // useEffect(() => {
     //     if (newsClicked) {
     //         // setSelectedItem(selectedItem);
-    //         // console.log("selected item in useeffect =", selectedItem);
+    //         // 
     //         // setShowModal(true);
     //         handleNewsClick(selectedItem)
     //         setNewsClicked(false);

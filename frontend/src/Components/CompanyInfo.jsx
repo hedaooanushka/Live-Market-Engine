@@ -42,7 +42,7 @@ export default function CompanyInfo(props) {
         )
     }
     else if (props?.dataValid) {
-        console.log("ticker_name in company info = " + props?.ticker_name)
+        
         const currentDate = () => {
             const now = new Date();
             const year = now.getFullYear();
@@ -65,7 +65,7 @@ export default function CompanyInfo(props) {
         useEffect(() => {
             const timer = setInterval(() => {
                 setCurrentTime(currentDate().DateTime);
-                console.log(currentTime)
+                
             }, 15000);
             return () => clearInterval(timer);
         }, [currentTime]);
@@ -100,10 +100,10 @@ export default function CompanyInfo(props) {
 
         const toggleBuyMessage = () => {
             setSuccessBuyMessage(!successBuyMessage);
-            axios.get(`http://localhost:3000/portfolio`)
+            axios.get(`https://webassign3.azurewebsites.net/portfolio`)
                 .then(response => {
                     const investments = response.data.investments;
-                    console.log("investments = " + JSON.stringify(investments));
+                    
                     for (let i = 0; i < investments.length; i++) {
                         if (investments[i].ticker === props?.ticker_name.toUpperCase()) {
                             setShowSellButton(true);
@@ -121,11 +121,11 @@ export default function CompanyInfo(props) {
 
         }
         // const getValues = ()=>{
-        //     axios.get(`http://localhost:3000/portfolio?ticker_name=${props?.ticker_name}`)
+        //     axios.get(`https://webassign3.azurewebsites.net/portfolio?ticker_name=${props?.ticker_name}`)
         //         .then(response => {
-        //             // console.log(response.data.current_balance)
+        //             // 
         //             setCurrentBalance(response.data.current_balance)
-        //             // console.log("CB"+currentBalance);
+        //             // 
         //         })
         //         .catch(error => {
         //             console.error('An error occurred:', error);
@@ -134,7 +134,7 @@ export default function CompanyInfo(props) {
 
         const buy = () => {
             // axios call to fetch total money in wallet
-            axios.get(`http://localhost:3000/portfolio`)
+            axios.get(`https://webassign3.azurewebsites.net/portfolio`)
                 .then(response => {
                     setCurrentBalance(response.data.current_balance)
                 })
@@ -157,10 +157,10 @@ export default function CompanyInfo(props) {
 
 
         useEffect(() => {
-            axios.get(`http://localhost:3000/portfolio`)
+            axios.get(`https://webassign3.azurewebsites.net/portfolio`)
                 .then(response => {
                     const investments = response.data.investments;
-                    console.log("investments = " + JSON.stringify(investments));
+                    
                     for (let i = 0; i < investments.length; i++) {
                         if (investments[i].ticker === props?.ticker_name.toUpperCase()) {
                             setShowSellButton(true);
@@ -173,9 +173,9 @@ export default function CompanyInfo(props) {
                 });
 
             //setTimeout(() => {
-            axios.get(`http://localhost:3000/watchlist`).then(response => {
+            axios.get(`https://webassign3.azurewebsites.net/watchlist`).then(response => {
                 const watchlist = response.data;
-                console.log("watchlist = " + JSON.stringify(watchlist));
+                
                 for (let i = 0; i < watchlist.length; i++) {
                     if (watchlist[i].ticker.toLowerCase() === props?.ticker_name.toLowerCase()) {
                         setIsStarSelected(true);
@@ -190,13 +190,13 @@ export default function CompanyInfo(props) {
 
 
         const handleStarClick = async () => {
-            console.log("star clicked, before changing the state = " + isStarSelected);
+            
             setIsStarSelected(!isStarSelected);
-            console.log("star clicked, after changing the state = " + isStarSelected);
+            
             if (!isStarSelected) {
-                axios.post(`http://localhost:3000/watchlist`, { ticker: props?.ticker_name, name: props?.info?.profile?.name })
+                axios.post(`https://webassign3.azurewebsites.net/watchlist`, { ticker: props?.ticker_name, name: props?.info?.profile?.name })
                     .then(response => {
-                        console.log("Added company = " + JSON.stringify(response))
+                        
                     })
                     .catch(error => {
                         console.error('An error occurred:', error);
@@ -204,12 +204,12 @@ export default function CompanyInfo(props) {
                 setShowAlert(true);
             }
             else {
-                axios.post('http://localhost:3000/deleteWatchlistItem', { ticker: props?.ticker_name })
+                axios.post('https://webassign3.azurewebsites.net/deleteWatchlistItem', { ticker: props?.ticker_name })
                     .then((res) => {
-                        console.log("Deleted")
-                        console.log("response ===", JSON.stringify(res.data))
+                        
+                        
                     }).catch((err) => {
-                        console.log(err);
+                        
                     })
             }
         };

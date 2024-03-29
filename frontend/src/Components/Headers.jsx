@@ -37,7 +37,7 @@ export default function Headers() {
     
     useEffect(() => {
         const path = location.pathname;
-        console.log('PPPPPPAAAAAAAAAAAAAATHHHHHHHHHHHHH =====', path)
+        
         if (path === '/search/home') {
             setActiveTab('home');
         } else if (path === '/watchlist') {

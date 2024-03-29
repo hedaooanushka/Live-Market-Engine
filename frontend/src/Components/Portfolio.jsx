@@ -35,9 +35,9 @@ export default function Portfolio() {
         if (!successBuyMessage && !successSellMessage) {
         const fetchData = async () => {
                 setIsLoading(true)
-                const result = await axios.get('http://localhost:3000/portfolio');
+                const result = await axios.get('https://webassign3.azurewebsites.net/portfolio');
 
-                console.log("Data == ", JSON.stringify(result.data));
+                
                 setCurrentBalance(result.data.current_balance);
                 const combinedInvestments = {};
                 const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
@@ -56,11 +56,11 @@ export default function Portfolio() {
                 // Convert the combined investments object back into an array
                 const combinedInvestmentsArray = Object.values(combinedInvestments);
                 setData(combinedInvestmentsArray);
-                console.log("combinedInvestmentsArray == ", JSON.stringify(combinedInvestmentsArray));
+                
                 // Fetch the current prices
                 const pricePromises = combinedInvestmentsArray.map(async (item, index) => {
                     await delay(1000); // Wait for 1 second between each request
-                    const priceResult = await axios.get(`http://localhost:3000/current_stock_price?ticker_name=${item.ticker}`);
+                    const priceResult = await axios.get(`https://webassign3.azurewebsites.net/current_stock_price?ticker_name=${item.ticker}`);
                     return { ticker: item.ticker, price: priceResult.data.c, quantity: item.quantity };
                 });
                 if (pricePromises) {
@@ -71,19 +71,19 @@ export default function Portfolio() {
             };
 
             fetchData();
-            console.log("Prices == ", JSON.stringify(prices));
+            
         }
     }, [successBuyMessage, successSellMessage]);
 
     const buy = (item, currentPrice) => {
-        console.log("buying ", ticker);
+        
         setShowBuyModal(true);
         setTicker(item.ticker);
         setCurrentPrice(currentPrice);
         setCompany(item.company);
     }
     const sell = (item, currentPrice) => {
-        console.log("selling ", ticker);
+        
         setShowSellModal(true);
         setTicker(item.ticker);
         setCurrentPrice(currentPrice);

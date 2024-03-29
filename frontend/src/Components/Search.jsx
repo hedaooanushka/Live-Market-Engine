@@ -95,9 +95,9 @@ export default function Search(props) {
         let differenceInMilliseconds = curr - lastClosed;
         let differenceInSeconds = differenceInMilliseconds / 1000;
         let differenceInMinutes = differenceInSeconds / 60;
-        console.log("difference ms = " + differenceInMilliseconds)
-        console.log("difference sec = " + differenceInSeconds)
-        console.log("difference min = " + differenceInMinutes)
+        
+        
+        
         if (differenceInMinutes > 5) return false;
         else return true;
     }
@@ -106,22 +106,22 @@ export default function Search(props) {
 
     useEffect(() => {
         const myData = JSON.parse(localStorage.getItem('myData'));
-        console.log("myData = ", myData);
+        
         const path = window.location.pathname;
         setUrl(path);
-        console.log('path === ', path)
+        
         let ishome = path.endsWith("/home");
         let isTicker = path.endsWith(`/${myData?.ticker_name}`);
         if(!ishome && !isTicker){
             let storedTickerName = path.split("/search/")[1];
-            console.log("storedTickerName", storedTickerName)
+            
             setTickerName(storedTickerName);
-            console.log("ticker_name = ", ticker_name);
+            
             callBackend(storedTickerName);
         }
         else if(myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
-            console.log("ticker_name = ", myData.ticker_name);
-            console.log("Normal ticker_name = ", ticker_name)
+            
+            
             setTickerName(myData.ticker_name);
             setSummaryInfo(myData.summary_info);
             setSummaryChart(myData.summary_chart);
@@ -155,9 +155,9 @@ export default function Search(props) {
     const onSuggestionSelected = (event, { suggestion }) => {
         event.preventDefault();
         setIsSuggestionSet(true);
-        console.log("Selected: " + JSON.stringify(suggestion))
-        console.log("Selected keys: " + Object.keys(suggestion))
-        console.log("Selected symbol: " + suggestion.displaySymbol)
+        
+        
+        
         setTickerName(suggestion.displaySymbol);
         setIsSuggestionSelected(true);
 
@@ -173,16 +173,16 @@ export default function Search(props) {
 
     var callBackend = (storedTickerName) => {
         setHide(false);
-        console.log("In storedTickerName = ", storedTickerName)
+        
         navigate(`/search/${storedTickerName}`);
-        console.log("ticker name in callbackend = " + storedTickerName)
-        console.log("i clicked")
+        
+        
         setClick(true);
         setIsLoading(true);
         setDataValid(false);
         if (storedTickerName !== "") {
-            console.log("ticker_name: " + storedTickerName)
-            axios.get(`http://localhost:3000/summary?ticker_name=${storedTickerName}`)
+            
+            axios.get(`https://webassign3.azurewebsites.net/summary?ticker_name=${storedTickerName}`)
                 .then(response => {
                     setSummaryInfo(response.data);
                     setIsLoading(false);
@@ -216,7 +216,7 @@ export default function Search(props) {
     useEffect(() => {
         if (dataValid) {
             let context = { ticker_name, summary_info, summary_chart, news_info, charts_info, insights_info }
-            // axios.get(`http://localhost:3000/news?ticker_name=${ticker_name}`)
+            // axios.get(`https://webassign3.azurewebsites.net/news?ticker_name=${ticker_name}`)
             //     .then(response => {
             //         context.news_info = response.data;
             //         setNewsInfo(response.data);
@@ -224,7 +224,7 @@ export default function Search(props) {
             //     .catch(error => {
             //         console.error('An error occurred:', error);
             //     });
-            // axios.get(`http://localhost:3000/summary-charts?ticker_name=${ticker_name}`)
+            // axios.get(`https://webassign3.azurewebsites.net/summary-charts?ticker_name=${ticker_name}`)
             //     .then(response => {
             //         setSummaryChart(response.data);
             //         context.summary_chart = response.data;
@@ -232,7 +232,7 @@ export default function Search(props) {
             //     .catch(error => {
             //         console.error('An error occurred:', error);
             //     });
-            // axios.get(`http://localhost:3000/charts?ticker_name=${ticker_name}`)
+            // axios.get(`https://webassign3.azurewebsites.net/charts?ticker_name=${ticker_name}`)
             //     .then(response => {
             //         setChartsInfo(response.data);
             //         context.charts_info = response.data;
@@ -240,7 +240,7 @@ export default function Search(props) {
             //     .catch(error => {
             //         console.error('An error occurred:', error);
             //     });
-            // axios.get(`http://localhost:3000/insights?ticker_name=${ticker_name}`)
+            // axios.get(`https://webassign3.azurewebsites.net/insights?ticker_name=${ticker_name}`)
             //     .then(response => {
             //         setInsightsInfo(response.data);
             //         context.insights_info = response.data;
@@ -249,10 +249,10 @@ export default function Search(props) {
             //         console.error('An error occurred:', error);
             //     });
             Promise.all([
-                axios.get(`http://localhost:3000/news?ticker_name=${ticker_name}`),
-                axios.get(`http://localhost:3000/summary-charts?ticker_name=${ticker_name}`),
-                axios.get(`http://localhost:3000/charts?ticker_name=${ticker_name}`),
-                axios.get(`http://localhost:3000/insights?ticker_name=${ticker_name}`)
+                axios.get(`https://webassign3.azurewebsites.net/news?ticker_name=${ticker_name}`),
+                axios.get(`https://webassign3.azurewebsites.net/summary-charts?ticker_name=${ticker_name}`),
+                axios.get(`https://webassign3.azurewebsites.net/charts?ticker_name=${ticker_name}`),
+                axios.get(`https://webassign3.azurewebsites.net/insights?ticker_name=${ticker_name}`)
             ]).then(([newsResponse, summaryChartResponse, chartsResponse, insightsResponse]) => {
                 context.news_info = newsResponse.data;
                 context.summary_chart = summaryChartResponse.data;
@@ -263,7 +263,7 @@ export default function Search(props) {
                 setSummaryChart(summaryChartResponse.data);
                 setChartsInfo(chartsResponse.data);
                 setInsightsInfo(insightsResponse.data);
-                console.log("localStorage set")
+                
                 localStorage.setItem('myData', JSON.stringify({ ...context }));
             }).catch(error => {
                 console.error('An error occurred:', error);
@@ -276,20 +276,20 @@ export default function Search(props) {
         const myData = JSON.parse(localStorage.getItem('myData'));
         const path = window.location.pathname;
         setUrl(path);
-        console.log(path)
+        
         let ishome = path.endsWith("/home");
         let isTicker = path.endsWith(`/${myData?.ticker_name}`)
-        console.log("isHome and isTicker", ishome, isTicker)
+        
         if (!ishome && !isTicker) {
-            console.log("Ohhhhh Noo")
+            
             let storedTickerName = path.split("/search/")[1];
-            console.log("storedTickerName", storedTickerName)
+            
             setTickerName(storedTickerName);
             callBackend(storedTickerName);
         }
         else {
             // window.location.reload();
-            console.log("Yeahhhh not called")
+            
         }
         // else {
         //     setTickerName("")
@@ -308,27 +308,27 @@ export default function Search(props) {
         // Set up a timer to refresh the page every 15 seconds
         const timer = setInterval(() => {
 
-            // console.log("=====================================")
-            // console.log("hide is set to false, and the actual is = " + hide);
-            // console.log("ticker_name = " + ticker_name);
-            // console.log("pathname = " + window.location.pathname);
-            // console.log("=====================================")
+            // 
+            // 
+            // 
+            // 
+            // 
             if (ticker_name && window.location.pathname !== "/search/home") {
                 setHide(false);
                 // navigate(`/search/${ticker_name}`);
-                console.log("ticker name in callbackend = " + ticker_name)
-                console.log("i clicked")
+                
+                
 
                 if (ticker_name !== "") {
-                    console.log("ticker_name: " + ticker_name)
-                    axios.get(`http://localhost:3000/current_stock_price?ticker_name=${ticker_name}`)
+                    
+                    axios.get(`https://webassign3.azurewebsites.net/current_stock_price?ticker_name=${ticker_name}`)
                         .then(response => {
                             let last_summary = summary_info;
                             last_summary.latest_price = response.data;
-                            console.log("new response = ", response.data);
-                            console.log("new summary = ", last_summary);
+                            
+                            
                             setSummaryInfo(last_summary);
-                            console.log("new summary = ", summary_info);
+                            
                             setCurrentTime(currentDate().currentDateTime)
                         })
                         .catch(error => {
@@ -407,7 +407,7 @@ export default function Search(props) {
                                                     cancelTokenSource.cancel();
                                                     // Create a new CancelToken source
                                                     cancelTokenSource = axios.CancelToken.source();
-                                                    axios.get(`http://localhost:3000/autocomplete?query=${value}`, {
+                                                    axios.get(`https://webassign3.azurewebsites.net/autocomplete?query=${value}`, {
                                                         cancelToken: cancelTokenSource.token
                                                     }).then(response => {
                                                         const filteredSuggestions = response.data.filter(suggestion =>
@@ -417,7 +417,7 @@ export default function Search(props) {
                                                         setAutoSuggestLoader(false);
                                                     }).catch(error => {
                                                         if (axios.isCancel(error)) {
-                                                            console.log('Request canceled:', error.message);
+                                                            
                                                         } else {
                                                             console.error('Failed to fetch suggestions:', error);
                                                             setAutoSuggestLoader(false);

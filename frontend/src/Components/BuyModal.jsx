@@ -18,7 +18,8 @@ export default function BuyModal(props) {
     useEffect(() => {
         const currentPrice = parseFloat(numStocks * props?.latest_price).toFixed(2)
         setTotalPrice(currentPrice);
-        if (currentPrice > props?.currentBalance) {
+        if (currentPrice > props?.currentBalance || numStocks <= 0) {
+            
             setShowAlert(true);
         } else setShowAlert(false);
     }, [numStocks]);
@@ -26,12 +27,12 @@ export default function BuyModal(props) {
     const handleNumStocksChange = (e) => {
         const { value } = e.target;
         if (value === '') {
-          setNumStocks(''); // This will ensure the input clears on backspace
+            setNumStocks(''); // This will ensure the input clears on backspace
         } else {
-          const numValue = parseInt(value, 10);
-          setNumStocks(isNaN(numValue) ? 0 : Math.max(0, numValue));
+            const numValue = parseInt(value, 10);
+            setNumStocks(isNaN(numValue) ? 0 : Math.max(0, numValue));
         }
-      };
+    };
 
     const hide = (e) => {
         e.preventDefault();
@@ -39,17 +40,17 @@ export default function BuyModal(props) {
     }
 
     const updateNumStocks = (delta) => {
-            setNumStocks(prevNumStocks => Math.max(0, prevNumStocks + delta));
+        setNumStocks(prevNumStocks => Math.max(0, prevNumStocks + delta));
     };
 
     const callBackend = () => {
-        axios.post('http://localhost:3000/buy', { price: totalPrice, quantity: numStocks, ticker: props?.ticker, company: props?.company })
+        axios.post('https://webassign3.azurewebsites.net/buy', { price: totalPrice, quantity: numStocks, ticker: props?.ticker, company: props?.company })
             .then((res) => {
                 props.toggleBuyModal();
                 props.toggleBuyMessage()
 
             }).catch((err) => {
-                console.log(err);
+                
             })
     }
 
@@ -57,7 +58,7 @@ export default function BuyModal(props) {
         <>
             {/* BUY MODAL */}
 
-            <Modal show={props?.showBuyModal} onHide={props?.toggleBuyModal} className='my-modal' style={{width:'95%', top:'1%',left:'2%'}}>
+            <Modal show={props?.showBuyModal} onHide={props?.toggleBuyModal} className='my-modal' style={{ width: '95%', top: '1%', left: '2%' }}>
                 <Modal.Dialog style={{ width: '100%', height: '100%' }}>
                     <Modal.Header closeButton>
                         <Modal.Title style={{ padding: '0px' }}>{props?.ticker}</Modal.Title>
@@ -71,16 +72,16 @@ export default function BuyModal(props) {
                                 aria-label="Quantity"
                                 value={numStocks}
                                 onChange={handleNumStocksChange}
-                                type="number" 
+                                type="number"
                                 style={{ borderRadius: '5px' }}
                             />
                         </InputGroup>
 
-                        {showAlert && <p style={{ color: 'red' }}>Not enough money in wallet!</p>}
+                        {showAlert && numStocks > 0 && <p style={{ color: 'red' }}>Not enough money in wallet!</p>}
                     </Modal.Body>
                     <Modal.Footer className="d-flex justify-content-between" style={{ padding: '0px', paddingLeft: '12px' }}>
                         <p>Total: {totalPrice}</p>
-                        <Button variant="success" onClick={callBackend} type='submit' disabled={totalPrice > props?.currentBalance}>Buy</Button>
+                        <Button variant="success" onClick={callBackend} type='submit' disabled={totalPrice > props?.currentBalance || numStocks <=0 }>Buy</Button>
                     </Modal.Footer>
 
                 </Modal.Dialog>

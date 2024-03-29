@@ -10,9 +10,9 @@ export default function Watchlist() {
     const [isLoading, setIsLoading] = useState(false);
     const fetchData = async () => {
         setIsLoading(true);
-        const result = await axios.get('http://localhost:3000/watchlist');
+        const result = await axios.get('https://webassign3.azurewebsites.net/watchlist');
         const delay = (duration) => new Promise(resolve => setTimeout(resolve, duration));
-        console.log("Data = ", JSON.stringify(result.data));
+        
         if (result.data.length === 0) {
             setEmptyResponse(true);
         }
@@ -22,13 +22,13 @@ export default function Watchlist() {
         setData(result.data);
         const pricePromises = result?.data.map(async (item, index) => {
             await delay(1000); // Wait for 1 second between each request
-            const priceResult = await axios.get(`http://localhost:3000/current_stock_price?ticker_name=${item.ticker}`);
+            const priceResult = await axios.get(`https://webassign3.azurewebsites.net/current_stock_price?ticker_name=${item.ticker}`);
             return priceResult.data;
         });
         if (pricePromises) {
             const prices = await Promise.all(pricePromises);
             setPrices(prices); // Store the prices as an array
-            console.log("Prices = ", JSON.stringify(prices));
+            
         }
         setIsLoading(false);
     };
@@ -37,14 +37,14 @@ export default function Watchlist() {
 
     }, [])
     const deleteStock = (ticker, event) => {
-        // console.log("delete stock")
-        axios.post('http://localhost:3000/deleteWatchlistItem', { ticker: ticker })
+        // 
+        axios.post('https://webassign3.azurewebsites.net/deleteWatchlistItem', { ticker: ticker })
             .then((res) => {
-                console.log("Deleted")
-                console.log("response ===", JSON.stringify(res.data))
+                
+                
                 // navigate(`/watchlist`);
             }).catch((err) => {
-                console.log(err);
+                
             })
             fetchData();
         // here I want to rerender the component
@@ -52,7 +52,7 @@ export default function Watchlist() {
 
     }
     const goToCompany = (ticker) => {
-        console.log("watchlist ticker = "+ticker);
+        
         navigate(`/search/${ticker.toUpperCase()}`);
     }
     return (
@@ -72,7 +72,7 @@ export default function Watchlist() {
                 </div>)}
                 {!isLoading && data.map((item, index) => {
                     const price = prices[index];
-                    console.log("card price = " + price)
+                    
                     return (
                         <div class="card" style={{ marginBottom: '20px' }}>
 

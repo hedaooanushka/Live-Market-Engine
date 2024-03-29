@@ -10,7 +10,7 @@ export default function SellModal(props) {
         return <></>;
     }
 
-    const [numStocks, setNumStocks] = useState(1)
+    const [numStocks, setNumStocks] = useState(0)
     const [totalPrice, setTotalPrice] = useState(0)
     const [stocksToSell, setStocksToSell] = useState(0)
     const [stocksBought, setStocksBought] = useState(0)
@@ -25,19 +25,19 @@ export default function SellModal(props) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios.get('http://localhost:3000/portfolio');
-            console.log("Data == ", JSON.stringify(result.data));
+            const result = await axios.get('https://webassign3.azurewebsites.net/portfolio');
+            
             setCurrentBalance((result.data.current_balance).toFixed(2));
             setPortfolioInfo(result.data.investments);
             result.data.investments.forEach((item) => {
                 if (item.ticker === props?.ticker) {
                     setStocksBought(item.quantity); // Make sure this is the correct property
-                    console.log("stocks bought =", item.quantity);
+                    
                 }
             });
         };
         fetchData();
-        console.log("stocksBought = ", stocksBought);
+        
     }, [])
 
     const handleNumStocksChange = (e) => {
@@ -46,21 +46,21 @@ export default function SellModal(props) {
             setNumStocks(''); // This will ensure the input clears on backspace
         } else {
             const numValue = parseInt(value, 10);
-            setNumStocks(isNaN(numValue) ? 0 : Math.max(0, numValue));
-            if (numValue > stocksBought) setShowAlert(true);
+            setNumStocks(isNaN(numValue) ? 1 : Math.max(0, numValue));
+            if (numValue > stocksBought || numValue <= 0) setShowAlert(true);
             else setShowAlert(false);
         }
     };
 
     const callBackend = () => {
 
-        console.log("inside portfolio frontend callback")
-        axios.post('http://localhost:3000/sell', { price: totalPrice, quantity: numStocks, ticker: props?.ticker, company: props?.company })
+        
+        axios.post('https://webassign3.azurewebsites.net/sell', { price: totalPrice, quantity: numStocks, ticker: props?.ticker, company: props?.company })
             .then((res) => {
                 props.toggleSellModal();
                 props.toggleSellMessage();
             }).catch((err) => {
-                console.log(err);
+                
             })
     }
 
@@ -85,11 +85,11 @@ export default function SellModal(props) {
                                 style={{ borderRadius: '5px' }}
                             />
                         </InputGroup>
-                        {showAlert && <p style={{ color: 'red' }}>You cannot sell the stocks that you don't have!</p>}
+                        {showAlert && numStocks > 0 && <p style={{ color: 'red' }}>You cannot sell the stocks that you don't have!</p>}
                     </Modal.Body>
                     <Modal.Footer className="d-flex justify-content-between">
                         <p>Total: {totalPrice}</p>
-                        <Button variant="success" onClick={callBackend} type='submit' disabled={showAlert}>Sell</Button>
+                        <Button variant="success" onClick={callBackend} type='submit' disabled={showAlert || numStocks <= 0}>Sell</Button>
                     </Modal.Footer>
                 </Modal.Dialog>
             </Modal>
