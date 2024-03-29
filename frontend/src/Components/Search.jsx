@@ -288,6 +288,7 @@ export default function Search(props) {
             callBackend(storedTickerName);
         }
         else {
+            // window.location.reload();
             console.log("Yeahhhh not called")
         }
         // else {

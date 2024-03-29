@@ -12,8 +12,9 @@ import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 
-export default function Headers(props) {
+export default function Headers() {
     const [activeTab, setActiveTab] = useState('home');
+    const location = useLocation();
     const navbar = {
         backgroundColor: '#2424ab',
         // height: '15px',
@@ -33,28 +34,30 @@ export default function Headers(props) {
         textDecoration: 'underline',
         color: 'white'
     };
-
-    // useEffect(() => {
-    //     // Extract the pathname and decide which tab should be active based on it
-    //     const path = location.pathname;
-    //     console.log("path = "+ path);
-        
-    //     // Assuming your search path looks like '/search/...' or '/search'
-    //     if (path.includes('/search')) {
-    //       setActiveTab('home');
-    //     } else if (path === '/watchlist') {
-    //       setActiveTab('watchlist');
-    //     } else if (path === '/portfolio') {
-    //       setActiveTab('portfolio');
-    //     }
-    //   }, [location]);
+    
+    useEffect(() => {
+        const path = location.pathname;
+        console.log('PPPPPPAAAAAAAAAAAAAATHHHHHHHHHHHHH =====', path)
+        if (path === '/search/home') {
+            setActiveTab('home');
+        } else if (path === '/watchlist') {
+            setActiveTab('watchlist');
+        } else if (path === '/portfolio') {
+            setActiveTab('portfolio');
+        }
+        else{
+            setActiveTab('home');
+        }
+    }, [location, activeTab]);
+     
+  
     return (
         <>
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className="custom-navbar">
-                <Navbar.Brand className="custom-brand">Stock Search</Navbar.Brand>
+                <Navbar.Brand className="custom-brand" style={{paddingLeft: '1%'}}>Stock Search</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" className="custom-toggle" />
                 <Navbar.Collapse id="responsive-navbar-nav" className="custom-collapse">
-                    <Nav className="ml-auto custom-nav">
+                    <Nav className="ms-auto">
                         <Nav.Link eventKey={1} onClick={() => setActiveTab('home')} className={`custom-link ${activeTab === 'home' ? 'text-primary' : 'text-secondary'}`}>
                             <Link to={{ pathname: "/search/home" }} className="text-white text-decoration-none">Search</Link>
                         </Nav.Link>

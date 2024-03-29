@@ -128,7 +128,7 @@ export default function Portfolio() {
                 )}
             </div>
 
-            <div className="col-12 col-lg-8" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: "5%", marginLeft: 'auto', marginRight: 'auto', marginBottom: '25%' }}>
+            <div className="col-12 col-lg-10" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: "2%", marginLeft: 'auto', marginRight: 'auto', marginBottom: '25%' }}>
                 < div className="container-fluid" style={{marginTop:'-30px'}}>
                     <div className="col-12">
                         <h1>My Portfolio</h1>
