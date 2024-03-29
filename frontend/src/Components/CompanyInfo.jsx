@@ -9,6 +9,8 @@ import SellModal from './SellModal.jsx'
 
 
 export default function CompanyInfo(props) {
+
+    console.log(props?.ticker_name, props?.dataValid, props?.click)
     if ((props?.ticker_name === "default" && props?.dataValid === false) || props?.hide) {
         return (
             <></>
@@ -27,7 +29,7 @@ export default function CompanyInfo(props) {
         return (
             <div>
                 <div className="d-flex justify-content-center">
-                    <div className="spinner-border" role="status"></div>
+                    <div className="spinner-border" style={{color: 'blue', margin: '3%'}} role="status"></div>
                 </div>
             </div>
         )

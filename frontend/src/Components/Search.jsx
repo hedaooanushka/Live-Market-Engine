@@ -95,9 +95,9 @@ export default function Search(props) {
         let differenceInMilliseconds = curr - lastClosed;
         let differenceInSeconds = differenceInMilliseconds / 1000;
         let differenceInMinutes = differenceInSeconds / 60;
-        
-        
-        
+
+
+
         if (differenceInMinutes > 5) return false;
         else return true;
     }
@@ -106,22 +106,20 @@ export default function Search(props) {
 
     useEffect(() => {
         const myData = JSON.parse(localStorage.getItem('myData'));
-        
+
         const path = window.location.pathname;
         setUrl(path);
-        
+
         let ishome = path.endsWith("/home");
         let isTicker = path.endsWith(`/${myData?.ticker_name}`);
-        if(!ishome && !isTicker){
+        if (!ishome && !isTicker) {
             let storedTickerName = path.split("/search/")[1];
-            
+
             setTickerName(storedTickerName);
-            
+
             callBackend(storedTickerName);
         }
-        else if(myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
-            
-            
+        else if (myData?.ticker_name && myData?.summary_info !== "default" && myData?.news_info.length > 0) {
             setTickerName(myData.ticker_name);
             setSummaryInfo(myData.summary_info);
             setSummaryChart(myData.summary_chart);
@@ -132,8 +130,6 @@ export default function Search(props) {
             setAutoSuggestLoader(false);
             setIsSuggestionSet(false)
             window.history.pushState({}, null, `/search/${myData.ticker_name}`);
-        }else{
-
         }
     }, []);
 
@@ -155,9 +151,9 @@ export default function Search(props) {
     const onSuggestionSelected = (event, { suggestion }) => {
         event.preventDefault();
         setIsSuggestionSet(true);
-        
-        
-        
+
+
+
         setTickerName(suggestion.displaySymbol);
         setIsSuggestionSelected(true);
 
@@ -173,15 +169,11 @@ export default function Search(props) {
 
     var callBackend = (storedTickerName) => {
         setHide(false);
-        
-        navigate(`/search/${storedTickerName}`);
-        
-        
         setClick(true);
         setIsLoading(true);
         setDataValid(false);
         if (storedTickerName !== "") {
-            
+            navigate(`/search/${storedTickerName}`);
             axios.get(`https://webassign3.azurewebsites.net/summary?ticker_name=${storedTickerName}`)
                 .then(response => {
                     setSummaryInfo(response.data);
@@ -196,6 +188,9 @@ export default function Search(props) {
                 .catch(error => {
                     console.error('An error occurred:', error);
                 });
+        }
+        else{
+            setTickerName("");
         }
 
     }
@@ -263,7 +258,7 @@ export default function Search(props) {
                 setSummaryChart(summaryChartResponse.data);
                 setChartsInfo(chartsResponse.data);
                 setInsightsInfo(insightsResponse.data);
-                
+
                 localStorage.setItem('myData', JSON.stringify({ ...context }));
             }).catch(error => {
                 console.error('An error occurred:', error);
@@ -276,20 +271,20 @@ export default function Search(props) {
         const myData = JSON.parse(localStorage.getItem('myData'));
         const path = window.location.pathname;
         setUrl(path);
-        
+
         let ishome = path.endsWith("/home");
         let isTicker = path.endsWith(`/${myData?.ticker_name}`)
-        
+
         if (!ishome && !isTicker) {
-            
+
             let storedTickerName = path.split("/search/")[1];
-            
+
             setTickerName(storedTickerName);
             callBackend(storedTickerName);
         }
         else {
             // window.location.reload();
-            
+
         }
         // else {
         //     setTickerName("")
@@ -316,19 +311,19 @@ export default function Search(props) {
             if (ticker_name && window.location.pathname !== "/search/home") {
                 setHide(false);
                 // navigate(`/search/${ticker_name}`);
-                
-                
+
+
 
                 if (ticker_name !== "") {
-                    
+
                     axios.get(`https://webassign3.azurewebsites.net/current_stock_price?ticker_name=${ticker_name}`)
                         .then(response => {
                             let last_summary = summary_info;
                             last_summary.latest_price = response.data;
-                            
-                            
+
+
                             setSummaryInfo(last_summary);
-                            
+
                             setCurrentTime(currentDate().currentDateTime)
                         })
                         .catch(error => {
@@ -355,7 +350,7 @@ export default function Search(props) {
     return (
         <>
             <br />
-            <p style={{textAlign:'center', fontSize:'30px', fontWeight:'400'}}>STOCK SEARCH</p><br />
+            <p style={{ textAlign: 'center', fontSize: '30px', fontWeight: '400' }}>STOCK SEARCH</p><br />
             <Container className="search-container">
                 <Row>
                     <Col className='search-bar'>
@@ -370,6 +365,7 @@ export default function Search(props) {
                                             borderRadius: '4px',
                                             backgroundColor: 'white',
                                             padding: '10px',
+                                            zIndex: '9999'
                                         },
                                         suggestionsList: {
                                             listStyleType: 'none',
@@ -380,7 +376,7 @@ export default function Search(props) {
                                         return (!click && (suggestions.length > 0 || (autoSuggestLoader && ticker_name.length > 0))) && (
                                             <div {...containerProps} style={{ ...containerProps.style, maxHeight: '200px', overflow: 'auto' }}>
                                                 {autoSuggestLoader && ticker_name.length > 0 && suggestions.length == 0 ?
-                                                    <div className="d-flex justify-content-center">
+                                                    <div className="d-flex">
                                                         <div className="spinner-border" role="status">
                                                         </div>
                                                     </div>
@@ -417,7 +413,7 @@ export default function Search(props) {
                                                         setAutoSuggestLoader(false);
                                                     }).catch(error => {
                                                         if (axios.isCancel(error)) {
-                                                            
+
                                                         } else {
                                                             console.error('Failed to fetch suggestions:', error);
                                                             setAutoSuggestLoader(false);
@@ -445,7 +441,7 @@ export default function Search(props) {
                                         placeholder: "Enter stock ticker symbol",
                                         value: ticker_name,
                                         onChange: handleInputChange,
-                                        className: 'input-box',                          
+                                        className: 'input-box',
                                     }}
                                 />
                             </Form.Group>
@@ -464,11 +460,11 @@ export default function Search(props) {
                 </Row>
             </Container>
             <br />
-            {ticker_name && <div>
+           <div>
                 <CompanyInfo hide={hide} info={summary_info} ticker_name={ticker_name} dataValid={dataValid} click={click} isLoading={isLoading} last={last} now={now} isMarketOpen={isMarketOpen(now.DateTime, last.DateTime)} />
                 <br />
                 <Tabs hide={hide} info={summary_info} summary_chart={summary_chart} news={news_info} charts={charts_info} insights={insights_info} ticker_name={ticker_name} isValid={dataValid} isMarketOpen={isMarketOpen(now.DateTime, last.DateTime)} />
-            </div>}
+            </div>
         </>
     )
 }

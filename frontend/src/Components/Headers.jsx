@@ -58,14 +58,14 @@ export default function Headers() {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" className="custom-toggle" />
                 <Navbar.Collapse id="responsive-navbar-nav" className="custom-collapse">
                     <Nav className="ms-auto">
-                        <Nav.Link eventKey={1} onClick={() => setActiveTab('home')} className={`custom-link ${activeTab === 'home' ? 'text-primary' : 'text-secondary'}`}>
-                            <Link to={{ pathname: "/search/home" }} className="text-white text-decoration-none">Search</Link>
+                        <Nav.Link eventKey={1} onClick={() => setActiveTab('home')} className={`custom-link  ${activeTab === 'home' ? 'text-primary' : 'text-secondary'}`}>
+                            <Link to={{ pathname: "/search/home" }} className="text-decoration-none hover-effect" style={{color: '#ddd'}}>Search</Link>
                         </Nav.Link>
-                        <Nav.Link eventKey={2} onClick={() => setActiveTab('watchlist')} className={`custom-link ${activeTab === 'watchlist' ? 'text-primary' : 'text-secondary'}`}>
-                            <Link to="/watchlist" className="text-white text-decoration-none">Watchlist</Link>
+                        <Nav.Link eventKey={2} onClick={() => setActiveTab('watchlist')} className={`custom-link  ${activeTab === 'watchlist' ? 'text-primary' : 'text-secondary'}`}>
+                            <Link to="/watchlist" className="text-decoration-none hover-effect" style={{color: '#ddd' }}>Watchlist</Link>
                         </Nav.Link>
                         <Nav.Link eventKey={3} onClick={() => setActiveTab('portfolio')} className={`custom-link ${activeTab === 'portfolio' ? 'text-primary' : 'text-secondary'}`}>
-                            <Link to="/portfolio" className="text-white text-decoration-none">Portfolio</Link>
+                            <Link to="/portfolio" className="text-decoration-none hover-effect" style={{color: '#ddd'}}>Portfolio</Link>
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
