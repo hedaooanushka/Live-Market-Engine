@@ -79,6 +79,17 @@ function unixToOriginal(unixTimestamp) {
     }
 }
 
+const isMarketOpen = (now, last) => {
+    let curr = new Date(now);
+    let lastClosed = new Date(last);
+
+    let differenceInMilliseconds = curr - lastClosed;
+    let differenceInSeconds = differenceInMilliseconds / 1000;
+    let differenceInMinutes = differenceInSeconds / 60;
+    if (differenceInMinutes > 5) return false;
+    else return true;
+}
+
 async function run() {
     try {
         // To get all the watchlist items
@@ -261,13 +272,31 @@ async function run() {
             const current = getCurrentTime();
             let to_date;
             let from_date;
-            if ((current.dayIndex == 6) || (current.dayIndex == 0)) {  // saturday
-                to_date = last.Date;
+            // if ((current.dayIndex == 6) || (current.dayIndex == 0)) {  // saturday
+            //     to_date = last.Date;
+            //     from_date = new Date(to_date);
+            //     from_date.setDate(from_date.getDate() - 1);
+            //     from_date = from_date.toISOString().split('T')[0];
+            // } else {
+            //     to_date = current.Date
+            //     from_date = new Date(to_date);
+            //     from_date.setDate(from_date.getDate() - 1);
+            //     from_date = from_date.toISOString().split('T')[0];
+            //     console.log("from_date"+ from_date)
+            //     console.log("to_date"+ to_date)
+            // }
+
+            if(isMarketOpen(current.DateTime, last.DateTime)){
+                console.log("market open")
+                to_date = current.Date
                 from_date = new Date(to_date);
                 from_date.setDate(from_date.getDate() - 1);
                 from_date = from_date.toISOString().split('T')[0];
-            } else {
-                to_date = current.Date
+                console.log("from_date"+ from_date)
+                console.log("to_date"+ to_date)
+            }else{
+                console.log("market closed")
+                to_date = last.Date;
                 from_date = new Date(to_date);
                 from_date.setDate(from_date.getDate() - 1);
                 from_date = from_date.toISOString().split('T')[0];
